@@ -8,11 +8,6 @@
 pub fn compile_ars(ars_string: String) -> Vec<String> {
 	let mut compiled = Vec::<u8>::new();
 	let mut tree_from_ars = Vec::<ARSTreeItem>::new();
-	/* Compilation steps
-	1. No checking for syntax correctness - that would crash with unclosed brackets in text
-	2. Go through each character
-	3. Find the key in the database and append the opcode and parameters to `compiled`
-	*/
 	let words = split_into_keys(ars_string); //Words is a Vec<String> containing first level parsed and split keys
 	for word in words.iter() {
 		if word.is_empty() {
@@ -71,6 +66,9 @@ fn split_into_keys(ars_string: String) -> Vec<String> {
 				opened_brackets -= 1;
 			}
 		}
+	}
+	if words.len() == 0 {
+		words.push(ars_string);
 	}
 	return words;
 }

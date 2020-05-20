@@ -1,3 +1,6 @@
-No stripping unclosed brackets - on new bracket check if current_word is a key
 ~~Add '?' as the splitting character for database keys~~ - no weird database keys, fuck off
-Creating a new item when no bracket is opened and an opening bracket is found
+Implement DSS - I don't care about other statements. Or maybe something custom?
+BUG: unclosed brackets at the end disappear
+
+HOWTO: DSS
+Create a tree of all possible branches and add a function that will choose the proper one

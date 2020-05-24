@@ -34,9 +34,11 @@ fn split_into_keys(ars_string: String) -> Vec<String> {
 	let mut current_word = String::new();
 	let mut words = Vec::<String>::new();
 	let mut opened_brackets: u8 = 0;
+	let mut character_count = 0; //Fixes bug where unclosed brackets would get dropped
 	//To prevent text before the first bracket from being suffixed to the content of the first bracket
 	//Split the input into keys with brackets
 	for current_char in ars_string.chars() {
+		character_count += 1;
 		if opened_brackets == 0 {
 			if current_char == '{' {
 				opened_brackets += 1;
@@ -64,6 +66,11 @@ fn split_into_keys(ars_string: String) -> Vec<String> {
 				opened_brackets += 1;
 			} else if current_char == '}' {
 				opened_brackets -= 1;
+			}
+		}
+		if character_count == ars_string.len() {
+			if !current_word.is_empty() {
+				words.push(current_word.clone());
 			}
 		}
 	}

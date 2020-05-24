@@ -1,4 +1,4 @@
-mod ars;
+mod lib;
 
 use std::io::stdin;
 
@@ -8,6 +8,6 @@ fn main() {
 		stdin()
 			.read_line(&mut input)
 			.expect("An error has happened while reading from the console");
-		println!("{:?}", ars::compile_ars(input.clone()));
+		println!("{:?}", lib::compile_ars(input.clone()));
 	}
 }

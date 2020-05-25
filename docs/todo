@@ -1,5 +1,6 @@
 ~~Add '?' as the splitting character for database keys~~ - no weird database keys, fuck off
 Implement DSS - I don't care about other statements. Or maybe something custom?
+Rewrite the parser/tree maker to be single pass
 
 HOWTO: DSS
 Create a tree of all possible branches and add a function that will choose the proper one

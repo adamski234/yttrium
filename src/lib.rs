@@ -1,4 +1,5 @@
 #![allow(unused_variables)]
+
 /**
  * Compiles ARS into bytecode defined in docs/
  * # Arguments
@@ -22,13 +23,10 @@ fn create_ars_tree(ars_string: String) -> Vec<ARSTreeItem> {
 		let split_parts_of_current_word: Vec<&str> = word.split(':').collect();
 		let key = String::from(split_parts_of_current_word[0]); //First part of the content split by `:` is the key
 		let param = String::from(split_parts_of_current_word[1..].join("")); //The rest of the content is considered to be the parameter
-		let current_part = ARSTreeItem {
-			key: ARSStringOrTree::Text(key),
-			parameter: ARSStringOrTree::Text(param),
-		};
+		let current_part = ARSTreeItem::new(key, param);
 		top_level_items.push(current_part);
 	}
-	for item in &top_level_items {
+	for item in &mut top_level_items {
 		item.parse_recursive();
 	}
 	return top_level_items;
@@ -97,8 +95,32 @@ struct ARSTreeItem {
 }
 
 impl ARSTreeItem {
-	pub fn parse_recursive(&self) {
-		unimplemented!();
+	pub fn parse_recursive(&mut self) {
+		if let ARSStringOrTree::Text(text) = &self.key {
+			//Check if the string contains keys and parse it if it does
+			if !text.is_empty() && self.is_ars_string(text) {
+				//It be parse time
+				self.key = ARSStringOrTree::Keys(create_ars_tree(text[1..text.len() - 1].to_owned()));
+			}
+		}
+		//Do the exact same thing but for the parameter
+		if let ARSStringOrTree::Text(text) = &self.parameter {
+			//Check if the string contains keys and parse it if it does
+			if !text.is_empty() && self.is_ars_string(text) {
+				//It be parse time
+				self.parameter = ARSStringOrTree::Keys(create_ars_tree(text.to_string()));
+			}
+		}
+	}
+	fn is_ars_string(&self, text_to_check: &String) -> bool {
+		let chars: Vec<char> = text_to_check.chars().collect();
+		return chars[0] == '{' && chars[chars.len() - 1] == '}';
+	}
+	pub fn new(key: String, param: String) -> ARSTreeItem {
+		return ARSTreeItem {
+			key: ARSStringOrTree::Text(key),
+			parameter: ARSStringOrTree::Text(param),
+		}
 	}
 }
 
@@ -134,15 +156,17 @@ mod tests {
 		#[test]
 		fn create_ars_tree_correct() {
 			//Tests for a correctly formed string
-			//It needs to be replaced when the ars tree will be parsed to the end
 			let tree = create_ars_tree(String::from("abc{def}{ghi:{jkm}}"));
-			match &tree[0].key {
-				ARSStringOrTree::Text(abc) => {
-					assert_eq!(abc, "abc")
+			if let ARSStringOrTree::Text(text) = &tree[0].key {
+				assert_eq!(text, "abc");
+			}
+			if let ARSStringOrTree::Keys(keys) = &tree[1].key {
+				if let ARSStringOrTree::Text(text) = &keys[0].key {
+					assert_eq!(text, "{def}");
 				}
-				ARSStringOrTree::Keys(_) => {
-					panic!("`ARSStringOrTree` was of variant `Keys`");
-				}
+			}
+			if let ARSStringOrTree::Text(text) = &tree[2].key {
+				assert_eq!(text, "{nop}")
 			}
 		}
 	}

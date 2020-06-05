@@ -1,11 +1,11 @@
-pub fn create_ars_tree<'a>(ars_string: String) -> ARSTreeItem<'a> {
+pub fn create_ars_tree(ars_string: String) -> ARSTreeItem {
 	let mut top_level_node = ARSTreeItem {
-		key: ARSStringOrTree::Keys(Vec::new()),
+		key: ARSStringOrTree::Text(String::new()),
 		parameter: ARSStringOrTree::Text(String::new()),
 		parent_item: None,
 	};
-	let mut current_node = &top_level_node;
-	let mut current_part = &current_node.key;
+	let mut current_node = &mut top_level_node; //Reference to the currently edited node
+	let mut current_part = &mut current_node.key; //Reference to the currently edited string
 	let mut is_parameter = false;
 	let mut index = 0;
 	for current_char in ars_string.chars() {
@@ -24,27 +24,14 @@ pub fn create_ars_tree<'a>(ars_string: String) -> ARSTreeItem<'a> {
 }
 
 #[derive(Debug)]
-pub struct ARSTreeItem<'a> {
-	key: ARSStringOrTree<'a>,
-	parameter: ARSStringOrTree<'a>,
-	parent_item: Option<&'a ARSTreeItem<'a>>,
+pub struct ARSTreeItem {
+	key: ARSStringOrTree,
+	parameter: ARSStringOrTree,
+	parent_item: Option<Box<ARSTreeItem>>,
 }
 
 #[derive(Debug)]
-enum ARSStringOrTree<'a> {
+enum ARSStringOrTree {
 	Text(String),
-	Keys(Vec<ARSTreeItem<'a>>),
-}
-
-#[cfg(test)]
-mod tests {
-	//These tests probably won't ever be finished
-	mod create_ars_tree_tests {
-		use super::super::*;
-		#[test]
-		fn create_ars_tree_correct() {
-			//Tests for a correctly formed string
-			unimplemented!();
-		}
-	}
+	Keys(Vec<ARSTreeItem>),
 }

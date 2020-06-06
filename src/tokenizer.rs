@@ -1,3 +1,5 @@
+/// `split_into_tokens` takes a string of valid or invalid ARS code and separates it into a vector of tokens
+#[allow(dead_code)]
 pub fn split_into_tokens(ars_string: String) -> Vec<Token> {
 	let mut output = Vec::new();
 	let mut current_string = String::with_capacity(50);
@@ -65,6 +67,7 @@ pub struct Token {
 	token_type: TokenType
 }
 
+#[allow(dead_code)]
 #[derive(Debug)]
 enum TokenType {
 	OpenBracket,

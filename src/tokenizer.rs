@@ -1,11 +1,10 @@
+#[allow(clippy::needless_return)]
 /// `split_into_tokens` takes a string of valid or invalid ARS code and separates it into a vector of tokens
 #[allow(dead_code)]
 pub fn split_into_tokens(ars_string: String) -> Vec<Token> {
 	let mut output = Vec::new();
 	let mut current_string = String::with_capacity(50);
-	let mut count = 0;
-	for current_char in ars_string.chars() {
-		count += 1;
+	for (count, current_char) in ars_string.chars().enumerate() {
 		match current_char {
 			'{' => {
 				if !current_string.is_empty() {
@@ -50,7 +49,7 @@ pub fn split_into_tokens(ars_string: String) -> Vec<Token> {
 				current_string.push(current_char);
 			}
 		}
-		if count == ars_string.len() && !current_string.is_empty() {
+		if count == ars_string.len() - 1 && !current_string.is_empty() {
 			output.push(Token {
 				text: current_string,
 				token_type: TokenType::StringLiteral,
@@ -63,13 +62,12 @@ pub fn split_into_tokens(ars_string: String) -> Vec<Token> {
 
 #[derive(Debug)]
 pub struct Token {
-	text: String,
-	token_type: TokenType
+	pub text: String,
+	pub token_type: TokenType
 }
 
-#[allow(dead_code)]
 #[derive(Debug)]
-enum TokenType {
+pub enum TokenType {
 	OpenBracket,
 	CloseBracket,
 	StringLiteral,

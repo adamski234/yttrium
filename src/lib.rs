@@ -1,5 +1,6 @@
+#[allow(clippy::needless_return)]
 #[path = "./tree_creator.rs"] mod tree_creator; //#[path] allows to load a module from an arbitrary part
-
+#[path = "./tokenizer.rs"] mod tokenizer;
 /**
  * Compiles ARS into bytecode defined in docs/
  * # Arguments

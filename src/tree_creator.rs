@@ -4,6 +4,7 @@
 type Id = usize;
 
 pub fn create_ars_tree(ars_string: String) -> Vec<TreeNode> {
+	let tokens = tokenizer::split_into_tokens(ars_string); //TODO: multithread it
 	/*
 	How things work:
 	node_list is a flat vector of all nodes in the tree.
@@ -20,13 +21,13 @@ pub fn create_ars_tree(ars_string: String) -> Vec<TreeNode> {
 		}
 	];
 	let mut current_node_index = 0;
-	let tokens = tokenizer::split_into_tokens(ars_string);
 	for token in tokens {
+		let top_node_list_size = top_node_list.len(); //satisfying the borrow checker
+		println!("{}", current_node_index);
 		use tokenizer::TokenType;
 		match token.token_type {
 			TokenType::OpenBracket => {
 				if top_node_list[current_node_index].is_editing_parameter {
-					let top_node_list_size = top_node_list.len(); //satisfying the borrow checker
 					match &mut top_node_list[current_node_index].parameter {
 						Some(param) => {
 							match param {
@@ -81,10 +82,39 @@ pub fn create_ars_tree(ars_string: String) -> Vec<TreeNode> {
 				}
 			}
 			TokenType::CloseBracket => {
-				//
+				if let Some(parent_node) = top_node_list[current_node_index].parent {
+					current_node_index = parent_node;
+				}
 			}
 			TokenType::ParameterDelimiter => {
-				//
+				if top_node_list[current_node_index].is_editing_parameter {
+					match &mut top_node_list[current_node_index].parameter {
+						Some(param) => {
+							match param {
+								Parameter::Nodes(child_nodes) => {
+									let new_node = TreeNode {
+										key: String::from("literal"),
+										parameter: Some(Parameter::String(token.text)),
+										is_editing_parameter: true,
+										parent: Some(current_node_index),
+									};
+									child_nodes.push(top_node_list_size);
+									top_node_list.push(new_node);
+								}
+								Parameter::String(text) => {
+									text.push_str(&token.text);
+								}
+							}
+						}
+						None => {
+							top_node_list[current_node_index].parameter = Some(Parameter::String(String::new()));
+						}
+					}
+				} else {
+					//No parameter
+					top_node_list[current_node_index].parameter = Some(Parameter::String(String::new()));
+					top_node_list[current_node_index].is_editing_parameter = true;
+				}
 			}
 			TokenType::StringLiteral => {
 				//

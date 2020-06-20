@@ -40,7 +40,7 @@ pub fn create_ars_tree(ars_string: String) -> Vec<TreeNode> {
 									};
 									child_nodes.push(top_node_list_size);
 									top_node_list.push(new_node);
-									current_node_index = top_node_list_size + 1;
+									current_node_index = top_node_list_size;
 								}
 								Parameter::String(text) => {
 									let node_from_text = TreeNode {
@@ -117,7 +117,33 @@ pub fn create_ars_tree(ars_string: String) -> Vec<TreeNode> {
 				}
 			}
 			TokenType::StringLiteral => {
-				//
+				if top_node_list[current_node_index].is_editing_parameter {
+					match &mut top_node_list[current_node_index].parameter {
+						Some(param) => {
+							match param {
+								Parameter::String(text) => {
+									text.push_str(&token.text);
+								}
+								Parameter::Nodes(child_nodes) => {
+									let new_node = TreeNode {
+										key: String::from("literal"),
+										parameter: Some(Parameter::String(token.text)),
+										is_editing_parameter: true,
+										parent: Some(current_node_index),
+									};
+									child_nodes.push(top_node_list_size);
+									top_node_list.push(new_node);
+									current_node_index = top_node_list_size;
+								}
+							}
+						}
+						None => {
+							panic!(format!("top_node_list[{}] has `is_editing_parameter` set to true but `parameter` field is `None`!", current_node_index));
+						}
+					}
+				} else {
+					top_node_list[current_node_index].key.push_str(&token.text);
+				}
 			}
 		}
 	}
@@ -133,6 +159,7 @@ pub struct TreeNode {
 }
 
 #[derive(Debug)]
+#[allow(dead_code)] //Linter suggests that neither of the two variants are constructed so it's silenced
 pub enum Parameter {
 	Nodes(Vec<Id>),
 	String(String)

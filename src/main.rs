@@ -11,7 +11,7 @@ fn main() {
 		stdin()
 			.read_line(&mut input)
 			.expect("An error has happened while reading from the console");
-		println!("{:?}", tree_creator::create_ars_tree(input));
+		println!("{:#?}", tree_creator::create_ars_tree(input));
 		//println!("{:?}", tokenizer::split_into_tokens(input));
 	}
 }

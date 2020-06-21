@@ -1,10 +1,14 @@
 #[allow(clippy::needless_return)]
 #[path = "tokenizer.rs"] mod tokenizer;
+use std::sync::mpsc;
 
 type Id = usize;
 
 pub fn create_ars_tree(ars_string: String) -> Vec<TreeNode> {
-	let tokens = tokenizer::split_into_tokens(ars_string); //TODO: multithread it
+	let (sender, token_stream) = mpsc::channel();
+	std::thread::spawn(move || {
+		tokenizer::split_into_tokens(ars_string, sender);
+	});
 	/*
 	How things work:
 	node_list is a flat vector of all nodes in the tree.
@@ -21,7 +25,7 @@ pub fn create_ars_tree(ars_string: String) -> Vec<TreeNode> {
 		}
 	];
 	let mut current_node_index = 0;
-	for token in tokens {
+	for token in token_stream.iter() {
 		let top_node_list_size = top_node_list.len(); //satisfying the borrow checker
 		println!("{}", current_node_index);
 		use tokenizer::TokenType;

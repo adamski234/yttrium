@@ -1,159 +1,166 @@
-pub fn create_ars_tree(ars_string: String) -> Vec<ARSTreeItem> {
-	let words = split_into_keys(ars_string); //Words is a Vec<String> containing first level parsed and split keys
-	let mut top_level_items = Vec::<ARSTreeItem>::new();
-	for word in words.iter() {
-		if word.is_empty() {
-			continue; //Disregard all empty strings
+#[allow(clippy::needless_return)]
+#[path = "tokenizer.rs"] mod tokenizer;
+
+type Id = usize;
+
+pub fn create_ars_tree(ars_string: String) -> Vec<TreeNode> {
+	let tokens = tokenizer::split_into_tokens(ars_string); //TODO: multithread it
+	/*
+	How things work:
+	node_list is a flat vector of all nodes in the tree.
+	This way I don't have to work with pointers but rather just vector indices
+	After creating a new node, push it to node_list and use the new index as parent pointer
+	I'll probably want to jump off a bridge after finishing it
+	*/
+	let mut top_node_list = vec![
+		TreeNode {
+			key: String::from("top"), //`top` is the top level TreeNode containing all other nodes
+			parameter: Some(Parameter::String(String::new())),
+			is_editing_parameter: true,
+			parent: None
 		}
-		let split_parts_of_current_word: Vec<&str> = word.split(':').collect();
-		let key = String::from(split_parts_of_current_word[0]); //First part of the content split by `:` is the key
-		let param = String::from(split_parts_of_current_word[1..].join("")); //The rest of the content is considered to be the parameter
-		let current_part = ARSTreeItem::new(key, param);
-		top_level_items.push(current_part);
+	];
+	let mut current_node_index = 0;
+	for token in tokens {
+		let top_node_list_size = top_node_list.len(); //satisfying the borrow checker
+		println!("{}", current_node_index);
+		use tokenizer::TokenType;
+		match token.token_type {
+			TokenType::OpenBracket => {
+				if top_node_list[current_node_index].is_editing_parameter {
+					match &mut top_node_list[current_node_index].parameter {
+						Some(param) => {
+							match param {
+								Parameter::Nodes(child_nodes) => {
+									let new_node = TreeNode {
+										key: String::new(),
+										parameter: None,
+										is_editing_parameter: false,
+										parent: Some(current_node_index),
+									};
+									child_nodes.push(top_node_list_size);
+									top_node_list.push(new_node);
+									current_node_index = top_node_list_size;
+								}
+								Parameter::String(text) => {
+									let node_from_text = TreeNode {
+										key: String::from("literal"),
+										parameter: Some(Parameter::String(text.to_string())),
+										is_editing_parameter: true,
+										parent: Some(current_node_index)
+									};
+									let new_node = TreeNode {
+										key: String::new(),
+										parameter: None,
+										is_editing_parameter: false,
+										parent: Some(current_node_index),
+									};
+									let child_nodes = vec![ //Children IDs
+										top_node_list_size,
+										top_node_list_size + 1,
+									];
+									top_node_list.push(node_from_text);
+									top_node_list.push(new_node);
+									top_node_list[current_node_index].parameter = Some(Parameter::Nodes(child_nodes));
+									current_node_index = top_node_list_size + 1;
+								}
+							}
+						}
+						None => {
+							let new_node = TreeNode {
+								key: String::new(),
+								parameter: None,
+								is_editing_parameter: false,
+								parent: Some(current_node_index),
+							};
+							top_node_list[current_node_index].parameter = Some(Parameter::Nodes(vec![top_node_list_size]));
+							top_node_list.push(new_node);
+						}
+					}
+				} else {
+					top_node_list[current_node_index].key.push_str(&token.text);
+				}
+			}
+			TokenType::CloseBracket => {
+				if let Some(parent_node) = top_node_list[current_node_index].parent {
+					current_node_index = parent_node;
+				}
+			}
+			TokenType::ParameterDelimiter => {
+				if top_node_list[current_node_index].is_editing_parameter {
+					match &mut top_node_list[current_node_index].parameter {
+						Some(param) => {
+							match param {
+								Parameter::Nodes(child_nodes) => {
+									let new_node = TreeNode {
+										key: String::from("literal"),
+										parameter: Some(Parameter::String(token.text)),
+										is_editing_parameter: true,
+										parent: Some(current_node_index),
+									};
+									child_nodes.push(top_node_list_size);
+									top_node_list.push(new_node);
+								}
+								Parameter::String(text) => {
+									text.push_str(&token.text);
+								}
+							}
+						}
+						None => {
+							top_node_list[current_node_index].parameter = Some(Parameter::String(String::new()));
+						}
+					}
+				} else {
+					//No parameter
+					top_node_list[current_node_index].parameter = Some(Parameter::String(String::new()));
+					top_node_list[current_node_index].is_editing_parameter = true;
+				}
+			}
+			TokenType::StringLiteral => {
+				if top_node_list[current_node_index].is_editing_parameter {
+					match &mut top_node_list[current_node_index].parameter {
+						Some(param) => {
+							match param {
+								Parameter::String(text) => {
+									text.push_str(&token.text);
+								}
+								Parameter::Nodes(child_nodes) => {
+									let new_node = TreeNode {
+										key: String::from("literal"),
+										parameter: Some(Parameter::String(token.text)),
+										is_editing_parameter: true,
+										parent: Some(current_node_index),
+									};
+									child_nodes.push(top_node_list_size);
+									top_node_list.push(new_node);
+									current_node_index = top_node_list_size;
+								}
+							}
+						}
+						None => {
+							panic!(format!("top_node_list[{}] has `is_editing_parameter` set to true but `parameter` field is `None`!", current_node_index));
+						}
+					}
+				} else {
+					top_node_list[current_node_index].key.push_str(&token.text);
+				}
+			}
+		}
 	}
-	for item in &mut top_level_items {
-		item.parse_recursive();
-	}
-	return top_level_items;
+	return top_node_list;
 }
 
-/**
- * Splits the argument into a vector of keys
- * # Arguments
- * * `ars_string` - string containing ARS code enclosed in brackets
- * # Returns
- * `Vec<String>` containing all split keys
- */
-fn split_into_keys(ars_string: String) -> Vec<String> {
-	let mut current_word = String::new();
-	let mut words = Vec::<String>::new();
-	let mut opened_brackets: u8 = 0;
-	let mut character_count = 0; //Fixes bug where unclosed brackets would get dropped
-	//To prevent text before the first bracket from being suffixed to the content of the first bracket
-	//Split the input into keys with brackets
-	for current_char in ars_string.chars() {
-		character_count += 1;
-		if opened_brackets == 0 {
-			if current_char == '{' {
-				opened_brackets += 1;
-				if !current_word.is_empty() {
-					words.push(current_word.clone());
-				}
-				current_word = current_char.to_string();
-			} else {
-				current_word.push(current_char);
-			}
-		} else if opened_brackets == 1 {
-			current_word.push(current_char);
-			if current_char == '{' {
-				opened_brackets += 1;
-			} else if current_char == '}' {
-				opened_brackets -= 1;
-				if !current_word.is_empty() {
-					words.push(current_word.clone());
-				}
-				current_word = String::new();
-			}
-		} else {
-			current_word.push(current_char);
-			if current_char == '{' {
-				opened_brackets += 1;
-			} else if current_char == '}' {
-				opened_brackets -= 1;
-			}
-		}
-		if character_count == ars_string.len() {
-			if !current_word.is_empty() {
-				words.push(current_word.clone());
-			}
-		}
-	}
-	if words.len() == 0 {
-		words.push(ars_string);
-	}
-	return words;
-}
 #[derive(Debug)]
-pub struct ARSTreeItem {
-	key: ARSStringOrTree,
-	parameter: ARSStringOrTree,
-}
-
-impl ARSTreeItem {
-	pub fn parse_recursive(&mut self) {
-		if let ARSStringOrTree::Text(text) = &self.key {
-			//Check if the string contains keys and parse it if it does
-			if !text.is_empty() && self.is_ars_string(text) {
-				//It be parse time
-				self.key = ARSStringOrTree::Keys(create_ars_tree(text[1..text.len() - 1].to_owned()));
-			}
-		}
-		//Do the exact same thing but for the parameter
-		if let ARSStringOrTree::Text(text) = &self.parameter {
-			//Check if the string contains keys and parse it if it does
-			if !text.is_empty() && self.is_ars_string(text) {
-				//It be parse time
-				self.parameter = ARSStringOrTree::Keys(create_ars_tree(text.to_string()));
-			}
-		}
-	}
-	fn is_ars_string(&self, text_to_check: &String) -> bool {
-		let chars: Vec<char> = text_to_check.chars().collect();
-		return chars[0] == '{' && chars[chars.len() - 1] == '}';
-	}
-	pub fn new(key: String, param: String) -> ARSTreeItem {
-		return ARSTreeItem {
-			key: ARSStringOrTree::Text(key),
-			parameter: ARSStringOrTree::Text(param),
-		}
-	}
+pub struct TreeNode {
+	key: String, //Cannot be ars code, as it would require getting opcodes on the fly. Could work with an interpreter tho
+	parameter: Option<Parameter>, //String for literals, Nodes for variable values
+	is_editing_parameter: bool,
+	parent: Option<Id>, //Pointer, except that it's a vector index instead of a memory address
 }
 
 #[derive(Debug)]
-enum ARSStringOrTree {
-	Text(String),
-	Keys(Vec<ARSTreeItem>),
-}
-
-#[cfg(test)]
-mod tests {
-	//These tests probably won't ever be finished
-	mod split_into_keys_tests {
-		use super::super::*;
-		#[test]
-		fn split_into_keys_correct() {
-			//Tests for splitting a correctly formed string
-			assert_eq!(
-				split_into_keys(String::from("abc{def}{ghi:{jkm}}")),
-				vec!["abc", "{def}", "{ghi:{jkm}}"]
-			);
-		}
-		#[test]
-		fn split_into_keys_unclosed_brackets_end() {
-			//Tests for splitting a string with unclosed brackets at the end
-			assert_eq!(split_into_keys(
-				String::from("abc{{}")),
-				vec!["abc", "{{}"]
-			);
-		}
-	}
-	mod create_ars_tree_tests {
-		use super::super::*;
-		#[test]
-		fn create_ars_tree_correct() {
-			//Tests for a correctly formed string
-			let tree = create_ars_tree(String::from("abc{def}{ghi:{jkm}}"));
-			if let ARSStringOrTree::Text(text) = &tree[0].key {
-				assert_eq!(text, "abc");
-			}
-			if let ARSStringOrTree::Keys(keys) = &tree[1].key {
-				if let ARSStringOrTree::Text(text) = &keys[0].key {
-					assert_eq!(text, "{def}");
-				}
-			}
-			if let ARSStringOrTree::Text(text) = &tree[2].key {
-				assert_eq!(text, "{nop}")
-			}
-		}
-	}
+#[allow(dead_code)] //Linter suggests that neither of the two variants are constructed so it's silenced
+pub enum Parameter {
+	Nodes(Vec<Id>),
+	String(String)
 }

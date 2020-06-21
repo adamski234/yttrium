@@ -27,7 +27,6 @@ pub fn create_ars_tree(ars_string: String) -> Vec<TreeNode> {
 	let mut current_node_index = 0;
 	for token in token_stream.iter() {
 		let top_node_list_size = top_node_list.len(); //satisfying the borrow checker
-		println!("{}", current_node_index);
 		use tokenizer::TokenType;
 		match token.token_type {
 			TokenType::OpenBracket => {

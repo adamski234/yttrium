@@ -79,13 +79,8 @@ mod tests {
 	use super::*;
 	#[test]
 	fn tokenizer_test_correct() {
-		let (sender, receiver) = mpsc::channel();
-		let mut output = Vec::new();
 		let input = String::from("abc{def}{ghi:jkm}");
-		split_into_tokens(input, sender);
-		for item in receiver.iter() {
-			output.push(item);
-		}
+		let output = split_into_tokens(input);
 		let correct_output = vec![
 			Token {
 				text: String::from("abc"),

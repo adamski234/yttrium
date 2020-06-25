@@ -2,48 +2,73 @@
 /// `split_into_tokens` takes a string of valid or invalid ARS code and separates it into a vector of tokens
 #[allow(dead_code)]
 pub fn split_into_tokens(ars_string: String) -> Vec<Token> {
+	const DEFAULT_STR_LENGTH: usize = 20;
 	let mut output = Vec::new();
-	let mut current_string = String::with_capacity(50);
+	let mut current_string = String::with_capacity(DEFAULT_STR_LENGTH);
+	let mut is_backslashed = false;
 	for (count, current_char) in ars_string.chars().enumerate() {
 		match current_char {
 			'{' => {
-				if !current_string.is_empty() {
+				if is_backslashed {
+					current_string.push(current_char);
+					is_backslashed = false;
+				} else {
+					if !current_string.is_empty() {
+						output.push(Token {
+							text: current_string,
+							token_type: TokenType::StringLiteral,
+						});
+						current_string = String::with_capacity(DEFAULT_STR_LENGTH);
+					}
 					output.push(Token {
-						text: current_string,
-						token_type: TokenType::StringLiteral,
+						text: current_char.to_string(),
+						token_type: TokenType::OpenBracket,
 					});
-					current_string = String::with_capacity(50);
 				}
-				output.push(Token {
-					text: current_char.to_string(),
-					token_type: TokenType::OpenBracket,
-				});
 			}
 			'}' => {
-				if !current_string.is_empty() {
+				if is_backslashed {
+					current_string.push(current_char);
+					is_backslashed = false;
+				} else {
+					if !current_string.is_empty() {
+						output.push(Token {
+							text: current_string,
+							token_type: TokenType::StringLiteral,
+						});
+						current_string = String::with_capacity(DEFAULT_STR_LENGTH);
+					}
 					output.push(Token {
-						text: current_string,
-						token_type: TokenType::StringLiteral,
+						text: current_char.to_string(),
+						token_type: TokenType::CloseBracket,
 					});
-					current_string = String::with_capacity(50);
 				}
-				output.push(Token {
-					text: current_char.to_string(),
-					token_type: TokenType::CloseBracket,
-				})
 			}
 			':' => {
-				if !current_string.is_empty() {
+				if is_backslashed {
+					current_string.push(current_char);
+					is_backslashed = false;
+				} else {
+					if !current_string.is_empty() {
+						output.push(Token {
+							text: current_string,
+							token_type: TokenType::StringLiteral,
+						});
+						current_string = String::with_capacity(DEFAULT_STR_LENGTH);
+					}
 					output.push(Token {
-						text: current_string,
-						token_type: TokenType::StringLiteral,
+						text: current_char.to_string(),
+						token_type: TokenType::ParameterDelimiter,
 					});
-					current_string = String::with_capacity(50);
 				}
-				output.push(Token {
-					text: current_char.to_string(),
-					token_type: TokenType::ParameterDelimiter,
-				})
+			}
+			'\\' => {
+				if is_backslashed {
+					current_string.push(current_char);
+					is_backslashed = false;
+				} else {
+					is_backslashed = true;
+				}
 			}
 			_ => {
 				current_string.push(current_char);
@@ -54,7 +79,7 @@ pub fn split_into_tokens(ars_string: String) -> Vec<Token> {
 				text: current_string,
 				token_type: TokenType::StringLiteral,
 			});
-			current_string = String::with_capacity(50);
+			current_string = String::with_capacity(DEFAULT_STR_LENGTH);
 		}
 	}
 	return output;
@@ -112,6 +137,30 @@ mod tests {
 			},
 			Token {
 				text: String::from("jkm"),
+				token_type: TokenType::StringLiteral,
+			},
+			Token {
+				text: String::from("}"),
+				token_type: TokenType::CloseBracket,
+			},
+		];
+		assert_eq!(output, correct_output);
+	}
+	#[test]
+	fn tokenizer_backslashes() {
+		let input = String::from("\\{abc\\}\\\\{def}");
+		let output = split_into_tokens(input);
+		let correct_output = vec![
+			Token {
+				text: String::from("{abc}\\"),
+				token_type: TokenType::StringLiteral,
+			},
+			Token {
+				text: String::from("{"),
+				token_type: TokenType::OpenBracket,
+			},
+			Token {
+				text: String::from("def"),
 				token_type: TokenType::StringLiteral,
 			},
 			Token {

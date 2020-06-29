@@ -71,6 +71,10 @@ pub fn split_into_tokens(ars_string: String) -> Vec<Token> {
 				}
 			}
 			_ => {
+				if is_backslashed {
+					current_string.push('\\');
+					is_backslashed = false;
+				}
 				current_string.push(current_char);
 			}
 		}
@@ -148,11 +152,11 @@ mod tests {
 	}
 	#[test]
 	fn tokenizer_backslashes() {
-		let input = String::from("\\{abc\\}\\\\{def}");
+		let input = String::from("\\{a\\bc\\}\\\\{def}");
 		let output = split_into_tokens(input);
 		let correct_output = vec![
 			Token {
-				text: String::from("{abc}\\"),
+				text: String::from("{a\\bc}\\"),
 				token_type: TokenType::StringLiteral,
 			},
 			Token {

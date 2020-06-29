@@ -44,6 +44,42 @@ pub fn split_into_tokens(ars_string: String) -> Vec<Token> {
 					});
 				}
 			}
+			'(' => {
+				if is_backslashed {
+					current_string.push(current_char);
+					is_backslashed = false;
+				} else {
+					if !current_string.is_empty() {
+						output.push(Token {
+							text: current_string,
+							token_type: TokenType::StringLiteral,
+						});
+						current_string = String::with_capacity(DEFAULT_STR_LENGTH);
+					}
+					output.push(Token {
+						text: current_char.to_string(),
+						token_type: TokenType::OpenParentheses,
+					});
+				}
+			}
+			')' => {
+				if is_backslashed {
+					current_string.push(current_char);
+					is_backslashed = false;
+				} else {
+					if !current_string.is_empty() {
+						output.push(Token {
+							text: current_string,
+							token_type: TokenType::StringLiteral,
+						});
+						current_string = String::with_capacity(DEFAULT_STR_LENGTH);
+					}
+					output.push(Token {
+						text: current_char.to_string(),
+						token_type: TokenType::CloseParentheses,
+					});
+				}
+			}
 			':' => {
 				if is_backslashed {
 					current_string.push(current_char);
@@ -101,8 +137,11 @@ pub enum TokenType {
 	CloseBracket,
 	StringLiteral,
 	ParameterDelimiter,
+	OpenParentheses,
+	CloseParentheses
 }
 
+//110 lines of tests begin
 #[cfg(test)]
 mod tests {
 	use super::*;
@@ -173,5 +212,40 @@ mod tests {
 			},
 		];
 		assert_eq!(output, correct_output);
+	}
+	#[test]
+	fn tokenizer_parentheses() {
+		let input = String::from("({abc})\\()");
+		let output = split_into_tokens(input);
+		let correct_output = vec![
+			Token {
+				text: String::from("("),
+				token_type: TokenType::OpenParentheses,
+			},
+			Token {
+				text: String::from("{"),
+				token_type: TokenType::OpenBracket,
+			},
+			Token {
+				text: String::from("abc"),
+				token_type: TokenType::StringLiteral,
+			},
+			Token {
+				text: String::from("}"),
+				token_type: TokenType::CloseBracket,
+			},
+			Token {
+				text: String::from(")"),
+				token_type: TokenType::CloseParentheses,
+			},
+			Token {
+				text: String::from("("),
+				token_type: TokenType::StringLiteral,
+			},
+			Token {
+				text: String::from(")"),
+				token_type: TokenType::CloseParentheses,
+			},
+		];
 	}
 }

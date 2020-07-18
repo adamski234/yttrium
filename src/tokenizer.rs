@@ -109,21 +109,6 @@ pub fn split_into_tokens(ars_string: String) -> Vec<Token> {
 					is_backslashed = true;
 				}
 			}
-			' ' => {
-				if is_backslashed {
-					current_string.push('\\');
-					is_backslashed = false;
-				}
-				if keywords.contains(&current_string.trim().to_lowercase()) {
-					output.push(Token {
-						text: current_string.trim().to_lowercase(),
-						token_type: TokenType::Keyword,
-					});
-					current_string = String::with_capacity(DEFAULT_STR_LENGTH);
-				} else {
-					current_string.push(current_char);
-				}
-			}
 			_ => {
 				if is_backslashed {
 					current_string.push('\\');
@@ -156,11 +141,10 @@ pub enum TokenType {
 	StringLiteral,
 	ParameterDelimiter,
 	OpenParentheses,
-	CloseParentheses,
-	Keyword,
+	CloseParentheses
 }
 
-//180 lines of tests begin
+//110 lines of tests begin
 #[cfg(test)]
 mod tests {
 	use super::*;
@@ -266,74 +250,5 @@ mod tests {
 				token_type: TokenType::CloseParentheses,
 			},
 		];
-		assert_eq!(output, correct_output);
-	}
-	#[test]
-	fn tokenizer_keywords() {
-		let input = String::from("if ({abc}) {} else {{def}}");
-		let output = split_into_tokens(input);
-		let correct_output = vec![
-			Token {
-				text: String::from("if"),
-				token_type: TokenType::Keyword,
-			},
-			Token {
-				text: String::from("("),
-				token_type: TokenType::OpenParentheses,
-			},
-			Token {
-				text: String::from("{"),
-				token_type: TokenType::OpenBracket,
-			},
-			Token {
-				text: String::from("abc"),
-				token_type: TokenType::StringLiteral,
-			},
-			Token {
-				text: String::from("}"),
-				token_type: TokenType::CloseBracket,
-			},
-			Token {
-				text: String::from(")"),
-				token_type: TokenType::CloseParentheses,
-			},
-			Token {
-				text: String::from(" "),
-				token_type: TokenType::StringLiteral,
-			},
-			Token {
-				text: String::from("{"),
-				token_type: TokenType::OpenBracket,
-			},
-			Token {
-				text: String::from("}"),
-				token_type: TokenType::CloseBracket,
-			},
-			Token {
-				text: String::from("else"),
-				token_type: TokenType::Keyword,
-			},
-			Token {
-				text: String::from("{"),
-				token_type: TokenType::OpenBracket,
-			},
-			Token {
-				text: String::from("{"),
-				token_type: TokenType::OpenBracket,
-			},
-			Token {
-				text: String::from("def"),
-				token_type: TokenType::StringLiteral,
-			},
-			Token {
-				text: String::from("}"),
-				token_type: TokenType::CloseBracket,
-			},
-			Token {
-				text: String::from("}"),
-				token_type: TokenType::CloseBracket,
-			},
-		];
-		assert_eq!(output, correct_output, "\nLeft: {:#?}\nRight: {:#?}", output, correct_output);
 	}
 }

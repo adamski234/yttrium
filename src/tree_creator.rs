@@ -1,10 +1,14 @@
 #[allow(clippy::needless_return)]
-#[path = "tokenizer.rs"] mod tokenizer;
+use crate::tokenizer;
 
 type Id = usize;
 
-pub fn create_ars_tree(ars_string: String) -> Vec<TreeNode> {
+pub fn create_statement_tree(ars_string: String) {
 	let tokens = tokenizer::split_into_tokens(ars_string); //TODO: multithread it
+}
+
+
+pub fn create_ars_tree(tokens: Vec<tokenizer::Token>) -> Vec<TreeNode> {
 	/*
 	How things work:
 	node_list is a flat vector of all nodes in the tree.
@@ -23,7 +27,6 @@ pub fn create_ars_tree(ars_string: String) -> Vec<TreeNode> {
 	let mut current_node_index = 0;
 	for token in tokens {
 		let top_node_list_size = top_node_list.len(); //satisfying the borrow checker
-		println!("{}", current_node_index);
 		use tokenizer::TokenType;
 		match token.token_type {
 			TokenType::OpenBracket => {

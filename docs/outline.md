@@ -9,9 +9,15 @@ ARS supports key nesting (using the result of one key as a parameter to another 
 ## Statements
 Statements have following format:
 ```
-{cond:{test}:{cond_true}:{cond_false}}
+if ({statement_key:param1,param2}) {
+	statements
+} else if ({statement_2:param1,param2}) {
+	statements
+} else {
+	statements
+}
 ```
-`cond` is a statement that takes a condition and a statement to return if the condition is true. It can also optionally take a statement to return if the condition is false
+`statement_key` is a special type of key that takes in two ARS trees or other statement keys and selects a branch based on it  
 Separator between keys is still being chosen
 
 # Bytecode format

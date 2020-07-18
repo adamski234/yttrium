@@ -4,8 +4,7 @@
 pub fn split_into_tokens(ars_string: String) -> Vec<Token> {
 	const DEFAULT_STR_LENGTH: usize = 20;
 	let keywords = vec![
-		String::from("if"),
-		String::from("else"),
+		String::from("cond"),
 	];
 	let mut output = Vec::new();
 	let mut current_string = String::with_capacity(DEFAULT_STR_LENGTH);

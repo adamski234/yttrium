@@ -32,32 +32,54 @@ pub fn create_ars_tree(tokens: Vec<tokenizer::Token>) -> Vec<TreeNode> {
 		use tokenizer::TokenType;
 		match token.token_type {
 			TokenType::OpenBracket => {
-				if top_node_list[current_node_index].inner_node.is_editing_parameter {
-					match &mut top_node_list[current_node_index].inner_node.parameter {
-						Some(param) => {
-							match param {
-								Parameter::Nodes(child_nodes) => {
-									let new_node = TreeNode {
-										inner_node: NodeEntryType::Unconditional(UnconditionalNodeEntry {
-											key: String::new(),
-											parameter: None,
-											is_editing_parameter: false,
-										}),
-										parent: Some(current_node_index),
-									};
-									child_nodes.push(top_node_list_size);
-									top_node_list.push(new_node);
-									current_node_index = top_node_list_size;
+				match top_node_list[current_node_index].inner_node {
+					NodeEntryType::Unconditional(mut inner) => {
+						if inner.is_editing_parameter {
+							match &mut inner.parameter {
+								Some(param) => {
+									match param {
+										Parameter::Nodes(child_nodes) => {
+											let new_node = TreeNode {
+												inner_node: NodeEntryType::Unconditional(UnconditionalNodeEntry {
+													key: String::new(),
+													parameter: None,
+													is_editing_parameter: false,
+												}),
+												parent: Some(current_node_index),
+											};
+											child_nodes.push(top_node_list_size);
+											top_node_list.push(new_node);
+											current_node_index = top_node_list_size;
+										}
+										Parameter::String(text) => {
+											let node_from_text = TreeNode {
+												inner_node: NodeEntryType::Unconditional(UnconditionalNodeEntry {
+													key: String::from("literal"),
+													parameter: Some(Parameter::String(text.to_string())),
+													is_editing_parameter: true,
+												}),
+												parent: Some(current_node_index)
+											};
+											let new_node = TreeNode {
+												inner_node: NodeEntryType::Unconditional(UnconditionalNodeEntry {
+													key: String::new(),
+													parameter: None,
+													is_editing_parameter: false,
+												}),
+												parent: Some(current_node_index),
+											};
+											let child_nodes = vec![ //Children IDs
+												top_node_list_size,
+												top_node_list_size + 1,
+											];
+											top_node_list.push(node_from_text);
+											top_node_list.push(new_node);
+											inner.parameter = Some(Parameter::Nodes(child_nodes));
+											current_node_index = top_node_list_size + 1;
+										}
+									}
 								}
-								Parameter::String(text) => {
-									let node_from_text = TreeNode {
-										inner_node: NodeEntryType::Unconditional(UnconditionalNodeEntry {
-											key: String::from("literal"),
-											parameter: Some(Parameter::String(text.to_string())),
-											is_editing_parameter: true,
-										}),
-										parent: Some(current_node_index)
-									};
+								None => {
 									let new_node = TreeNode {
 										inner_node: NodeEntryType::Unconditional(UnconditionalNodeEntry {
 											key: String::new(),
@@ -66,32 +88,39 @@ pub fn create_ars_tree(tokens: Vec<tokenizer::Token>) -> Vec<TreeNode> {
 										}),
 										parent: Some(current_node_index),
 									};
-									let child_nodes = vec![ //Children IDs
-										top_node_list_size,
-										top_node_list_size + 1,
-									];
-									top_node_list.push(node_from_text);
+									inner.parameter = Some(Parameter::Nodes(vec![top_node_list_size]));
 									top_node_list.push(new_node);
-									top_node_list[current_node_index].parameter = Some(Parameter::Nodes(child_nodes));
-									current_node_index = top_node_list_size + 1;
 								}
 							}
-						}
-						None => {
-							let new_node = TreeNode {
-								inner_node: NodeEntryType::Unconditional(UnconditionalNodeEntry {
-									key: String::new(),
-									parameter: None,
-									is_editing_parameter: false,
-								}),
-								parent: Some(current_node_index),
-							};
-							top_node_list[current_node_index].inner_node.parameter = Some(Parameter::Nodes(vec![top_node_list_size]));
-							top_node_list.push(new_node);
+						} else {
+							inner.key.push_str(&token.text);
 						}
 					}
-				} else {
-					top_node_list[current_node_index].inner_node.key.push_str(&token.text);
+					NodeEntryType::Conditional(mut inner) => {
+						let new_node = TreeNode {
+							inner_node: NodeEntryType::Unconditional(UnconditionalNodeEntry {
+								key: String::new(),
+								parameter: None,
+								is_editing_parameter: false,
+							}),
+							parent: Some(top_node_list_size),
+						};
+						top_node_list.push(new_node);
+						current_node_index = top_node_list_size;
+						#[allow(unused_imports)] //Kills the warning
+						use CurrentlyEditedPartOfConditional;
+						match inner.currently_edited_part {
+							Condition => {
+								inner.condition = top_node_list_size;
+							},
+							ConditionTrue => {
+								inner.if_condition_true = top_node_list_size;
+							},
+							ConditionFalse => {
+								inner.if_condition_false = Some(top_node_list_size);
+							}
+						}
+					}
 				}
 			}
 			TokenType::CloseBracket => {
@@ -185,6 +214,14 @@ pub struct ConditionalNodeEntry {
 	condition: Id,
 	if_condition_true: Id,
 	if_condition_false: Option<Id>,
+	currently_edited_part: CurrentlyEditedPartOfConditional,
+}
+
+#[derive(Debug)]
+pub enum CurrentlyEditedPartOfConditional {
+	Condition,
+	ConditionTrue,
+	ConditionFalse,
 }
 
 #[derive(Debug)]

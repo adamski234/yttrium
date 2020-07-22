@@ -107,16 +107,14 @@ pub fn create_ars_tree(tokens: Vec<tokenizer::Token>) -> Vec<TreeNode> {
 						};
 						top_node_list.push(new_node);
 						current_node_index = top_node_list_size;
-						#[allow(unused_imports)] //Kills the warning
-						use CurrentlyEditedPartOfConditional;
 						match inner.currently_edited_part {
-							Condition => {
+							CurrentlyEditedPartOfConditional::Condition => {
 								inner.condition = top_node_list_size;
 							},
-							ConditionTrue => {
+							CurrentlyEditedPartOfConditional::ConditionTrue => {
 								inner.if_condition_true = top_node_list_size;
 							},
-							ConditionFalse => {
+							CurrentlyEditedPartOfConditional::ConditionFalse => {
 								inner.if_condition_false = Some(top_node_list_size);
 							}
 						}
@@ -129,66 +127,112 @@ pub fn create_ars_tree(tokens: Vec<tokenizer::Token>) -> Vec<TreeNode> {
 				}
 			}
 			TokenType::ParameterDelimiter => {
-				if top_node_list[current_node_index].inner_node.is_editing_parameter {
-					match &mut top_node_list[current_node_index].inner_node.parameter {
-						Some(param) => {
-							match param {
-								Parameter::Nodes(child_nodes) => {
-									let new_node = TreeNode {
-										inner_node: NodeEntryType::Unconditional(UnconditionalNodeEntry {
-											key: String::from("literal"),
-											parameter: Some(Parameter::String(token.text)),
-											is_editing_parameter: true,
-										}),
-										parent: Some(current_node_index),
-									};
-									child_nodes.push(top_node_list_size);
-									top_node_list.push(new_node);
+				match top_node_list[current_node_index].inner_node {
+					NodeEntryType::Unconditional(mut inner) => {
+						if inner.is_editing_parameter {
+							match &mut inner.parameter {
+								Some(param) => {
+									match param {
+										Parameter::Nodes(child_nodes) => {
+											let new_node = TreeNode {
+												inner_node: NodeEntryType::Unconditional(UnconditionalNodeEntry {
+													key: String::from("literal"),
+													parameter: Some(Parameter::String(token.text)),
+													is_editing_parameter: true,
+												}),
+												parent: Some(current_node_index),
+											};
+											child_nodes.push(top_node_list_size);
+											top_node_list.push(new_node);
+										}
+										Parameter::String(text) => {
+											text.push_str(&token.text);
+										}
+									}
 								}
-								Parameter::String(text) => {
-									text.push_str(&token.text);
+								None => {
+									inner.parameter = Some(Parameter::String(String::new()));
 								}
 							}
-						}
-						None => {
-							top_node_list[current_node_index].inner_node.parameter = Some(Parameter::String(String::new()));
+						} else {
+							//No parameter
+							inner.parameter = Some(Parameter::String(String::new()));
+							inner.is_editing_parameter = true;
 						}
 					}
-				} else {
-					//No parameter
-					top_node_list[current_node_index].inner_node.parameter = Some(Parameter::String(String::new()));
-					top_node_list[current_node_index].inner_node.is_editing_parameter = true;
+					NodeEntryType::Conditional(mut inner) => {
+						match inner.currently_edited_part {
+							CurrentlyEditedPartOfConditional::Condition => {
+								inner.currently_edited_part = CurrentlyEditedPartOfConditional::ConditionTrue;
+								let new_node = TreeNode {
+									inner_node: NodeEntryType::Unconditional(UnconditionalNodeEntry {
+										key: String::from(""),
+										parameter: Some(Parameter::String(token.text)),
+										is_editing_parameter: true,
+									}),
+									parent: Some(current_node_index),
+								};
+								top_node_list.push(new_node);
+								inner.if_condition_true = top_node_list_size;
+								current_node_index = top_node_list_size;
+							}
+							CurrentlyEditedPartOfConditional::ConditionTrue => {
+								inner.currently_edited_part = CurrentlyEditedPartOfConditional::ConditionFalse;
+								let new_node = TreeNode {
+									inner_node: NodeEntryType::Unconditional(UnconditionalNodeEntry {
+										key: String::from(""),
+										parameter: Some(Parameter::String(token.text)),
+										is_editing_parameter: true,
+									}),
+									parent: Some(current_node_index),
+								};
+								top_node_list.push(new_node);
+								inner.if_condition_false = Some(top_node_list_size);
+								current_node_index = top_node_list_size;
+							}
+							CurrentlyEditedPartOfConditional::ConditionFalse => {
+								eprintln!("This should throw an error. Should.");
+							}
+						}
+					}
 				}
 			}
 			TokenType::StringLiteral => {
-				if top_node_list[current_node_index].inner_node.is_editing_parameter {
-					match &mut top_node_list[current_node_index].inner_node.parameter {
-						Some(param) => {
-							match param {
-								Parameter::String(text) => {
-									text.push_str(&token.text);
+				match top_node_list[current_node_index].inner_node {
+					NodeEntryType::Unconditional(mut inner) => {
+						if inner.is_editing_parameter {
+							match &mut inner.parameter {
+								Some(param) => {
+									match param {
+										Parameter::String(text) => {
+											text.push_str(&token.text);
+										}
+										Parameter::Nodes(child_nodes) => {
+											let new_node = TreeNode {
+												inner_node: NodeEntryType::Unconditional(UnconditionalNodeEntry {
+													key: String::from("literal"),
+													parameter: Some(Parameter::String(token.text)),
+													is_editing_parameter: true,
+												}),
+												parent: Some(current_node_index),
+											};
+											child_nodes.push(top_node_list_size);
+											top_node_list.push(new_node);
+											current_node_index = top_node_list_size;
+										}
+									}
 								}
-								Parameter::Nodes(child_nodes) => {
-									let new_node = TreeNode {
-										inner_node: NodeEntryType::Unconditional(UnconditionalNodeEntry {
-											key: String::from("literal"),
-											parameter: Some(Parameter::String(token.text)),
-											is_editing_parameter: true,
-										}),
-										parent: Some(current_node_index),
-									};
-									child_nodes.push(top_node_list_size);
-									top_node_list.push(new_node);
-									current_node_index = top_node_list_size;
+								None => {
+									panic!(format!("top_node_list[{}] has `is_editing_parameter` set to true but `parameter` field is `None`!", current_node_index)	);
 								}
 							}
-						}
-						None => {
-							panic!(format!("top_node_list[{}] has `is_editing_parameter` set to true but `parameter` field is `None`!", current_node_index));
+						} else {
+							inner.key.push_str(&token.text);
 						}
 					}
-				} else {
-					top_node_list[current_node_index].inner_node.key.push_str(&token.text);
+					NodeEntryType::Conditional(inner) => {
+						unimplemented!();
+					}
 				}
 			}
 		}

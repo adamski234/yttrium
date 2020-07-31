@@ -49,30 +49,45 @@ pub fn create_ars_tree(ars_string: String) -> Vec<TreeNode> {
 											current_node_index = top_node_list_size;
 										}
 										Parameter::String(text) => {
-											let node_from_text = TreeNode {
-												inner_node: NodeEntryType::Unconditional(UnconditionalNodeEntry {
-													key: String::from("literal"),
-													parameter: Some(Parameter::String(text.to_string())),
-													is_editing_parameter: true,
-												}),
-												parent: Some(current_node_index)
-											};
-											let new_node = TreeNode {
-												inner_node: NodeEntryType::Unconditional(UnconditionalNodeEntry {
-													key: String::new(),
-													parameter: None,
-													is_editing_parameter: false,
-												}),
-												parent: Some(current_node_index),
-											};
-											let child_nodes = vec![ //Children IDs
+											let mut child_nodes = vec![ //Children IDs
 												top_node_list_size,
-												top_node_list_size + 1,
 											];
-											nodes_to_push.push(node_from_text);
-											nodes_to_push.push(new_node);
+											current_node_index = top_node_list_size;
+											if text.is_empty() {
+												//Empty parameter
+												let new_node = TreeNode {
+													inner_node: NodeEntryType::Unconditional(UnconditionalNodeEntry {
+														key: String::new(),
+														parameter: None,
+														is_editing_parameter: false,
+													}),
+													parent: Some(current_node_index - 1),
+												};
+												nodes_to_push.push(new_node);
+											} else {
+												//Not empty parameter
+												let node_from_text = TreeNode {
+													inner_node: NodeEntryType::Unconditional(UnconditionalNodeEntry {
+														key: String::from("literal"),
+														parameter: Some(Parameter::String(text.to_string())),
+														is_editing_parameter: true,
+													}),
+													parent: Some(current_node_index - 1),
+												};
+												nodes_to_push.push(node_from_text);
+												child_nodes.push(top_node_list_size + 1);
+												current_node_index += 1;
+												let new_node = TreeNode {
+													inner_node: NodeEntryType::Unconditional(UnconditionalNodeEntry {
+														key: String::new(),
+														parameter: None,
+														is_editing_parameter: false,
+													}),
+													parent: Some(current_node_index - 2),
+												};
+												nodes_to_push.push(new_node);
+											}
 											inner.parameter = Some(Parameter::Nodes(child_nodes));
-											current_node_index = top_node_list_size + 1;
 										}
 									}
 								}
@@ -87,6 +102,7 @@ pub fn create_ars_tree(ars_string: String) -> Vec<TreeNode> {
 									};
 									inner.parameter = Some(Parameter::Nodes(vec![top_node_list_size]));
 									nodes_to_push.push(new_node);
+									current_node_index = top_node_list_size;
 								}
 							}
 						} else {
@@ -94,27 +110,7 @@ pub fn create_ars_tree(ars_string: String) -> Vec<TreeNode> {
 						}
 					}
 					NodeEntryType::Conditional(ref mut inner) => {
-						let new_node = TreeNode {
-							inner_node: NodeEntryType::Unconditional(UnconditionalNodeEntry {
-								key: String::new(),
-								parameter: None,
-								is_editing_parameter: false,
-							}),
-							parent: Some(top_node_list_size),
-						};
-						nodes_to_push.push(new_node);
-						current_node_index = top_node_list_size;
-						match inner.currently_edited_part {
-							CurrentlyEditedPartOfConditional::Condition => {
-								inner.condition = top_node_list_size;
-							},
-							CurrentlyEditedPartOfConditional::ConditionTrue => {
-								inner.if_condition_true = top_node_list_size;
-							},
-							CurrentlyEditedPartOfConditional::ConditionFalse => {
-								inner.if_condition_false = Some(top_node_list_size);
-							}
-						}
+						unimplemented!();
 					}
 				}
 			}
@@ -158,39 +154,7 @@ pub fn create_ars_tree(ars_string: String) -> Vec<TreeNode> {
 						}
 					}
 					NodeEntryType::Conditional(ref mut inner) => {
-						match inner.currently_edited_part {
-							CurrentlyEditedPartOfConditional::Condition => {
-								inner.currently_edited_part = CurrentlyEditedPartOfConditional::ConditionTrue;
-								let new_node = TreeNode {
-									inner_node: NodeEntryType::Unconditional(UnconditionalNodeEntry {
-										key: String::from(""),
-										parameter: Some(Parameter::String(token.text)),
-										is_editing_parameter: true,
-									}),
-									parent: Some(current_node_index),
-								};
-								nodes_to_push.push(new_node);
-								inner.if_condition_true = top_node_list_size;
-								current_node_index = top_node_list_size;
-							}
-							CurrentlyEditedPartOfConditional::ConditionTrue => {
-								inner.currently_edited_part = CurrentlyEditedPartOfConditional::ConditionFalse;
-								let new_node = TreeNode {
-									inner_node: NodeEntryType::Unconditional(UnconditionalNodeEntry {
-										key: String::from(""),
-										parameter: Some(Parameter::String(token.text)),
-										is_editing_parameter: true,
-									}),
-									parent: Some(current_node_index),
-								};
-								nodes_to_push.push(new_node);
-								inner.if_condition_false = Some(top_node_list_size);
-								current_node_index = top_node_list_size;
-							}
-							CurrentlyEditedPartOfConditional::ConditionFalse => {
-								eprintln!("This should throw an error. Should.");
-							}
-						}
+						unimplemented!();
 					}
 				}
 			}
@@ -215,12 +179,12 @@ pub fn create_ars_tree(ars_string: String) -> Vec<TreeNode> {
 											};
 											child_nodes.push(top_node_list_size);
 											nodes_to_push.push(new_node);
-											current_node_index = top_node_list_size;
+											current_node_index = top_node_list_size + 1;
 										}
 									}
 								}
 								None => {
-									panic!(format!("top_node_list[{}] has `is_editing_parameter` set to true but `parameter` field is `None`!", current_node_index)	);
+									inner.parameter = Some(Parameter::String(String::new()));
 								}
 							}
 						} else {
@@ -238,20 +202,20 @@ pub fn create_ars_tree(ars_string: String) -> Vec<TreeNode> {
 	return top_node_list;
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct TreeNode {
 	inner_node: NodeEntryType,
 	parent: Option<Id>, //Pointer, except that it's a vector index instead of a memory address
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct UnconditionalNodeEntry {
 	key: String, //Cannot be ars code, as it would require getting opcodes on the fly. Could work with an interpreter tho
 	parameter: Option<Parameter>, //String for literals, Nodes for variable values
 	is_editing_parameter: bool,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct ConditionalNodeEntry {
 	condition: Id,
 	if_condition_true: Id,
@@ -259,22 +223,255 @@ pub struct ConditionalNodeEntry {
 	currently_edited_part: CurrentlyEditedPartOfConditional,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
+#[allow(dead_code)]
 pub enum CurrentlyEditedPartOfConditional {
 	Condition,
 	ConditionTrue,
 	ConditionFalse,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
+#[allow(dead_code)]
 pub enum NodeEntryType {
 	Conditional(ConditionalNodeEntry),
 	Unconditional(UnconditionalNodeEntry),
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 #[allow(dead_code)] //Linter suggests that neither of the two variants are constructed so it's silenced
 pub enum Parameter {
 	Nodes(Vec<Id>),
 	String(String)
+}
+
+//A wall of text is incoming. You probably should collapse them
+#[cfg(test)]
+mod tests {
+	use super::*;
+	use NodeEntryType::*;
+	#[test]
+	fn tree_small_nesting() {
+		let tested_string = String::from("{abc:{def:ghi}}");
+		let correct = vec![
+			TreeNode {
+				inner_node: Unconditional(
+					UnconditionalNodeEntry {
+						key: String::from("top"),
+						parameter: Some(
+							Parameter::Nodes(
+								vec![
+									1,
+								],
+							),
+						),
+						is_editing_parameter: true,
+					},
+				),
+				parent: None,
+			},
+			TreeNode {
+				inner_node: Unconditional(
+					UnconditionalNodeEntry {
+						key: String::from("abc"),
+						parameter: Some(
+							Parameter::Nodes(
+								vec![
+									2,
+								],
+							),
+						),
+						is_editing_parameter: true,
+					},
+				),
+				parent: Some(
+					0,
+				),
+			},
+			TreeNode {
+				inner_node: Unconditional(
+					UnconditionalNodeEntry {
+						key: String::from("def"),
+						parameter: Some(
+							Parameter::String(
+								String::from("ghi"),
+							),
+						),
+						is_editing_parameter: true,
+					},
+				),
+				parent: Some(
+					1,
+				),
+			},
+		];
+		let output = create_ars_tree(tested_string);
+		assert_eq!(output, correct);
+	}
+	#[test]
+	fn tree_no_nesting_only_keys() {
+		let input = String::from("{abc}{def}{ghi}");
+		let correct = vec![
+			TreeNode {
+				inner_node: Unconditional(
+					UnconditionalNodeEntry {
+						key: String::from("top"),
+						parameter: Some(
+							Parameter::Nodes(
+								vec![
+									1,
+									2,
+									3,
+								],
+							),
+						),
+						is_editing_parameter: true,
+					},
+				),
+				parent: None,
+			},
+			TreeNode {
+				inner_node: Unconditional(
+					UnconditionalNodeEntry {
+						key: String::from("abc"),
+						parameter: None,
+						is_editing_parameter: false,
+					},
+				),
+				parent: Some(
+					0,
+				),
+			},
+			TreeNode {
+				inner_node: Unconditional(
+					UnconditionalNodeEntry {
+						key: String::from("def"),
+						parameter: None,
+						is_editing_parameter: false,
+					},
+				),
+				parent: Some(
+					0,
+				),
+			},
+			TreeNode {
+				inner_node: Unconditional(
+					UnconditionalNodeEntry {
+						key: String::from("ghi"),
+						parameter: None,
+						is_editing_parameter: false,
+					},
+				),
+				parent: Some(
+					0,
+				),
+			},
+		];
+		
+	}
+	#[test]
+	fn tree_nesting() {
+		let input = String::from("abc{def}{ghi:jkm}{abc:{def:ghi}}");
+		let correct_output = vec![
+			TreeNode {
+				inner_node: Unconditional(
+					UnconditionalNodeEntry {
+						key: String::from("top"),
+						parameter: Some(
+							Parameter::Nodes(
+								vec![
+									1,
+									2,
+									3,
+									4,
+								],
+							),
+						),
+						is_editing_parameter: true,
+					},
+				),
+				parent: None,
+			},
+			TreeNode {
+				inner_node: Unconditional(
+					UnconditionalNodeEntry {
+						key: String::from("literal"),
+						parameter: Some(
+							Parameter::String(
+								String::from("abc"),
+							),
+						),
+						is_editing_parameter: true,
+					},
+				),
+				parent: Some(
+					0,
+				),
+			},
+			TreeNode {
+				inner_node: Unconditional(
+					UnconditionalNodeEntry {
+						key: String::from("def"),
+						parameter: None,
+						is_editing_parameter: false,
+					},
+				),
+				parent: Some(
+					0,
+				),
+			},
+			TreeNode {
+				inner_node: Unconditional(
+					UnconditionalNodeEntry {
+						key: String::from("ghi"),
+						parameter: Some(
+							Parameter::String(
+								String::from("jkm"),
+							),
+						),
+						is_editing_parameter: true,
+					},
+				),
+				parent: Some(
+					0,
+				),
+			},
+			TreeNode {
+				inner_node: Unconditional(
+					UnconditionalNodeEntry {
+						key: String::from("abc"),
+						parameter: Some(
+							Parameter::Nodes(
+								vec![
+									5,
+								],
+							),
+						),
+						is_editing_parameter: true,
+					},
+				),
+				parent: Some(
+					0,
+				),
+			},
+			TreeNode {
+				inner_node: Unconditional(
+					UnconditionalNodeEntry {
+						key: String::from("def"),
+						parameter: Some(
+							Parameter::String(
+								String::from("ghi"),
+							),
+						),
+						is_editing_parameter: true,
+					},
+				),
+				parent: Some(
+					4,
+				),
+			},
+		];
+		let output = create_ars_tree(input);
+		assert_eq!(output, correct_output);
+	}
 }

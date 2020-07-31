@@ -24,12 +24,13 @@ pub fn create_ars_tree(ars_string: String) -> Vec<TreeNode> {
 	];
 	let mut current_node_index = 0;
 	for token in tokens {
+		let mut nodes_to_push = Vec::new();
 		let top_node_list_size = top_node_list.len(); //satisfying the borrow checker
 		use tokenizer::TokenType;
 		match token.token_type {
 			TokenType::OpenBracket => {
 				match top_node_list[current_node_index].inner_node {
-					NodeEntryType::Unconditional(mut inner) => {
+					NodeEntryType::Unconditional(ref mut inner) => {
 						if inner.is_editing_parameter {
 							match &mut inner.parameter {
 								Some(param) => {
@@ -44,7 +45,7 @@ pub fn create_ars_tree(ars_string: String) -> Vec<TreeNode> {
 												parent: Some(current_node_index),
 											};
 											child_nodes.push(top_node_list_size);
-											top_node_list.push(new_node);
+											nodes_to_push.push(new_node);
 											current_node_index = top_node_list_size;
 										}
 										Parameter::String(text) => {
@@ -68,8 +69,8 @@ pub fn create_ars_tree(ars_string: String) -> Vec<TreeNode> {
 												top_node_list_size,
 												top_node_list_size + 1,
 											];
-											top_node_list.push(node_from_text);
-											top_node_list.push(new_node);
+											nodes_to_push.push(node_from_text);
+											nodes_to_push.push(new_node);
 											inner.parameter = Some(Parameter::Nodes(child_nodes));
 											current_node_index = top_node_list_size + 1;
 										}
@@ -85,14 +86,14 @@ pub fn create_ars_tree(ars_string: String) -> Vec<TreeNode> {
 										parent: Some(current_node_index),
 									};
 									inner.parameter = Some(Parameter::Nodes(vec![top_node_list_size]));
-									top_node_list.push(new_node);
+									nodes_to_push.push(new_node);
 								}
 							}
 						} else {
 							inner.key.push_str(&token.text);
 						}
 					}
-					NodeEntryType::Conditional(mut inner) => {
+					NodeEntryType::Conditional(ref mut inner) => {
 						let new_node = TreeNode {
 							inner_node: NodeEntryType::Unconditional(UnconditionalNodeEntry {
 								key: String::new(),
@@ -101,7 +102,7 @@ pub fn create_ars_tree(ars_string: String) -> Vec<TreeNode> {
 							}),
 							parent: Some(top_node_list_size),
 						};
-						top_node_list.push(new_node);
+						nodes_to_push.push(new_node);
 						current_node_index = top_node_list_size;
 						match inner.currently_edited_part {
 							CurrentlyEditedPartOfConditional::Condition => {
@@ -124,7 +125,7 @@ pub fn create_ars_tree(ars_string: String) -> Vec<TreeNode> {
 			}
 			TokenType::ParameterDelimiter => {
 				match top_node_list[current_node_index].inner_node {
-					NodeEntryType::Unconditional(mut inner) => {
+					NodeEntryType::Unconditional(ref mut inner) => {
 						if inner.is_editing_parameter {
 							match &mut inner.parameter {
 								Some(param) => {
@@ -139,7 +140,7 @@ pub fn create_ars_tree(ars_string: String) -> Vec<TreeNode> {
 												parent: Some(current_node_index),
 											};
 											child_nodes.push(top_node_list_size);
-											top_node_list.push(new_node);
+											nodes_to_push.push(new_node);
 										}
 										Parameter::String(text) => {
 											text.push_str(&token.text);
@@ -156,7 +157,7 @@ pub fn create_ars_tree(ars_string: String) -> Vec<TreeNode> {
 							inner.is_editing_parameter = true;
 						}
 					}
-					NodeEntryType::Conditional(mut inner) => {
+					NodeEntryType::Conditional(ref mut inner) => {
 						match inner.currently_edited_part {
 							CurrentlyEditedPartOfConditional::Condition => {
 								inner.currently_edited_part = CurrentlyEditedPartOfConditional::ConditionTrue;
@@ -168,7 +169,7 @@ pub fn create_ars_tree(ars_string: String) -> Vec<TreeNode> {
 									}),
 									parent: Some(current_node_index),
 								};
-								top_node_list.push(new_node);
+								nodes_to_push.push(new_node);
 								inner.if_condition_true = top_node_list_size;
 								current_node_index = top_node_list_size;
 							}
@@ -182,7 +183,7 @@ pub fn create_ars_tree(ars_string: String) -> Vec<TreeNode> {
 									}),
 									parent: Some(current_node_index),
 								};
-								top_node_list.push(new_node);
+								nodes_to_push.push(new_node);
 								inner.if_condition_false = Some(top_node_list_size);
 								current_node_index = top_node_list_size;
 							}
@@ -195,7 +196,7 @@ pub fn create_ars_tree(ars_string: String) -> Vec<TreeNode> {
 			}
 			TokenType::StringLiteral => {
 				match top_node_list[current_node_index].inner_node {
-					NodeEntryType::Unconditional(mut inner) => {
+					NodeEntryType::Unconditional(ref mut inner) => {
 						if inner.is_editing_parameter {
 							match &mut inner.parameter {
 								Some(param) => {
@@ -213,7 +214,7 @@ pub fn create_ars_tree(ars_string: String) -> Vec<TreeNode> {
 												parent: Some(current_node_index),
 											};
 											child_nodes.push(top_node_list_size);
-											top_node_list.push(new_node);
+											nodes_to_push.push(new_node);
 											current_node_index = top_node_list_size;
 										}
 									}
@@ -226,12 +227,13 @@ pub fn create_ars_tree(ars_string: String) -> Vec<TreeNode> {
 							inner.key.push_str(&token.text);
 						}
 					}
-					NodeEntryType::Conditional(inner) => {
+					NodeEntryType::Conditional(ref mut inner) => {
 						unimplemented!();
 					}
 				}
 			}
 		}
+		top_node_list.append(&mut nodes_to_push);
 	}
 	return top_node_list;
 }

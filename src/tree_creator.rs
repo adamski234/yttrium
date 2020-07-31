@@ -3,12 +3,7 @@ use crate::tokenizer;
 
 type Id = usize;
 
-pub fn create_statement_tree(ars_string: String) {
-	let tokens = tokenizer::split_into_tokens(ars_string); //TODO: multithread it
-}
-
-
-pub fn create_ars_tree(tokens: Vec<tokenizer::Token>) -> Vec<TreeNode> {
+pub fn create_ars_tree(ars_string: String) -> Vec<TreeNode> {
 	/*
 	How things work:
 	node_list is a flat vector of all nodes in the tree.
@@ -16,6 +11,7 @@ pub fn create_ars_tree(tokens: Vec<tokenizer::Token>) -> Vec<TreeNode> {
 	After creating a new node, push it to node_list and use the new index as parent pointer
 	I'll probably want to jump off a bridge after finishing it
 	*/
+	let tokens = tokenizer::split_into_tokens(ars_string); //TODO: multithread it
 	let mut top_node_list = vec![
 		TreeNode {
 			inner_node: NodeEntryType::Unconditional(UnconditionalNodeEntry {

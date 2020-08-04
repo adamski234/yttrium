@@ -113,6 +113,9 @@ pub fn create_ars_tree(ars_string: String) -> Vec<TreeNode> {
 					}
 					NodeEntryType::Conditional(ref mut inner) => {
 						match inner.currently_edited_part {
+							CurrentlyEditedPartOfConditional::None => {
+								eprintln!("Opening bracket found after `cond` in conditional");
+							}
 							CurrentlyEditedPartOfConditional::Condition => {
 								match inner.condition {
 									Parameter::Nodes(ref mut nodes) => {
@@ -348,6 +351,9 @@ pub fn create_ars_tree(ars_string: String) -> Vec<TreeNode> {
 					}
 					NodeEntryType::Conditional(ref mut inner) => {
 						match inner.currently_edited_part {
+							CurrentlyEditedPartOfConditional::None => {
+								inner.currently_edited_part = CurrentlyEditedPartOfConditional::Condition;
+							}
 							CurrentlyEditedPartOfConditional::Condition => {
 								inner.currently_edited_part = CurrentlyEditedPartOfConditional::ConditionTrue;
 							}
@@ -392,11 +398,23 @@ pub fn create_ars_tree(ars_string: String) -> Vec<TreeNode> {
 								}
 							}
 						} else {
-							inner.key.push_str(&token.text);
+							if inner.key.is_empty() && token.text == "cond" {
+								top_node_list[current_node_index].inner_node = NodeEntryType::Conditional(ConditionalNodeEntry {
+									condition: Parameter::String(String::new()),
+									if_condition_true: Parameter::String(String::new()),
+									if_condition_false: None,
+									currently_edited_part: CurrentlyEditedPartOfConditional::None,
+								});
+							} else {
+								inner.key.push_str(&token.text);
+							}
 						}
 					}
 					NodeEntryType::Conditional(ref mut inner) => {
 						match inner.currently_edited_part {
+							CurrentlyEditedPartOfConditional::None => {
+								eprintln!("This is bad. Somehow a string literal was found after `cond` in a conditional");
+							}
 							CurrentlyEditedPartOfConditional::Condition => {
 								match inner.condition {
 									Parameter::Nodes(ref mut nodes) => {
@@ -498,6 +516,7 @@ pub struct ConditionalNodeEntry {
 #[derive(Debug, PartialEq)]
 #[allow(dead_code)]
 pub enum CurrentlyEditedPartOfConditional {
+	None,
 	Condition,
 	ConditionTrue,
 	ConditionFalse,

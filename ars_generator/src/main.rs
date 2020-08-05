@@ -3,10 +3,7 @@ use std::fs;
 use std::io::Write;
 
 fn main() {
-<<<<<<< HEAD
 	println!("This is randomly terminated. Kill the process if it gets stuck");
-=======
->>>>>>> 8efa468... Improved the random generator
 	let estimated_file_len = 1_000_000;
 	let mut output = String::with_capacity(estimated_file_len + 1000);
 	let mut file = fs::File::create("./longars.txt").unwrap();

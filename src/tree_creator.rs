@@ -3,6 +3,10 @@ use crate::tokenizer;
 
 type Id = usize;
 
+/* Crashlist:
+ * {cond:{cond:{cond:{a:{a:a}}:a}:{cond:a:{cond:a:a}}}:{a}:{a}}}:{a:{a}}:{a:{a:{a}}}}}}}
+*/
+
 //TODO: refactor
 #[allow(dead_code)]
 pub fn create_ars_tree(ars_string: String) -> Vec<TreeNode> {
@@ -25,8 +29,8 @@ pub fn create_ars_tree(ars_string: String) -> Vec<TreeNode> {
 		}
 	];
 	let mut current_node_index = 0;
+	let mut nodes_to_push = Vec::new();
 	for token in tokens {
-		let mut nodes_to_push = Vec::new();
 		let top_node_list_size = top_node_list.len(); //satisfying the borrow checker
 		use tokenizer::TokenType;
 		match token.token_type {
@@ -54,7 +58,6 @@ pub fn create_ars_tree(ars_string: String) -> Vec<TreeNode> {
 											let mut child_nodes = vec![ //Children IDs
 												top_node_list_size,
 											];
-											current_node_index = top_node_list_size;
 											if text.is_empty() {
 												//Empty parameter
 												let new_node = TreeNode {
@@ -63,8 +66,9 @@ pub fn create_ars_tree(ars_string: String) -> Vec<TreeNode> {
 														parameter: None,
 														is_editing_parameter: false,
 													}),
-													parent: Some(current_node_index - 1),
+													parent: Some(current_node_index),
 												};
+												current_node_index = top_node_list_size;
 												nodes_to_push.push(new_node);
 											} else {
 												//Not empty parameter
@@ -74,20 +78,20 @@ pub fn create_ars_tree(ars_string: String) -> Vec<TreeNode> {
 														parameter: Some(Parameter::String(text.to_string())),
 														is_editing_parameter: true,
 													}),
-													parent: Some(current_node_index - 1),
+													parent: Some(current_node_index),
 												};
 												nodes_to_push.push(node_from_text);
 												child_nodes.push(top_node_list_size + 1);
-												current_node_index += 1;
 												let new_node = TreeNode {
 													inner_node: NodeEntryType::Unconditional(UnconditionalNodeEntry {
 														key: String::new(),
 														parameter: None,
 														is_editing_parameter: false,
 													}),
-													parent: Some(current_node_index - 2),
+													parent: Some(current_node_index),
 												};
 												nodes_to_push.push(new_node);
+												current_node_index = top_node_list_size + 1;
 											}
 											inner.parameter = Some(Parameter::Nodes(child_nodes));
 										}
@@ -135,7 +139,6 @@ pub fn create_ars_tree(ars_string: String) -> Vec<TreeNode> {
 										let mut child_nodes = vec![ //Children IDs
 											top_node_list_size,
 										];
-										current_node_index = top_node_list_size;
 										if text.is_empty() {
 											//Empty parameter
 											let new_node = TreeNode {
@@ -144,8 +147,9 @@ pub fn create_ars_tree(ars_string: String) -> Vec<TreeNode> {
 													parameter: None,
 													is_editing_parameter: false,
 												}),
-												parent: Some(current_node_index - 1),
+												parent: Some(current_node_index),
 											};
+											current_node_index = top_node_list_size;
 											nodes_to_push.push(new_node);
 										} else {
 											//Not empty parameter
@@ -183,7 +187,7 @@ pub fn create_ars_tree(ars_string: String) -> Vec<TreeNode> {
 												parameter: None,
 												is_editing_parameter: false,
 											}),
-											parent: Some(current_node_index),
+											parent: Some(current_node_index - 1),
 										};
 										nodes_to_push.push(new_node);
 										current_node_index = top_node_list_size + 1;
@@ -193,7 +197,6 @@ pub fn create_ars_tree(ars_string: String) -> Vec<TreeNode> {
 										let mut child_nodes = vec![ //Children IDs
 											top_node_list_size,
 										];
-										current_node_index = top_node_list_size;
 										if text.is_empty() {
 											//Empty parameter
 											let new_node = TreeNode {
@@ -202,8 +205,9 @@ pub fn create_ars_tree(ars_string: String) -> Vec<TreeNode> {
 													parameter: None,
 													is_editing_parameter: false,
 												}),
-												parent: Some(current_node_index - 1),
+												parent: Some(current_node_index),
 											};
+											current_node_index = top_node_list_size;
 											nodes_to_push.push(new_node);
 										} else {
 											//Not empty parameter
@@ -213,19 +217,19 @@ pub fn create_ars_tree(ars_string: String) -> Vec<TreeNode> {
 													parameter: Some(Parameter::String(text.to_string())),
 													is_editing_parameter: true,
 												}),
-												parent: Some(current_node_index - 1),
+												parent: Some(current_node_index),
 											};
 											nodes_to_push.push(node_from_text);
 											child_nodes.push(top_node_list_size + 1);
-											current_node_index += 1;
 											let new_node = TreeNode {
 												inner_node: NodeEntryType::Unconditional(UnconditionalNodeEntry {
 													key: String::new(),
 													parameter: None,
 													is_editing_parameter: false,
 												}),
-												parent: Some(current_node_index - 2),
+												parent: Some(current_node_index + 1),
 											};
+											current_node_index = top_node_list_size + 2;
 											nodes_to_push.push(new_node);
 										}
 										inner.if_condition_true = Parameter::Nodes(child_nodes);
@@ -299,9 +303,10 @@ pub fn create_ars_tree(ars_string: String) -> Vec<TreeNode> {
 												parameter: None,
 												is_editing_parameter: false,
 											}),
-											parent: Some(current_node_index - 1),
+											parent: Some(current_node_index),
 										};
 										nodes_to_push.push(new_node);
+										current_node_index = top_node_list_size;
 										inner.if_condition_false = Some(Parameter::Nodes(vec![current_node_index]));
 									}
 								}
@@ -370,7 +375,6 @@ pub fn create_ars_tree(ars_string: String) -> Vec<TreeNode> {
 			TokenType::StringLiteral => {
 				match top_node_list[current_node_index].inner_node {
 					NodeEntryType::Unconditional(ref mut inner) => {
-						//TODO: change to conditional if needed
 						if inner.is_editing_parameter {
 							match &mut inner.parameter {
 								Some(param) => {
@@ -389,7 +393,7 @@ pub fn create_ars_tree(ars_string: String) -> Vec<TreeNode> {
 											};
 											child_nodes.push(top_node_list_size);
 											nodes_to_push.push(new_node);
-											current_node_index = top_node_list_size + 1;
+											//current_node_index = top_node_list_size;
 										}
 									}
 								}
@@ -470,7 +474,7 @@ pub fn create_ars_tree(ars_string: String) -> Vec<TreeNode> {
 												};
 												nodes.push(top_node_list_size);
 												nodes_to_push.push(new_node);
-												current_node_index = top_node_list_size + 1;
+												current_node_index = top_node_list_size;
 											}
 											Parameter::String(ref mut text) => {
 												text.push_str(&token.text);

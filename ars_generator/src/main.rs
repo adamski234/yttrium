@@ -18,7 +18,7 @@ fn main() {
 }
 fn generate_random() -> String {
 	let random = rand::random::<usize>();
-	if random % 3 == 0 {
+	if random % 4 == 0 {
 		//generate normal
 		return generate_normal();
 	} else if random % 3 == 1 {

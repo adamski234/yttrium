@@ -3,11 +3,8 @@ use crate::tokenizer;
 
 type Id = usize;
 
-/* Crashlist:
- * {cond:{cond:{cond:{a:{a:a}}:a}:{cond:a:{cond:a:a}}}:{a}:{a}}}:{a:{a}}:{a:{a:{a}}}}}}}
-*/
-
 //TODO: refactor
+//Abandon all hope, ye who enter here, for this function has 484 lines and is not fully unit tested
 #[allow(dead_code)]
 pub fn create_ars_tree(ars_string: String) -> Vec<TreeNode> {
 	/*
@@ -15,9 +12,8 @@ pub fn create_ars_tree(ars_string: String) -> Vec<TreeNode> {
 	node_list is a flat vector of all nodes in the tree.
 	This way I don't have to work with pointers but rather just vector indices
 	After creating a new node, push it to node_list and use the new index as parent pointer
-	I'll probably want to jump off a bridge after finishing it
 	*/
-	let tokens = tokenizer::split_into_tokens(ars_string); //TODO: multithread it
+	let tokens = tokenizer::split_into_tokens(ars_string);
 	let mut top_node_list = vec![
 		TreeNode {
 			inner_node: NodeEntryType::Unconditional(UnconditionalNodeEntry {

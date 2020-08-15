@@ -375,7 +375,7 @@ pub fn create_ars_tree(ars_string: String) -> Result<TreeReturn, errors_and_warn
 #[derive(Debug, PartialEq)]
 pub struct TreeNode {
 	pub inner_node: NodeEntryType,
-	parent: Option<Id>, //Pointer, except that it's a vector index instead of a memory address
+	pub parent: Option<Id>, //Pointer, except that it's a vector index instead of a memory address
 }
 
 impl TreeNode {

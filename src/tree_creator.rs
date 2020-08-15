@@ -54,24 +54,15 @@ pub fn create_ars_tree(ars_string: String) -> Result<TreeReturn, errors_and_warn
 											];
 											if text.is_empty() {
 												//Empty parameter
-												let new_node = TreeNode {
-													inner_node: NodeEntryType::new_unconditional(),
-													parent: Some(current_node_index),
-												};
+												let new_node = TreeNode::new_unconditional(current_node_index);
 												current_node_index = top_node_list_size;
 												nodes_to_push.push(new_node);
 											} else {
 												//Not empty parameter
-												let node_from_text = TreeNode {
-													inner_node: NodeEntryType::new_unconditional_literal(text.to_string()),
-													parent: Some(current_node_index),
-												};
+												let node_from_text = TreeNode::new_unconditional_literal(current_node_index, text.to_string());
 												nodes_to_push.push(node_from_text);
 												child_nodes.push(top_node_list_size + 1);
-												let new_node = TreeNode {
-													inner_node: NodeEntryType::new_unconditional(),
-													parent: Some(current_node_index),
-												};
+												let new_node = TreeNode::new_unconditional(current_node_index);
 												nodes_to_push.push(new_node);
 												current_node_index = top_node_list_size + 1;
 											}
@@ -80,10 +71,7 @@ pub fn create_ars_tree(ars_string: String) -> Result<TreeReturn, errors_and_warn
 									}
 								}
 								None => {
-									let new_node = TreeNode {
-										inner_node: NodeEntryType::new_unconditional(),
-										parent: Some(current_node_index),
-									};
+									let new_node = TreeNode::new_unconditional(current_node_index);
 									inner.parameter = Some(Parameter::Nodes(vec![top_node_list_size]));
 									nodes_to_push.push(new_node);
 									current_node_index = top_node_list_size;
@@ -101,10 +89,7 @@ pub fn create_ars_tree(ars_string: String) -> Result<TreeReturn, errors_and_warn
 							CurrentlyEditedPartOfConditional::Condition => {
 								match inner.condition {
 									Parameter::Nodes(ref mut nodes) => {
-										let new_node = TreeNode {
-											inner_node: NodeEntryType::new_unconditional(),
-											parent: Some(current_node_index),
-										};
+										let new_node = TreeNode::new_unconditional(current_node_index);
 										nodes_to_push.push(new_node);
 										current_node_index = top_node_list_size + 1;
 										nodes.push(current_node_index);
@@ -115,25 +100,16 @@ pub fn create_ars_tree(ars_string: String) -> Result<TreeReturn, errors_and_warn
 										];
 										if text.is_empty() {
 											//Empty parameter
-											let new_node = TreeNode {
-												inner_node: NodeEntryType::new_unconditional(),
-												parent: Some(current_node_index),
-											};
+											let new_node = TreeNode::new_unconditional(current_node_index);
 											current_node_index = top_node_list_size;
 											nodes_to_push.push(new_node);
 										} else {
 											//Not empty parameter
-											let node_from_text = TreeNode {
-												inner_node: NodeEntryType::new_unconditional_literal(text.to_string()),
-												parent: Some(current_node_index - 1),
-											};
+											let node_from_text = TreeNode::new_unconditional_literal(current_node_index, text.to_string());
 											nodes_to_push.push(node_from_text);
 											child_nodes.push(top_node_list_size + 1);
-											current_node_index += 1;
-											let new_node = TreeNode {
-												inner_node: NodeEntryType::new_unconditional(),
-												parent: Some(current_node_index - 2),
-											};
+											let new_node = TreeNode::new_unconditional(current_node_index - 1);
+											current_node_index = top_node_list_size + 1;
 											nodes_to_push.push(new_node);
 										}
 										inner.condition = Parameter::Nodes(child_nodes);
@@ -143,10 +119,7 @@ pub fn create_ars_tree(ars_string: String) -> Result<TreeReturn, errors_and_warn
 							CurrentlyEditedPartOfConditional::ConditionTrue => {
 								match inner.if_condition_true {
 									Parameter::Nodes(ref mut nodes) => {
-										let new_node = TreeNode {
-											inner_node: NodeEntryType::new_unconditional(),
-											parent: Some(current_node_index - 1),
-										};
+										let new_node = TreeNode::new_unconditional(current_node_index - 1);
 										nodes_to_push.push(new_node);
 										current_node_index = top_node_list_size + 1;
 										nodes.push(current_node_index);
@@ -157,24 +130,15 @@ pub fn create_ars_tree(ars_string: String) -> Result<TreeReturn, errors_and_warn
 										];
 										if text.is_empty() {
 											//Empty parameter
-											let new_node = TreeNode {
-												inner_node: NodeEntryType::new_unconditional(),
-												parent: Some(current_node_index),
-											};
+											let new_node = TreeNode::new_unconditional(current_node_index);
 											current_node_index = top_node_list_size;
 											nodes_to_push.push(new_node);
 										} else {
 											//Not empty parameter
-											let node_from_text = TreeNode {
-												inner_node: NodeEntryType::new_unconditional_literal(text.to_string()),
-												parent: Some(current_node_index),
-											};
+											let node_from_text = TreeNode::new_unconditional_literal(current_node_index, text.to_string());
 											nodes_to_push.push(node_from_text);
 											child_nodes.push(top_node_list_size + 1);
-											let new_node = TreeNode {
-												inner_node: NodeEntryType::new_unconditional(),
-												parent: Some(current_node_index + 1),
-											};
+											let new_node = TreeNode::new_unconditional(current_node_index + 1);
 											current_node_index = top_node_list_size + 2;
 											nodes_to_push.push(new_node);
 										}
@@ -187,10 +151,7 @@ pub fn create_ars_tree(ars_string: String) -> Result<TreeReturn, errors_and_warn
 									Some(ref mut value) => {
 										match value {
 											Parameter::Nodes(ref mut nodes) => {
-												let new_node = TreeNode {
-													inner_node: NodeEntryType::new_unconditional(),
-													parent: Some(current_node_index),
-												};
+												let new_node = TreeNode::new_unconditional(current_node_index);
 												nodes_to_push.push(new_node);
 												current_node_index = top_node_list_size + 1;
 												nodes.push(current_node_index);
@@ -202,23 +163,14 @@ pub fn create_ars_tree(ars_string: String) -> Result<TreeReturn, errors_and_warn
 												current_node_index = top_node_list_size;
 												if text.is_empty() {
 													//Empty parameter
-													let new_node = TreeNode {
-														inner_node: NodeEntryType::new_unconditional(),
-														parent: Some(current_node_index - 1),
-													};
+													let new_node = TreeNode::new_unconditional(current_node_index - 1);
 													nodes_to_push.push(new_node);
 												} else {
 													//Not empty parameter
-													let node_from_text = TreeNode {
-														inner_node: NodeEntryType::new_unconditional_literal(text.to_string()),
-														parent: Some(current_node_index - 1),
-													};
+													let node_from_text = TreeNode::new_unconditional_literal(current_node_index, text.to_string());
 													nodes_to_push.push(node_from_text);
 													child_nodes.push(top_node_list_size + 1);
-													let new_node = TreeNode {
-														inner_node: NodeEntryType::new_unconditional(),
-														parent: Some(current_node_index - 1),
-													};
+													let new_node = TreeNode::new_unconditional(current_node_index - 1);
 													current_node_index = top_node_list_size + 1;
 													nodes_to_push.push(new_node);
 												}
@@ -227,10 +179,7 @@ pub fn create_ars_tree(ars_string: String) -> Result<TreeReturn, errors_and_warn
 										}
 									}
 									None => {
-										let new_node = TreeNode {
-											inner_node: NodeEntryType::new_unconditional(),
-											parent: Some(current_node_index),
-										};
+										let new_node = TreeNode::new_unconditional(current_node_index);
 										nodes_to_push.push(new_node);
 										current_node_index = top_node_list_size;
 										inner.if_condition_false = Some(Parameter::Nodes(vec![current_node_index]));
@@ -252,10 +201,7 @@ pub fn create_ars_tree(ars_string: String) -> Result<TreeReturn, errors_and_warn
 									Some(ref mut param) => {
 										match param {
 											Parameter::Nodes(ref mut nodes) => {
-												let new_node = TreeNode {
-													inner_node: NodeEntryType::new_unconditional_literal(token.text),
-													parent: Some(current_node_index),
-												};
+												let new_node = TreeNode::new_unconditional_literal(current_node_index, token.text);
 												nodes_to_push.push(new_node);
 												nodes.push(top_node_list_size);
 											}
@@ -286,10 +232,7 @@ pub fn create_ars_tree(ars_string: String) -> Result<TreeReturn, errors_and_warn
 								Some(param) => {
 									match param {
 										Parameter::Nodes(child_nodes) => {
-											let new_node = TreeNode {
-												inner_node: NodeEntryType::new_unconditional_literal(token.text),
-												parent: Some(current_node_index),
-											};
+											let new_node = TreeNode::new_unconditional_literal(current_node_index, token.text);
 											child_nodes.push(top_node_list_size);
 											nodes_to_push.push(new_node);
 										}
@@ -337,13 +280,9 @@ pub fn create_ars_tree(ars_string: String) -> Result<TreeReturn, errors_and_warn
 											text.push_str(&token.text);
 										}
 										Parameter::Nodes(child_nodes) => {
-											let new_node = TreeNode {
-												inner_node: NodeEntryType::new_unconditional_literal(token.text),
-												parent: Some(current_node_index),
-											};
+											let new_node = TreeNode::new_unconditional_literal(current_node_index, token.text);
 											child_nodes.push(top_node_list_size);
 											nodes_to_push.push(new_node);
-											//current_node_index = top_node_list_size;
 										}
 									}
 								}
@@ -367,10 +306,7 @@ pub fn create_ars_tree(ars_string: String) -> Result<TreeReturn, errors_and_warn
 							CurrentlyEditedPartOfConditional::Condition => {
 								match inner.condition {
 									Parameter::Nodes(ref mut nodes) => {
-										let new_node = TreeNode {
-											inner_node: NodeEntryType::new_unconditional_literal(token.text),
-											parent: Some(current_node_index),
-										};
+										let new_node = TreeNode::new_unconditional_literal(current_node_index, token.text);
 										nodes.push(top_node_list_size);
 										nodes_to_push.push(new_node);
 										current_node_index = top_node_list_size + 1;
@@ -383,10 +319,7 @@ pub fn create_ars_tree(ars_string: String) -> Result<TreeReturn, errors_and_warn
 							CurrentlyEditedPartOfConditional::ConditionTrue => {
 								match inner.if_condition_true {
 									Parameter::Nodes(ref mut nodes) => {
-										let new_node = TreeNode {
-											inner_node: NodeEntryType::new_unconditional_literal(token.text),
-											parent: Some(current_node_index),
-										};
+										let new_node = TreeNode::new_unconditional_literal(current_node_index, token.text);
 										nodes.push(top_node_list_size);
 										nodes_to_push.push(new_node);
 										current_node_index = top_node_list_size + 1;
@@ -440,6 +373,21 @@ pub fn create_ars_tree(ars_string: String) -> Result<TreeReturn, errors_and_warn
 pub struct TreeNode {
 	inner_node: NodeEntryType,
 	parent: Option<Id>, //Pointer, except that it's a vector index instead of a memory address
+}
+
+impl TreeNode {
+	fn new_unconditional(parent: Id) -> Self {
+		return Self {
+			inner_node: NodeEntryType::new_unconditional(),
+			parent: Some(parent),
+		};
+	}
+	fn new_unconditional_literal(parent: Id, literal_text: String) -> Self {
+		return Self {
+			inner_node: NodeEntryType::new_unconditional_literal(literal_text),
+			parent: Some(parent),
+		};
+	}
 }
 
 #[derive(Debug, PartialEq)]

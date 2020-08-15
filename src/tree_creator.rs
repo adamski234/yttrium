@@ -1,4 +1,3 @@
-#[allow(clippy::needless_return)]
 use crate::tokenizer;
 use crate::errors_and_warns;
 
@@ -263,7 +262,7 @@ pub fn create_ars_tree(ars_string: String) -> Result<TreeReturn, errors_and_warn
 								inner.currently_edited_part = CurrentlyEditedPartOfConditional::ConditionFalse;
 							}
 							CurrentlyEditedPartOfConditional::ConditionFalse => {
-								eprintln!("Parameter delimiter after false condition");
+								return Err(errors_and_warns::Error::ParameterDelimAfterCondFalse);
 							}
 						}
 					}
@@ -359,19 +358,22 @@ pub fn create_ars_tree(ars_string: String) -> Result<TreeReturn, errors_and_warn
 		}
 		top_node_list.append(&mut nodes_to_push);
 	}
+	if let Some(error) = errors_and_warns::check_for_errors(&top_node_list) {
+		return Err(error);
+	}
 	if current_node_index != 0 {
 		warnings.push(errors_and_warns::Warning::UnclosedKeys);
 	}
 	let to_return = TreeReturn {
 		tree: top_node_list,
-		warnings: if warnings.len() == 0 { None } else { Some(warnings) },
+		warnings: if warnings.is_empty() { None } else { Some(warnings) },
 	};
 	return Ok(to_return);
 }
 
 #[derive(Debug, PartialEq)]
 pub struct TreeNode {
-	inner_node: NodeEntryType,
+	pub inner_node: NodeEntryType,
 	parent: Option<Id>, //Pointer, except that it's a vector index instead of a memory address
 }
 
@@ -392,17 +394,17 @@ impl TreeNode {
 
 #[derive(Debug, PartialEq)]
 pub struct UnconditionalNodeEntry {
-	key: String, //Cannot be ars code, as it would require getting opcodes on the fly. Could work with an interpreter tho
-	parameter: Option<Parameter>, //String for literals, Nodes for variable values
-	is_editing_parameter: bool,
+	pub key: String, //Cannot be ars code, as it would require getting opcodes on the fly. Could work with an interpreter tho
+	pub parameter: Option<Parameter>, //String for literals, Nodes for variable values
+	pub is_editing_parameter: bool,
 }
 
 #[derive(Debug, PartialEq)]
 pub struct ConditionalNodeEntry {
-	condition: Parameter,
-	if_condition_true: Parameter,
-	if_condition_false: Option<Parameter>,
-	currently_edited_part: CurrentlyEditedPartOfConditional,
+	pub condition: Parameter,
+	pub if_condition_true: Parameter,
+	pub if_condition_false: Option<Parameter>,
+	pub currently_edited_part: CurrentlyEditedPartOfConditional,
 }
 
 #[derive(Debug, PartialEq)]
@@ -454,8 +456,8 @@ pub enum Parameter {
 
 #[derive(Debug, PartialEq)]
 pub struct TreeReturn {
-	tree: Vec<TreeNode>,
-	warnings: Option<Vec<errors_and_warns::Warning>>,
+	pub tree: Vec<TreeNode>,
+	pub warnings: Option<Vec<errors_and_warns::Warning>>,
 }
 
 //A wall of text is incoming. You probably should collapse them

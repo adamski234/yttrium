@@ -255,6 +255,8 @@ pub fn create_ars_tree(ars_string: String) -> Result<Vec<TreeNode>, errors_and_w
 													inner_node: NodeEntryType::new_unconditional_literal(token.text),
 													parent: Some(current_node_index),
 												};
+												nodes_to_push.push(new_node);
+												nodes.push(top_node_list_size);
 											}
 											Parameter::String(ref mut text) => {
 												text.push_str(&token.text);
@@ -262,80 +264,18 @@ pub fn create_ars_tree(ars_string: String) -> Result<Vec<TreeNode>, errors_and_w
 										}
 									}
 									None => {
-										inner.parameter = Some(Parameter::String(token.text));
+										panic!("Top level node had the parameter set to `None`");
 									}
 								}
 							} else {
 								panic!("Top level was not editing parameter and a closing bracket was found");
 							}
 						}
-						NodeEntryType::Conditional(ref mut inner) => {
-							match inner.currently_edited_part {
-								CurrentlyEditedPartOfConditional::None => {
-									match inner.condition {
-										Parameter::Nodes(ref mut nodes) => {
-											let new_node = TreeNode {
-												inner_node: NodeEntryType::new_unconditional_literal(token.text),
-												parent: Some(current_node_index),
-											};
-											nodes.push(top_node_list_size);
-											nodes_to_push.push(new_node);
-										}
-										Parameter::String(ref mut text) => {
-											text.push_str(&token.text);
-										}
-									}
-								}
-								CurrentlyEditedPartOfConditional::Condition => {
-									match inner.condition {
-										Parameter::Nodes(ref mut nodes) => {
-											let new_node = TreeNode {
-												inner_node: NodeEntryType::new_unconditional_literal(token.text),
-												parent: Some(current_node_index),
-											};
-											nodes.push(top_node_list_size);
-											nodes_to_push.push(new_node);
-										}
-										Parameter::String(ref mut text) => {
-											text.push_str(&token.text);
-										}
-									}
-								}
-								CurrentlyEditedPartOfConditional::ConditionTrue => {
-									match inner.condition {
-										Parameter::Nodes(ref mut nodes) => {
-											let new_node = TreeNode {
-												inner_node: NodeEntryType::new_unconditional_literal(token.text),
-												parent: Some(current_node_index),
-											};
-											nodes.push(top_node_list_size);
-											nodes_to_push.push(new_node);
-										}
-										Parameter::String(ref mut text) => {
-											text.push_str(&token.text);
-										}
-									}
-								}
-								CurrentlyEditedPartOfConditional::ConditionFalse => {
-									match inner.condition {
-										Parameter::Nodes(ref mut nodes) => {
-											let new_node = TreeNode {
-												inner_node: NodeEntryType::new_unconditional_literal(token.text),
-												parent: Some(current_node_index),
-											};
-											nodes.push(top_node_list_size);
-											nodes_to_push.push(new_node);
-										}
-										Parameter::String(ref mut text) => {
-											text.push_str(&token.text);
-										}
-									}
-								}
-							}
+						NodeEntryType::Conditional(_) => {
+							panic!("Top level node was a conditional");
 						}
 					}
 				}
-				//TODO: adding the bracket as string if no parent
 			}
 			TokenType::ParameterDelimiter => {
 				match top_node_list[current_node_index].inner_node {

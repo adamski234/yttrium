@@ -1,12 +1,13 @@
 #[allow(clippy::needless_return)]
 use crate::tokenizer;
+use crate::errors_and_warns;
 
 type Id = usize;
 
 //TODO: refactor
 //Abandon all hope, ye who enter here, for this function has 484 lines and is not fully unit tested
 #[allow(dead_code)]
-pub fn create_ars_tree(ars_string: String) -> Vec<TreeNode> {
+pub fn create_ars_tree(ars_string: String) -> Result<Vec<TreeNode>, errors_and_warns::Error> {
 	/*
 	How things work:
 	node_list is a flat vector of all nodes in the tree.
@@ -94,7 +95,7 @@ pub fn create_ars_tree(ars_string: String) -> Vec<TreeNode> {
 					NodeEntryType::Conditional(ref mut inner) => {
 						match inner.currently_edited_part {
 							CurrentlyEditedPartOfConditional::None => {
-								eprintln!("Opening bracket found after `cond` in conditional");
+								return Err(errors_and_warns::Error::BracketsInCond);
 							}
 							CurrentlyEditedPartOfConditional::Condition => {
 								match inner.condition {
@@ -242,7 +243,99 @@ pub fn create_ars_tree(ars_string: String) -> Vec<TreeNode> {
 			TokenType::CloseBracket => {
 				if let Some(parent_node) = top_node_list[current_node_index].parent {
 					current_node_index = parent_node;
-				} //TODO: adding the bracket as string if no parent
+				} else {
+					match top_node_list[current_node_index].inner_node {
+						NodeEntryType::Unconditional(ref mut inner) => {
+							if inner.is_editing_parameter {
+								match inner.parameter {
+									Some(ref mut param) => {
+										match param {
+											Parameter::Nodes(ref mut nodes) => {
+												let new_node = TreeNode {
+													inner_node: NodeEntryType::new_unconditional_literal(token.text),
+													parent: Some(current_node_index),
+												};
+											}
+											Parameter::String(ref mut text) => {
+												text.push_str(&token.text);
+											}
+										}
+									}
+									None => {
+										inner.parameter = Some(Parameter::String(token.text));
+									}
+								}
+							} else {
+								panic!("Top level was not editing parameter and a closing bracket was found");
+							}
+						}
+						NodeEntryType::Conditional(ref mut inner) => {
+							match inner.currently_edited_part {
+								CurrentlyEditedPartOfConditional::None => {
+									match inner.condition {
+										Parameter::Nodes(ref mut nodes) => {
+											let new_node = TreeNode {
+												inner_node: NodeEntryType::new_unconditional_literal(token.text),
+												parent: Some(current_node_index),
+											};
+											nodes.push(top_node_list_size);
+											nodes_to_push.push(new_node);
+										}
+										Parameter::String(ref mut text) => {
+											text.push_str(&token.text);
+										}
+									}
+								}
+								CurrentlyEditedPartOfConditional::Condition => {
+									match inner.condition {
+										Parameter::Nodes(ref mut nodes) => {
+											let new_node = TreeNode {
+												inner_node: NodeEntryType::new_unconditional_literal(token.text),
+												parent: Some(current_node_index),
+											};
+											nodes.push(top_node_list_size);
+											nodes_to_push.push(new_node);
+										}
+										Parameter::String(ref mut text) => {
+											text.push_str(&token.text);
+										}
+									}
+								}
+								CurrentlyEditedPartOfConditional::ConditionTrue => {
+									match inner.condition {
+										Parameter::Nodes(ref mut nodes) => {
+											let new_node = TreeNode {
+												inner_node: NodeEntryType::new_unconditional_literal(token.text),
+												parent: Some(current_node_index),
+											};
+											nodes.push(top_node_list_size);
+											nodes_to_push.push(new_node);
+										}
+										Parameter::String(ref mut text) => {
+											text.push_str(&token.text);
+										}
+									}
+								}
+								CurrentlyEditedPartOfConditional::ConditionFalse => {
+									match inner.condition {
+										Parameter::Nodes(ref mut nodes) => {
+											let new_node = TreeNode {
+												inner_node: NodeEntryType::new_unconditional_literal(token.text),
+												parent: Some(current_node_index),
+											};
+											nodes.push(top_node_list_size);
+											nodes_to_push.push(new_node);
+										}
+										Parameter::String(ref mut text) => {
+											text.push_str(&token.text);
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+				//TODO: adding the bracket as string if no parent
 			}
 			TokenType::ParameterDelimiter => {
 				match top_node_list[current_node_index].inner_node {
@@ -328,7 +421,7 @@ pub fn create_ars_tree(ars_string: String) -> Vec<TreeNode> {
 					NodeEntryType::Conditional(ref mut inner) => {
 						match inner.currently_edited_part {
 							CurrentlyEditedPartOfConditional::None => {
-								eprintln!("This is bad. Somehow a string literal was found after `cond` in a conditional");
+								panic!("A string literal was found after `cond` in a conditional.");
 							}
 							CurrentlyEditedPartOfConditional::Condition => {
 								match inner.condition {
@@ -392,7 +485,7 @@ pub fn create_ars_tree(ars_string: String) -> Vec<TreeNode> {
 		}
 		top_node_list.append(&mut nodes_to_push);
 	}
-	return top_node_list;
+	return Ok(top_node_list);
 }
 
 #[derive(Debug, PartialEq)]
@@ -523,7 +616,7 @@ mod tests {
 				),
 			},
 		];
-		let output = create_ars_tree(tested_string);
+		let output = create_ars_tree(tested_string).unwrap();
 		assert_eq!(output, correct);
 	}
 	#[test]
@@ -585,7 +678,7 @@ mod tests {
 				),
 			},
 		];
-		let output = create_ars_tree(input);
+		let output = create_ars_tree(input).unwrap();
 		assert_eq!(output, correct);
 	}
 	#[test]
@@ -690,7 +783,7 @@ mod tests {
 				),
 			},
 		];
-		let output = create_ars_tree(input);
+		let output = create_ars_tree(input).unwrap();
 		assert_eq!(output, correct_output);
 	}
 }

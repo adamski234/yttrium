@@ -7,7 +7,7 @@ type Id = usize;
 //TODO: refactor
 //Abandon all hope, ye who enter here, for this function has 484 lines and is not fully unit tested
 #[allow(dead_code)]
-pub fn create_ars_tree(ars_string: String) -> Result<Vec<TreeNode>, errors_and_warns::Error> {
+pub fn create_ars_tree(ars_string: String) -> Result<TreeReturn, errors_and_warns::Error> {
 	/*
 	How things work:
 	node_list is a flat vector of all nodes in the tree.
@@ -24,7 +24,8 @@ pub fn create_ars_tree(ars_string: String) -> Result<Vec<TreeNode>, errors_and_w
 			}),
 			parent: None
 		}
-	];
+		];
+	let mut warnings = Vec::new();
 	let mut current_node_index = 0;
 	let mut nodes_to_push = Vec::new();
 	for token in tokens {
@@ -425,7 +426,11 @@ pub fn create_ars_tree(ars_string: String) -> Result<Vec<TreeNode>, errors_and_w
 		}
 		top_node_list.append(&mut nodes_to_push);
 	}
-	return Ok(top_node_list);
+	let to_return = TreeReturn {
+		tree: top_node_list,
+		warnings: if warnings.len() == 0 { None } else { Some(warnings) },
+	};
+	return Ok(to_return);
 }
 
 #[derive(Debug, PartialEq)]
@@ -496,6 +501,12 @@ pub enum Parameter {
 	String(String)
 }
 
+#[derive(Debug, PartialEq)]
+pub struct TreeReturn {
+	tree: Vec<TreeNode>,
+	warnings: Option<Vec<errors_and_warns::Warning>>,
+}
+
 //A wall of text is incoming. You probably should collapse them
 #[cfg(test)]
 mod tests {
@@ -556,7 +567,7 @@ mod tests {
 				),
 			},
 		];
-		let output = create_ars_tree(tested_string).unwrap();
+		let output = create_ars_tree(tested_string).unwrap().tree;
 		assert_eq!(output, correct);
 	}
 	#[test]
@@ -618,7 +629,7 @@ mod tests {
 				),
 			},
 		];
-		let output = create_ars_tree(input).unwrap();
+		let output = create_ars_tree(input).unwrap().tree;
 		assert_eq!(output, correct);
 	}
 	#[test]
@@ -723,7 +734,7 @@ mod tests {
 				),
 			},
 		];
-		let output = create_ars_tree(input).unwrap();
+		let output = create_ars_tree(input).unwrap().tree;
 		assert_eq!(output, correct_output);
 	}
 }

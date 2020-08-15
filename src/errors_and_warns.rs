@@ -1,4 +1,4 @@
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum Error {
 	NoParameterSupplied,
 	EmptyCondition,
@@ -7,7 +7,7 @@ pub enum Error {
 	ParameterDelimAfterCondFalse,
 	EmptyParameter,
 }
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum Warning {
 	UnclosedKeys,
 }

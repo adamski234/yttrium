@@ -358,6 +358,7 @@ pub fn create_ars_tree(ars_string: String) -> Result<TreeReturn, errors_and_warn
 		}
 		top_node_list.append(&mut nodes_to_push);
 	}
+	#[cfg(feature = "errors")]
 	if let Some(error) = errors_and_warns::check_for_errors(&top_node_list) {
 		return Err(error);
 	}

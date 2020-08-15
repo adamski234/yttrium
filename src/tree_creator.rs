@@ -426,6 +426,9 @@ pub fn create_ars_tree(ars_string: String) -> Result<TreeReturn, errors_and_warn
 		}
 		top_node_list.append(&mut nodes_to_push);
 	}
+	if current_node_index != 0 {
+		warnings.push(errors_and_warns::Warning::UnclosedKeys);
+	}
 	let to_return = TreeReturn {
 		tree: top_node_list,
 		warnings: if warnings.len() == 0 { None } else { Some(warnings) },
@@ -736,5 +739,11 @@ mod tests {
 		];
 		let output = create_ars_tree(input).unwrap().tree;
 		assert_eq!(output, correct_output);
+	}
+	#[test]
+	fn unclosed_keys() {
+		let input = String::from("{abc");
+		let output_warns = create_ars_tree(input).unwrap().warnings;
+		assert_eq!(output_warns, Some(vec![errors_and_warns::Warning::UnclosedKeys]));
 	}
 }

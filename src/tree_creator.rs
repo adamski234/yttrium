@@ -131,13 +131,19 @@ pub fn create_ars_tree(ars_string: String) -> Result<TreeReturn, errors_and_warn
 	return Ok(to_return);
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug)]
 pub struct TreeNode {
 	pub key: String, //Cannot be ars code, as it would require getting opcodes on the fly. Could work with an interpreter tho
 	pub parameters: Vec<Parameter>, //String for literals, Nodes for variable values
 	pub is_editing_parameter: bool,
 	pub edited_parameter: usize,
 	pub parent: Option<Id>, //Pointer, except that it's a vector index instead of a memory address
+}
+
+impl PartialEq for TreeNode {
+	fn eq(&self, other: &Self) -> bool {
+		return self.key == other.key && self.parameters == other.parameters && self.parent == other.parent;
+	}
 }
 
 impl TreeNode {
@@ -178,57 +184,47 @@ pub struct TreeReturn {
 #[cfg(test)]
 mod tests {
 	use super::*;
-	use NodeEntryType::*;
 	#[test]
 	fn tree_small_nesting() {
 		let tested_string = String::from("{abc:{def:ghi}}");
 		let correct = vec![
 			TreeNode {
-				inner_node: Unconditional(
-					UnconditionalNodeEntry {
-						key: String::from("top"),
-						parameter: Some(
-							Parameter::Nodes(
-								vec![
-									1,
-								],
-							),
-						),
-						is_editing_parameter: true,
-					},
-				),
+				key: String::from("top"),
+				parameters: vec![
+					Parameter::Nodes(
+						vec![
+							1,
+						],
+					),
+				],
+				is_editing_parameter: true,
+				edited_parameter: 0,
 				parent: None,
 			},
 			TreeNode {
-				inner_node: Unconditional(
-					UnconditionalNodeEntry {
-						key: String::from("abc"),
-						parameter: Some(
-							Parameter::Nodes(
-								vec![
-									2,
-								],
-							),
-						),
-						is_editing_parameter: true,
-					},
-				),
+				key: String::from("abc"),
+				parameters: vec![
+					Parameter::Nodes(
+						vec![
+							2,
+						],
+					),
+				],
+				is_editing_parameter: true,
+				edited_parameter: 0,
 				parent: Some(
 					0,
 				),
 			},
 			TreeNode {
-				inner_node: Unconditional(
-					UnconditionalNodeEntry {
-						key: String::from("def"),
-						parameter: Some(
-							Parameter::String(
-								String::from("ghi"),
-							),
-						),
-						is_editing_parameter: true,
-					},
-				),
+				key: String::from("def"),
+				parameters: vec![
+					Parameter::String(
+						String::from("ghi"),
+					),
+				],
+				is_editing_parameter: true,
+				edited_parameter: 0,
 				parent: Some(
 					1,
 				),
@@ -242,55 +238,43 @@ mod tests {
 		let input = String::from("{abc}{def}{ghi}");
 		let correct = vec![
 			TreeNode {
-				inner_node: Unconditional(
-					UnconditionalNodeEntry {
-						key: String::from("top"),
-						parameter: Some(
-							Parameter::Nodes(
-								vec![
-									1,
-									2,
-									3,
-								],
-							),
-						),
-						is_editing_parameter: true,
-					},
-				),
+				key: String::from("top"),
+				parameters: vec![
+					Parameter::Nodes(
+						vec![
+							1,
+							2,
+							3,
+						],
+					),
+				],
+				is_editing_parameter: true,
+				edited_parameter: 0,
 				parent: None,
 			},
 			TreeNode {
-				inner_node: Unconditional(
-					UnconditionalNodeEntry {
-						key: String::from("abc"),
-						parameter: None,
-						is_editing_parameter: false,
-					},
-				),
+				key: String::from("abc"),
+				parameters: vec![],
+				is_editing_parameter: false,
+				edited_parameter: 0,
 				parent: Some(
 					0,
 				),
 			},
 			TreeNode {
-				inner_node: Unconditional(
-					UnconditionalNodeEntry {
-						key: String::from("def"),
-						parameter: None,
-						is_editing_parameter: false,
-					},
-				),
+				key: String::from("def"),
+				parameters: vec![],
+				is_editing_parameter: false,
+				edited_parameter: 0,
 				parent: Some(
 					0,
 				),
 			},
 			TreeNode {
-				inner_node: Unconditional(
-					UnconditionalNodeEntry {
-						key: String::from("ghi"),
-						parameter: None,
-						is_editing_parameter: false,
-					},
-				),
+				key: String::from("ghi"),
+				parameters: vec![],
+				is_editing_parameter: false,
+				edited_parameter: 0,
 				parent: Some(
 					0,
 				),
@@ -304,98 +288,80 @@ mod tests {
 		let input = String::from("abc{def}{ghi:jkm}{abc:{def:ghi}}");
 		let correct_output = vec![
 			TreeNode {
-				inner_node: Unconditional(
-					UnconditionalNodeEntry {
-						key: String::from("top"),
-						parameter: Some(
-							Parameter::Nodes(
-								vec![
-									1,
-									2,
-									3,
-									4,
-								],
-							),
-						),
-						is_editing_parameter: true,
-					},
-				),
+				key: String::from("top"),
+				parameters: vec![
+					Parameter::Nodes(
+						vec![
+							1,
+							2,
+							3,
+							4,
+						],
+					),
+				],
+				is_editing_parameter: true,
+				edited_parameter: 0,
 				parent: None,
 			},
 			TreeNode {
-				inner_node: Unconditional(
-					UnconditionalNodeEntry {
-						key: String::from("literal"),
-						parameter: Some(
-							Parameter::String(
-								String::from("abc"),
-							),
-						),
-						is_editing_parameter: true,
-					},
-				),
+				key: String::from("literal"),
+				parameters: vec![
+					Parameter::String(
+						String::from("abc"),
+					),
+				],
+				is_editing_parameter: true,
+				edited_parameter: 0,
 				parent: Some(
 					0,
 				),
 			},
 			TreeNode {
-				inner_node: Unconditional(
-					UnconditionalNodeEntry {
-						key: String::from("def"),
-						parameter: None,
-						is_editing_parameter: false,
-					},
-				),
+				key: String::from("def"),
+				parameters: vec![],
+				is_editing_parameter: false,
+				edited_parameter: 0,
 				parent: Some(
 					0,
 				),
 			},
 			TreeNode {
-				inner_node: Unconditional(
-					UnconditionalNodeEntry {
-						key: String::from("ghi"),
-						parameter: Some(
-							Parameter::String(
-								String::from("jkm"),
-							),
-						),
-						is_editing_parameter: true,
-					},
-				),
+				key: String::from("ghi"),
+				parameters: vec![
+					Parameter::String(
+						String::from("jkm"),
+					),
+				],
+				is_editing_parameter: true,
+				edited_parameter: 0,
 				parent: Some(
 					0,
 				),
 			},
 			TreeNode {
-				inner_node: Unconditional(
-					UnconditionalNodeEntry {
-						key: String::from("abc"),
-						parameter: Some(
-							Parameter::Nodes(
-								vec![
-									5,
-								],
-							),
-						),
-						is_editing_parameter: true,
-					},
-				),
+				key: String::from("abc"),
+				parameters: vec![
+					Parameter::Nodes(
+						vec![
+							5,
+						],
+					),
+				],
+				is_editing_parameter: true,
+				edited_parameter: 0,
 				parent: Some(
 					0,
 				),
 			},
 			TreeNode {
-				inner_node: Unconditional(
-					UnconditionalNodeEntry {
-						key: String::from("def"),
-						parameter: Some(
-							Parameter::String(
-								String::from("ghi"),
-							),
-						),
-						is_editing_parameter: true,
-					},
-				),
+				key: String::from("def"),
+				parameters: vec![
+					Parameter::String(
+						String::from("ghi"),
+					),
+				],
+				is_editing_parameter: true,
+				edited_parameter: 0,
 				parent: Some(
 					4,
 				),

@@ -5,6 +5,8 @@ pub trait Key {
 
 #[derive(Clone)]
 pub struct KeyInfo {
-	is_parameter_required: bool,
+	parameters_required: Vec<usize>,
 	name: String,
+	opcode: u8,
+	allowed_key_names: Vec<String>,
 }

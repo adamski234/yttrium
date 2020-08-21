@@ -3,8 +3,6 @@ use crate::errors_and_warns;
 
 type Id = usize;
 
-//TODO: refactor
-//Abandon all hope, ye who enter here, for this function has 484 lines and is not fully unit tested
 #[allow(dead_code)]
 pub fn create_ars_tree(ars_string: String) -> Result<TreeReturn, errors_and_warns::Error> {
 	/*

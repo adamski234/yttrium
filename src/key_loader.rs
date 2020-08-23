@@ -12,7 +12,7 @@ pub fn load_keys(directory: &str) -> Vec<Box<dyn key_base::Key>> {
 				parameters_required: vec![0],
 				name: String::from("abc"),
 				opcode: 0,
-				allowed_key_names: vec![],
+				allowed_key_names: vec![String::from("*")],
 			}
 		})
 	);
@@ -23,7 +23,7 @@ pub fn load_keys(directory: &str) -> Vec<Box<dyn key_base::Key>> {
 				parameters_required: vec![1],
 				name: String::from("def"),
 				opcode: 0,
-				allowed_key_names: vec![],
+				allowed_key_names: vec![String::from("*")],
 			}
 		})
 	);
@@ -34,7 +34,7 @@ pub fn load_keys(directory: &str) -> Vec<Box<dyn key_base::Key>> {
 				parameters_required: vec![0, 1, 3],
 				name: String::from("ghi"),
 				opcode: 0,
-				allowed_key_names: vec![],
+				allowed_key_names: vec![String::from("*")],
 			}
 		})
 	);
@@ -42,10 +42,10 @@ pub fn load_keys(directory: &str) -> Vec<Box<dyn key_base::Key>> {
 		Box::new(Key1 {
 			function: placeholder_fn,
 			info: key_base::KeyInfo {
-				parameters_required: vec![],
+				parameters_required: vec![0],
 				name: String::from("jkm"),
 				opcode: 0,
-				allowed_key_names: vec![],
+				allowed_key_names: vec![String::from("*")],
 			}
 		})
 	);
@@ -56,7 +56,18 @@ pub fn load_keys(directory: &str) -> Vec<Box<dyn key_base::Key>> {
 				parameters_required: vec![2],
 				name: String::from("ab"),
 				opcode: 0,
-				allowed_key_names: vec![],
+				allowed_key_names: vec![String::from("*")],
+			}
+		})
+	);
+	keys.push(
+		Box::new(Key1 {
+			function: placeholder_fn,
+			info: key_base::KeyInfo {
+				parameters_required: vec![1, 2],
+				name: String::from("bc"),
+				opcode: 0,
+				allowed_key_names: vec![String::from("*")],
 			}
 		})
 	);
@@ -71,6 +82,9 @@ pub fn load_keys(directory: &str) -> Vec<Box<dyn key_base::Key>> {
 		} else if key_info.parameters_required.len() == 1 && key_info.parameters_required[0] != 0 && key_info.allowed_key_names.len() == 0 {
 			to_remove.push(index - to_remove.len());
 			println!("Key {} had `allowed_key_names` empty", key_info.name);
+		} else if !key_info.parameters_required.is_sorted() {
+			to_remove.push(index - to_remove.len());
+			println!("Key {} had `parameters_required` not sorted", key_info.name);
 		}
 	}
 	for index in to_remove {

@@ -39,7 +39,7 @@ fn generate_normal() -> String {
 		return format!("{{a:{}}}", parameter);
 	}
 }
-fn generate_conditional() -> String{
+fn generate_conditional() -> String {
 	if rand::random::<usize>() % 2 == 0 {
 		//will not have a false condition
 		return format!("{{cond:{}:{}}}", generate_random(), generate_random());

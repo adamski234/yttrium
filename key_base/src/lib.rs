@@ -3,10 +3,10 @@ pub trait Key {
 	fn get_key_function(&self) -> fn(parameter: &String) -> bool;
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct KeyInfo {
-	parameters_required: Vec<usize>,
-	name: String,
-	opcode: u8,
-	allowed_key_names: Vec<String>,
+	pub parameters_required: Vec<usize>,
+	pub name: String,
+	pub opcode: u8,
+	pub allowed_key_names: Vec<String>,
 }

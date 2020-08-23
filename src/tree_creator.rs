@@ -1,10 +1,11 @@
 use crate::tokenizer;
 use crate::errors_and_warns;
+use key_base;
 
 type Id = usize;
 
 #[allow(dead_code)]
-pub fn create_ars_tree(ars_string: String) -> Result<TreeReturn, errors_and_warns::Error> {
+pub fn create_ars_tree(ars_string: String, key_list: &Vec<Box<dyn key_base::Key>>) -> Result<TreeReturn, errors_and_warns::Error> {
 	/*
 	How things work:
 	node_list is a flat vector of all nodes in the tree.
@@ -115,8 +116,7 @@ pub fn create_ars_tree(ars_string: String) -> Result<TreeReturn, errors_and_warn
 		}
 		top_node_list.append(&mut nodes_to_push);
 	}
-	#[cfg(feature = "errors")]
-	if let Some(error) = errors_and_warns::check_for_errors(&top_node_list) {
+	if let Some(error) = errors_and_warns::check_for_errors(&top_node_list, key_list) {
 		return Err(error);
 	}
 	if current_node_index != 0 {
@@ -228,7 +228,7 @@ mod tests {
 				),
 			},
 		];
-		let output = create_ars_tree(tested_string).unwrap().tree;
+		let output = create_ars_tree(tested_string, &vec![]).unwrap().tree;
 		assert_eq!(output, correct);
 	}
 	#[test]
@@ -278,7 +278,7 @@ mod tests {
 				),
 			},
 		];
-		let output = create_ars_tree(input).unwrap().tree;
+		let output = create_ars_tree(input, &vec![]).unwrap().tree;
 		assert_eq!(output, correct);
 	}
 	#[test]
@@ -365,13 +365,13 @@ mod tests {
 				),
 			},
 		];
-		let output = create_ars_tree(input).unwrap().tree;
+		let output = create_ars_tree(input, &vec![]).unwrap().tree;
 		assert_eq!(output, correct_output);
 	}
 	#[test]
 	fn unclosed_keys() {
 		let input = String::from("{abc");
-		let output_warns = create_ars_tree(input).unwrap().warnings;
+		let output_warns = create_ars_tree(input, &vec![]).unwrap().warnings;
 		assert_eq!(output_warns, Some(vec![errors_and_warns::Warning::UnclosedKeys]));
 	}
 }

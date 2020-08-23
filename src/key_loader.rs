@@ -66,8 +66,11 @@ pub fn load_keys(directory: &str) -> Vec<Box<dyn key_base::Key>> {
 		let key_info = key.get_key_info();
 		println!("Loaded key {}", key_info.name);
 		if key_info.parameters_required.is_empty() {
-			to_remove.push(index);
+			to_remove.push(index - to_remove.len());
 			println!("Key {} had `parameters_required` empty", key_info.name);
+		} else if key_info.parameters_required.len() == 1 && key_info.parameters_required[0] != 0 && key_info.allowed_key_names.len() == 0 {
+			to_remove.push(index - to_remove.len());
+			println!("Key {} had `allowed_key_names` empty", key_info.name);
 		}
 	}
 	for index in to_remove {

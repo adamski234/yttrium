@@ -181,6 +181,95 @@ pub struct TreeReturn {
 //A wall of text is incoming. You probably should collapse them
 #[cfg(test)]
 mod tests {
+	//Some basic definitions for testing
+	struct Key1 {
+		function: fn(parameter: &String) -> bool,
+		info: key_base::KeyInfo,
+	}
+	impl key_base::Key for Key1 {
+		fn get_key_info(&self) -> key_base::KeyInfo {
+			return self.info.clone();
+		}
+		fn get_key_function(&self) -> fn(parameter: &String) -> bool {
+			return self.function;
+		}
+	}
+	#[allow(dead_code)]
+	fn placeholder_fn(_param: &String) -> bool {
+		return true;
+	}
+	fn load_keys_test() -> Vec<Box<dyn key_base::Key>> {
+		//let keys = Vec::new();
+		let mut keys = Vec::<Box<dyn key_base::Key>>::new();
+		keys.push(
+			Box::new(Key1 {
+				function: placeholder_fn,
+				info: key_base::KeyInfo {
+					parameters_required: vec![0],
+					name: String::from("abc"),
+					opcode: 0,
+					allowed_key_names: vec![String::from("*")],
+				}
+			})
+		);
+		keys.push(
+			Box::new(Key1 {
+				function: placeholder_fn,
+				info: key_base::KeyInfo {
+					parameters_required: vec![1],
+					name: String::from("def"),
+					opcode: 0,
+					allowed_key_names: vec![String::from("*")],
+				}
+			})
+		);
+		keys.push(
+			Box::new(Key1 {
+				function: placeholder_fn,
+				info: key_base::KeyInfo {
+					parameters_required: vec![0, 1, 3],
+					name: String::from("ghi"),
+					opcode: 0,
+					allowed_key_names: vec![String::from("*")],
+				}
+			})
+		);
+		keys.push(
+			Box::new(Key1 {
+				function: placeholder_fn,
+				info: key_base::KeyInfo {
+					parameters_required: vec![0],
+					name: String::from("jkm"),
+					opcode: 0,
+					allowed_key_names: vec![String::from("*")],
+				}
+			})
+		);
+		keys.push(
+			Box::new(Key1 {
+				function: placeholder_fn,
+				info: key_base::KeyInfo {
+					parameters_required: vec![2],
+					name: String::from("ab"),
+					opcode: 0,
+					allowed_key_names: vec![String::from("*")],
+				}
+			})
+		);
+		keys.push(
+			Box::new(Key1 {
+				function: placeholder_fn,
+				info: key_base::KeyInfo {
+					parameters_required: vec![1, 2],
+					name: String::from("bc"),
+					opcode: 0,
+					allowed_key_names: vec![String::from("*")],
+				}
+			})
+		);
+		return keys;
+	}
+	
 	use super::*;
 	#[test]
 	fn tree_small_nesting() {
@@ -228,7 +317,7 @@ mod tests {
 				),
 			},
 		];
-		let output = create_ars_tree(tested_string, &vec![]).unwrap().tree;
+		let output = create_ars_tree(tested_string, &load_keys_test()).unwrap().tree;
 		assert_eq!(output, correct);
 	}
 	#[test]
@@ -278,7 +367,7 @@ mod tests {
 				),
 			},
 		];
-		let output = create_ars_tree(input, &vec![]).unwrap().tree;
+		let output = create_ars_tree(input, &load_keys_test()).unwrap().tree;
 		assert_eq!(output, correct);
 	}
 	#[test]
@@ -365,13 +454,13 @@ mod tests {
 				),
 			},
 		];
-		let output = create_ars_tree(input, &vec![]).unwrap().tree;
+		let output = create_ars_tree(input, &load_keys_test()).unwrap().tree;
 		assert_eq!(output, correct_output);
 	}
 	#[test]
 	fn unclosed_keys() {
 		let input = String::from("{abc");
-		let output_warns = create_ars_tree(input, &vec![]).unwrap().warnings;
+		let output_warns = create_ars_tree(input, &load_keys_test()).unwrap().warnings;
 		assert_eq!(output_warns, Some(vec![errors_and_warns::Warning::UnclosedKeys]));
 	}
 }

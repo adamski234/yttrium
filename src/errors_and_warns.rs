@@ -52,11 +52,100 @@ pub fn check_for_errors(nodes: &Vec<tree_creator::TreeNode>, keys: &Vec<Box<dyn 
 #[cfg(test)]
 mod tests {
 	use super::*;
+	//Some basic definitions for testing
+	struct Key1 {
+		function: fn(parameter: &String) -> bool,
+		info: key_base::KeyInfo,
+	}
+	impl key_base::Key for Key1 {
+		fn get_key_info(&self) -> key_base::KeyInfo {
+			return self.info.clone();
+		}
+		fn get_key_function(&self) -> fn(parameter: &String) -> bool {
+			return self.function;
+		}
+	}
+	#[allow(dead_code)]
+	fn placeholder_fn(_param: &String) -> bool {
+		return true;
+	}
+	fn load_keys_test() -> Vec<Box<dyn key_base::Key>> {
+		//let keys = Vec::new();
+		let mut keys = Vec::<Box<dyn key_base::Key>>::new();
+		keys.push(
+			Box::new(Key1 {
+				function: placeholder_fn,
+				info: key_base::KeyInfo {
+					parameters_required: vec![0],
+					name: String::from("abc"),
+					opcode: 0,
+					allowed_key_names: vec![String::from("*")],
+				}
+			})
+		);
+		keys.push(
+			Box::new(Key1 {
+				function: placeholder_fn,
+				info: key_base::KeyInfo {
+					parameters_required: vec![1],
+					name: String::from("def"),
+					opcode: 0,
+					allowed_key_names: vec![String::from("*")],
+				}
+			})
+		);
+		keys.push(
+			Box::new(Key1 {
+				function: placeholder_fn,
+				info: key_base::KeyInfo {
+					parameters_required: vec![0, 1, 3],
+					name: String::from("ghi"),
+					opcode: 0,
+					allowed_key_names: vec![String::from("*")],
+				}
+			})
+		);
+		keys.push(
+			Box::new(Key1 {
+				function: placeholder_fn,
+				info: key_base::KeyInfo {
+					parameters_required: vec![0],
+					name: String::from("jkm"),
+					opcode: 0,
+					allowed_key_names: vec![String::from("*")],
+				}
+			})
+		);
+		keys.push(
+			Box::new(Key1 {
+				function: placeholder_fn,
+				info: key_base::KeyInfo {
+					parameters_required: vec![2],
+					name: String::from("ab"),
+					opcode: 0,
+					allowed_key_names: vec![String::from("*")],
+				}
+			})
+		);
+		keys.push(
+			Box::new(Key1 {
+				function: placeholder_fn,
+				info: key_base::KeyInfo {
+					parameters_required: vec![1, 2],
+					name: String::from("bc"),
+					opcode: 0,
+					allowed_key_names: vec![String::from("*")],
+				}
+			})
+		);
+		return keys;
+	}
+	
 	#[test]
 	fn no_parameter() {
 		use crate::tree_creator::{TreeNode, Parameter};
 		let input = vec![TreeNode {
-			key: String::from("abc"),
+			key: String::from("does_not_exist"),
 			parameters: vec![
 				Parameter::String(
 					String::new(),
@@ -66,7 +155,7 @@ mod tests {
 			edited_parameter: 0,
 			parent: None
 		}];
-		let output = check_for_errors(&input, &vec![]);
+		let output = check_for_errors(&input, &load_keys_test());
 		assert_eq!(output, Some(Error::EmptyParameter));
 	}
 }

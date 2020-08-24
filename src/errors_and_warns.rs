@@ -23,14 +23,7 @@ pub fn check_for_errors(nodes: &Vec<tree_creator::TreeNode>, keys: &Vec<Box<dyn 
 				let key_info = key.get_key_info();
 				if key_info.name == node.key {
 					//We have the correct key. Now check the parameter count
-					let mut is_correct = false;
-					for current_count in key_info.parameters_required {
-						if node.edited_parameter + 1 == current_count {
-							is_correct = true;
-							break;
-						}
-					}
-					if !is_correct {
+					if !key_info.parameters_required.contains(&(node.edited_parameter + 1)) {
 						return Some(Error::WrongAmountOfParameters);
 					}
 				}

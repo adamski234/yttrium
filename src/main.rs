@@ -8,7 +8,7 @@ use std::io::stdin;
 use std::io::Read;
 
 fn main() {
-	let key_list = key_loader::load_keys("abc");
+	let key_list = key_loader::load_keys("keys");
 	loop {
 		let mut input = String::new();
 		stdin()

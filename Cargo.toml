@@ -8,6 +8,7 @@ edition = "2018"
 
 [dependencies]
 key_base = { path = "./key_base" }
+libloading = "0.6"
 
 [workspace]
 members = [

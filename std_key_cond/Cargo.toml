@@ -1,18 +1,13 @@
 [package]
-name = "ars"
+name = "std_key_cond"
 version = "0.1.0"
 authors = ["adamski234 <adamski234@protonmail.com>"]
 edition = "2018"
 
+[lib]
+crate-type = ["cdylib"]
+
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-key_base = { path = "./key_base" }
-libloading = "0.6"
-
-[workspace]
-members = [
-    "ars_generator",
-    "key_base",
-    "std_key_cond",
-]
+key_base = { path = "../key_base" }

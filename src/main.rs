@@ -1,11 +1,8 @@
 #![allow(clippy::needless_return)] //I'm gonna use returns whether clippy likes it or not
-//use ars::errors_and_warns;
-use ars::tokenizer;
 use ars::tree_creator;
 use ars::key_loader;
 
 use std::io::stdin;
-use std::io::Read;
 
 fn main() {
 	let key_list = key_loader::load_keys("keys");

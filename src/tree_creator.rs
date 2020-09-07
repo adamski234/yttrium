@@ -187,8 +187,8 @@ mod tests {
 		info: key_base::KeyInfo,
 	}
 	impl key_base::Key for Key1 {
-		fn get_key_info(&self) -> key_base::KeyInfo {
-			return self.info.clone();
+		fn get_key_info(&self) -> &key_base::KeyInfo {
+			return &self.info;
 		}
 		fn get_key_function(&self) -> fn(parameter: &String) -> bool {
 			return self.function;

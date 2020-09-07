@@ -5,13 +5,15 @@ use key_base;
 type KeyCreateFunction = fn() -> *mut dyn key_base::Key;
 const KEY_CREATE_FUNCTION_NAME: &[u8] = b"key_create";
 
-//TODO actually implement loading. This is currently just a placeholder
-pub fn load_keys(directory: &str) -> Vec<Box<dyn key_base::Key>> {
+pub fn load_keys(directory: &str) -> Keys {
+	let mut keys = Keys {
+		keys: Vec::new(),
+		libraries: Vec::new(),
+	};
 	if directory.is_empty() {
 		panic!("Key location directory was empty");
 	}
 	let files = fs::read_dir(directory).expect("Key directory did not exist");
-	let mut keys = Vec::<Box<dyn key_base::Key>>::new();
 	for file in files {
 		let file = file.expect("Error while reading file");
 		let library = libloading::Library::new(file.path()).expect(&format!("Error while opening library at `{}`", file.path().to_str().unwrap()));
@@ -21,12 +23,13 @@ pub fn load_keys(directory: &str) -> Vec<Box<dyn key_base::Key>> {
 				file.path().to_str().unwrap(),
 				String::from_utf8(KEY_CREATE_FUNCTION_NAME.into()).unwrap())
 			);
-			keys.push(Box::from_raw(creator_function()));
+			keys.keys.push(Box::from_raw(creator_function()));
 		}
+		keys.libraries.push(library);
 	}
 	//Verification and information step
 	let mut to_remove = Vec::new();
-	for (index, key) in keys.iter().enumerate() {
+	for (index, key) in keys.keys.iter().enumerate() {
 		let key_info = key.get_key_info();
 		println!("Loaded key {}", key_info.name);
 		if key_info.parameters_required.is_empty() {
@@ -41,10 +44,15 @@ pub fn load_keys(directory: &str) -> Vec<Box<dyn key_base::Key>> {
 		}
 	}
 	for index in to_remove {
-		keys.remove(index);
+		keys.keys.remove(index);
 	}
-	if keys.is_empty() {
+	if keys.keys.is_empty() {
 		panic!("No valid keys were found in the key directory");
 	}
 	return keys;
+}
+
+pub struct Keys {
+	pub keys: Vec<Box<dyn key_base::Key>>,
+	pub libraries: Vec<libloading::Library>,
 }

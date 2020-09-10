@@ -183,19 +183,19 @@ pub struct TreeReturn {
 mod tests {
 	//Some basic definitions for testing
 	struct Key1 {
-		function: fn(parameter: &String) -> bool,
+		function: fn(parameter: &Vec<String>) -> bool,
 		info: key_base::KeyInfo,
 	}
 	impl key_base::Key for Key1 {
 		fn get_key_info(&self) -> &key_base::KeyInfo {
 			return &self.info;
 		}
-		fn get_key_function(&self) -> fn(parameter: &String) -> bool {
+		fn get_key_function(&self) -> fn(parameter: &Vec<String>) -> bool {
 			return self.function;
 		}
 	}
 	#[allow(dead_code)]
-	fn placeholder_fn(_param: &String) -> bool {
+	fn placeholder_fn(_param: &Vec<String>) -> bool {
 		return true;
 	}
 	fn load_keys_test() -> Vec<Box<dyn key_base::Key>> {

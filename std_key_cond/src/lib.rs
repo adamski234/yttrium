@@ -12,14 +12,14 @@ pub fn key_create() -> *mut dyn key_base::Key {
 	}));
 }
 
-fn cond(parameter: &String) -> bool {
-	println!("cock");
+fn cond(parameter: &Vec<String>) -> bool {
+	println!("placeholder");
 	return false;
 }
 
 struct Key {
 	key_info: key_base::KeyInfo,
-	function: fn(parameter: &String) -> bool
+	function: fn(parameter: &Vec<String>) -> bool
 }
 
 impl key_base::Key for Key {
@@ -27,7 +27,7 @@ impl key_base::Key for Key {
 		return &self.key_info;
 	}
 
-	fn get_key_function(&self) -> fn(parameter: &String) -> bool {
+	fn get_key_function(&self) -> fn(parameter: &Vec<String>) -> bool {
 		return self.function;
 	}
 }

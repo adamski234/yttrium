@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use crate::tree_creator;
 
 #[allow(dead_code)]
@@ -15,11 +16,11 @@ pub enum Warning {
 	UnclosedKeys,
 }
 
-pub fn check_for_errors(nodes: &Vec<tree_creator::TreeNode>, keys: &Vec<Box<dyn key_base::Key>>) -> Option<Error> {
+pub fn check_for_errors(nodes: &Vec<tree_creator::TreeNode>, keys: &HashMap<String, Box<dyn key_base::Key>>) -> Option<Error> {
 	for node in nodes {
 		//TODO implement the rest of errors and add tests
 		if node.is_editing_parameter {
-			for key in keys {
+			for key in keys.values() {
 				let key_info = key.get_key_info();
 				if key_info.name == node.key {
 					//We have the correct key. Now check the parameter count
@@ -36,7 +37,7 @@ pub fn check_for_errors(nodes: &Vec<tree_creator::TreeNode>, keys: &Vec<Box<dyn 
 				}
 			}
 		} else {
-			for key in keys {
+			for key in keys.values() {
 				let key_info = key.get_key_info();
 				if key_info.name == node.key {
 					if key_info.parameters_required[0] != 0 {
@@ -69,10 +70,10 @@ mod tests {
 	fn placeholder_fn(_param: &Vec<String>) -> bool {
 		return true;
 	}
-	fn load_keys_test() -> Vec<Box<dyn key_base::Key>> {
+	fn load_keys_test() -> HashMap<String, Box<dyn key_base::Key>> {
 		//let keys = Vec::new();
-		let mut keys = Vec::<Box<dyn key_base::Key>>::new();
-		keys.push(
+		let mut keys = HashMap::<String, Box<dyn key_base::Key>>::new();
+		keys.insert(String::from("abc"),
 			Box::new(Key1 {
 				function: placeholder_fn,
 				info: key_base::KeyInfo {
@@ -83,7 +84,7 @@ mod tests {
 				}
 			})
 		);
-		keys.push(
+		keys.insert(String::from("def"),
 			Box::new(Key1 {
 				function: placeholder_fn,
 				info: key_base::KeyInfo {
@@ -94,7 +95,7 @@ mod tests {
 				}
 			})
 		);
-		keys.push(
+		keys.insert(String::from("ghi"),
 			Box::new(Key1 {
 				function: placeholder_fn,
 				info: key_base::KeyInfo {
@@ -105,7 +106,7 @@ mod tests {
 				}
 			})
 		);
-		keys.push(
+		keys.insert(String::from("jkm"),
 			Box::new(Key1 {
 				function: placeholder_fn,
 				info: key_base::KeyInfo {
@@ -116,7 +117,7 @@ mod tests {
 				}
 			})
 		);
-		keys.push(
+		keys.insert(String::from("ab"),
 			Box::new(Key1 {
 				function: placeholder_fn,
 				info: key_base::KeyInfo {
@@ -127,7 +128,7 @@ mod tests {
 				}
 			})
 		);
-		keys.push(
+		keys.insert(String::from("bc"),
 			Box::new(Key1 {
 				function: placeholder_fn,
 				info: key_base::KeyInfo {

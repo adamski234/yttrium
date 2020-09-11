@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use crate::tokenizer;
 use crate::errors_and_warns;
 use key_base;
@@ -5,7 +6,7 @@ use key_base;
 type Id = usize;
 
 #[allow(dead_code)]
-pub fn create_ars_tree(ars_string: String, key_list: &Vec<Box<dyn key_base::Key>>) -> Result<TreeReturn, errors_and_warns::Error> {
+pub fn create_ars_tree(ars_string: String, key_list: &HashMap<String, Box<dyn key_base::Key>>) -> Result<TreeReturn, errors_and_warns::Error> {
 	/*
 	How things work:
 	node_list is a flat vector of all nodes in the tree.
@@ -198,10 +199,9 @@ mod tests {
 	fn placeholder_fn(_param: &Vec<String>) -> bool {
 		return true;
 	}
-	fn load_keys_test() -> Vec<Box<dyn key_base::Key>> {
-		//let keys = Vec::new();
-		let mut keys = Vec::<Box<dyn key_base::Key>>::new();
-		keys.push(
+	fn load_keys_test() -> HashMap<String, Box<dyn key_base::Key>> {
+		let mut keys = HashMap::<String, Box<dyn key_base::Key>>::new();
+		keys.insert(String::from("abc"),
 			Box::new(Key1 {
 				function: placeholder_fn,
 				info: key_base::KeyInfo {
@@ -212,7 +212,7 @@ mod tests {
 				}
 			})
 		);
-		keys.push(
+		keys.insert(String::from("def"),
 			Box::new(Key1 {
 				function: placeholder_fn,
 				info: key_base::KeyInfo {
@@ -223,7 +223,7 @@ mod tests {
 				}
 			})
 		);
-		keys.push(
+		keys.insert(String::from("ghi"),
 			Box::new(Key1 {
 				function: placeholder_fn,
 				info: key_base::KeyInfo {
@@ -234,7 +234,7 @@ mod tests {
 				}
 			})
 		);
-		keys.push(
+		keys.insert(String::from("jkm"),
 			Box::new(Key1 {
 				function: placeholder_fn,
 				info: key_base::KeyInfo {
@@ -245,7 +245,7 @@ mod tests {
 				}
 			})
 		);
-		keys.push(
+		keys.insert(String::from("ab"),
 			Box::new(Key1 {
 				function: placeholder_fn,
 				info: key_base::KeyInfo {
@@ -256,7 +256,7 @@ mod tests {
 				}
 			})
 		);
-		keys.push(
+		keys.insert(String::from("bc"),
 			Box::new(Key1 {
 				function: placeholder_fn,
 				info: key_base::KeyInfo {
@@ -273,7 +273,7 @@ mod tests {
 	use super::*;
 	#[test]
 	fn tree_small_nesting() {
-		let tested_string = String::from("{abc:{def:ghi}}");
+		let tested_string = String::from("{def:{def:abc}}");
 		let correct = vec![
 			TreeNode {
 				key: String::from("top"),
@@ -289,7 +289,7 @@ mod tests {
 				parent: None,
 			},
 			TreeNode {
-				key: String::from("abc"),
+				key: String::from("def"),
 				parameters: vec![
 					Parameter::Nodes(
 						vec![
@@ -307,7 +307,7 @@ mod tests {
 				key: String::from("def"),
 				parameters: vec![
 					Parameter::String(
-						String::from("ghi"),
+						String::from("abc"),
 					),
 				],
 				is_editing_parameter: true,
@@ -322,7 +322,7 @@ mod tests {
 	}
 	#[test]
 	fn tree_no_nesting_only_keys() {
-		let input = String::from("{abc}{def}{ghi}");
+		let input = String::from("{abc}{jkm}{abc}");
 		let correct = vec![
 			TreeNode {
 				key: String::from("top"),
@@ -349,7 +349,7 @@ mod tests {
 				),
 			},
 			TreeNode {
-				key: String::from("def"),
+				key: String::from("jkm"),
 				parameters: vec![],
 				is_editing_parameter: false,
 				edited_parameter: 0,
@@ -358,7 +358,7 @@ mod tests {
 				),
 			},
 			TreeNode {
-				key: String::from("ghi"),
+				key: String::from("abc"),
 				parameters: vec![],
 				is_editing_parameter: false,
 				edited_parameter: 0,
@@ -372,7 +372,7 @@ mod tests {
 	}
 	#[test]
 	fn tree_nesting() {
-		let input = String::from("abc{def}{ghi:jkm}{abc:{def:ghi}}");
+		let input = String::from("abc{abc}{ghi:jkm}{bc:{def:ghi}}");
 		let correct_output = vec![
 			TreeNode {
 				key: String::from("top"),
@@ -404,7 +404,7 @@ mod tests {
 				),
 			},
 			TreeNode {
-				key: String::from("def"),
+				key: String::from("abc"),
 				parameters: vec![],
 				is_editing_parameter: false,
 				edited_parameter: 0,
@@ -426,7 +426,7 @@ mod tests {
 				),
 			},
 			TreeNode {
-				key: String::from("abc"),
+				key: String::from("bc"),
 				parameters: vec![
 					Parameter::Nodes(
 						vec![

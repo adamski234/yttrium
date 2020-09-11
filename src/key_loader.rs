@@ -1,13 +1,15 @@
 use std::fs;
 use key_base;
+use std::collections::HashMap;
 
 //TODO: document this being a raw pointer. VERY IMPORTANT
 type KeyCreateFunction = fn() -> *mut dyn key_base::Key;
 const KEY_CREATE_FUNCTION_NAME: &[u8] = b"key_create";
 
 pub fn load_keys(directory: &str) -> Keys {
+	let mut keys_vec = Vec::new();
 	let mut keys = Keys {
-		keys: Vec::new(),
+		keys: HashMap::new(), //HashMap ordered by the key name
 		libraries: Vec::new(),
 	};
 	if directory.is_empty() {
@@ -39,13 +41,13 @@ pub fn load_keys(directory: &str) -> Keys {
 				continue;
 			}
 			let creator_function = creator_function.unwrap();
-			keys.keys.push(Box::from_raw(creator_function()));
+			keys_vec.push(Box::from_raw(creator_function()));
 			keys.libraries.push(library);
 		}
 	}
 	//Verification and information step
 	let mut to_remove = Vec::new();
-	for (index, key) in keys.keys.iter().enumerate() {
+	for (index, key) in keys_vec.iter().enumerate() {
 		let key_info = key.get_key_info();
 		println!("Loaded key {}", key_info.name);
 		if key_info.parameters_required.is_empty() {
@@ -60,15 +62,19 @@ pub fn load_keys(directory: &str) -> Keys {
 		}
 	}
 	for index in to_remove {
-		keys.keys.remove(index);
+		keys_vec.remove(index);
 	}
-	if keys.keys.is_empty() {
+	if keys_vec.is_empty() {
 		panic!("No valid keys were found in the key directory");
+	}
+	for key in keys_vec {
+		let name = &key.get_key_info().name;
+		keys.keys.insert(name.into(), key);
 	}
 	return keys;
 }
 
 pub struct Keys {
-	pub keys: Vec<Box<dyn key_base::Key>>,
+	pub keys: HashMap<String, Box<dyn key_base::Key>>,
 	pub libraries: Vec<libloading::Library>,
 }

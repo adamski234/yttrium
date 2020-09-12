@@ -12,7 +12,7 @@ pub fn key_create() -> *mut dyn key_base::Key {
 	}));
 }
 
-fn cond(parameter: &Vec<String>, environment: &key_base::environment::Environment) -> String {
+fn cond(_parameter: &Vec<String>, _environment: &key_base::environment::Environment) -> String {
 	println!("placeholder");
 	return String::from("test");
 }

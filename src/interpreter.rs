@@ -1,6 +1,6 @@
 use std::collections::HashMap;
-use crate::tree_creator;
 use key_base::environment::Environment;
+use crate::tree_creator;
 
 pub fn interpret_tree(tree: Vec<tree_creator::TreeNode>, key_list: &HashMap<String, Box<dyn key_base::Key>>, environment: &mut Environment) -> InterpretationResult {
 	let mut current_index = 0;
@@ -14,8 +14,16 @@ pub fn interpret_tree(tree: Vec<tree_creator::TreeNode>, key_list: &HashMap<Stri
 	}
 	//Remember: no recursion
 	loop {
+		//Check if key is finished and execute with params
 		if interpretable_tree[current_index].interpreted_param == interpretable_tree[current_index].inner_node.parameters.len() - 1 {
 			let result = key_list.get(&interpretable_tree[current_index].inner_node.key).unwrap().get_key_function()(&interpretable_tree[current_index].returned_values, environment);
+			if interpretable_tree[current_index].inner_node.parent.is_none() {
+				#[cfg(debug_assertions)]
+				println!("breaking because no parent");
+				break;
+			}
+			current_index = interpretable_tree[current_index].inner_node.parent.unwrap();
+			interpretable_tree[current_index].returned_values.push(result);
 		}
 		break;
 	}

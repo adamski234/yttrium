@@ -7,7 +7,6 @@ use std::collections::HashMap;
 #[path = "./key_loader.rs"] pub mod key_loader;
 #[path = "./tree_creator.rs"] pub mod tree_creator; //#[path] allows to load a module from an arbitrary part
 #[path ="./interpreter.rs"] pub mod interpreter;
-#[path ="./environment.rs"] pub mod environment;
 
 
 pub fn run_ars_string(ars_string: String, key_list: &HashMap<String, Box<dyn key_base::Key>>) {

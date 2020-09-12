@@ -12,14 +12,14 @@ pub fn key_create() -> *mut dyn key_base::Key {
 	}));
 }
 
-fn cond(parameter: &Vec<String>) -> bool {
+fn cond(parameter: &Vec<String>, environment: &key_base::environment::Environment) -> String {
 	println!("placeholder");
-	return false;
+	return String::from("test");
 }
 
 struct Key {
 	key_info: key_base::KeyInfo,
-	function: fn(parameter: &Vec<String>) -> bool
+	function: fn(&Vec<String>, &key_base::environment::Environment) -> String
 }
 
 impl key_base::Key for Key {
@@ -27,7 +27,7 @@ impl key_base::Key for Key {
 		return &self.key_info;
 	}
 
-	fn get_key_function(&self) -> fn(parameter: &Vec<String>) -> bool {
+	fn get_key_function(&self) -> fn(&Vec<String>, &key_base::environment::Environment) -> String {
 		return self.function;
 	}
 }

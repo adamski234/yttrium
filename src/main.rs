@@ -12,8 +12,7 @@ fn main() {
 		stdin()
 			.read_line(&mut input)
 			.expect("An error has happened while reading from the console");
-		println!("{:#?}", tree_creator::create_ars_tree(input, &load_keys_test()).unwrap().tree);
-		//key_loader::load_keys("directory: &str");
+		println!("{:#?}", ars::run_ars_string(input.trim().into(), &load_keys_test()));
 	}
 }
 

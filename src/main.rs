@@ -21,7 +21,9 @@ fn load_keys_test() -> HashMap<String, Box<dyn key_base::Key>> {
 	let mut keys = HashMap::<String, Box<dyn key_base::Key>>::new();
 	keys.insert(String::from("abc"),
 		Box::new(Key1 {
-			function: placeholder_fn,
+			function: |_param, _env| {
+				return String::from("abc");
+			},
 			info: key_base::KeyInfo {
 				parameters_required: vec![0],
 				name: String::from("abc"),
@@ -32,7 +34,11 @@ fn load_keys_test() -> HashMap<String, Box<dyn key_base::Key>> {
 	);
 	keys.insert(String::from("def"),
 		Box::new(Key1 {
-			function: placeholder_fn,
+			function: |param, _env| {
+				let mut returned = String::from("def:");
+				returned.push_str(&param.join("|"));
+				return returned;
+			},
 			info: key_base::KeyInfo {
 				parameters_required: vec![1],
 				name: String::from("def"),
@@ -43,7 +49,11 @@ fn load_keys_test() -> HashMap<String, Box<dyn key_base::Key>> {
 	);
 	keys.insert(String::from("ghi"),
 		Box::new(Key1 {
-			function: placeholder_fn,
+			function: |param, _env| {
+				let mut returned = String::from("ghi:");
+				returned.push_str(&param.join("|"));
+				return returned;
+			},
 			info: key_base::KeyInfo {
 				parameters_required: vec![0, 1, 3],
 				name: String::from("ghi"),
@@ -54,7 +64,9 @@ fn load_keys_test() -> HashMap<String, Box<dyn key_base::Key>> {
 	);
 	keys.insert(String::from("jkm"),
 		Box::new(Key1 {
-			function: placeholder_fn,
+			function: |_param, _env| {
+				return String::from("jkm");
+			},
 			info: key_base::KeyInfo {
 				parameters_required: vec![0],
 				name: String::from("jkm"),
@@ -65,7 +77,11 @@ fn load_keys_test() -> HashMap<String, Box<dyn key_base::Key>> {
 	);
 	keys.insert(String::from("ab"),
 		Box::new(Key1 {
-			function: placeholder_fn,
+			function: |param, _env| {
+				let mut returned = String::from("ab:");
+				returned.push_str(&param.join("|"));
+				return returned;
+			},
 			info: key_base::KeyInfo {
 				parameters_required: vec![2],
 				name: String::from("ab"),
@@ -76,7 +92,11 @@ fn load_keys_test() -> HashMap<String, Box<dyn key_base::Key>> {
 	);
 	keys.insert(String::from("bc"),
 		Box::new(Key1 {
-			function: placeholder_fn,
+			function: |param, _env| {
+				let mut returned = String::from("bc:");
+				returned.push_str(&param.join("|"));
+				return returned;
+			},
 			info: key_base::KeyInfo {
 				parameters_required: vec![1, 2],
 				name: String::from("bc"),
@@ -98,8 +118,4 @@ impl key_base::Key for Key1 {
 	fn get_key_function(&self) -> fn(&Vec<String>, &key_base::environment::Environment) -> String {
 		return self.function;
 	}
-}
-#[allow(dead_code)]
-fn placeholder_fn(_param: &Vec<String>, _env: &key_base::environment::Environment) -> String {
-	return String::from("abc");
 }

@@ -2,7 +2,7 @@ use std::collections::HashMap;
 use key_base::environment::Environment;
 use crate::tree_creator;
 
-pub fn interpret_tree(tree: Vec<tree_creator::TreeNode>, key_list: &HashMap<String, Box<dyn key_base::Key>>, environment: &mut Environment) -> InterpretationResult {
+pub fn interpret_tree(tree: Vec<tree_creator::TreeNode>, key_list: &HashMap<String, Box<dyn key_base::Key>>, mut environment: Environment) -> InterpretationResult {
 	let mut current_index = 0; //Pointer to the currently interpreted node
 	let mut interpretable_tree = Vec::with_capacity(tree.len());
 	let mut next_rule = None;
@@ -118,7 +118,7 @@ pub fn interpret_tree(tree: Vec<tree_creator::TreeNode>, key_list: &HashMap<Stri
 						next_rule = Some(current_node.returned_values.join(""));
 						returned = String::new();
 					} else {
-						returned = key_list.get(&current_node.inner_node.key).unwrap().get_key_function()(&current_node.returned_values, environment);
+						returned = key_list.get(&current_node.inner_node.key).unwrap().get_key_function()(&current_node.returned_values, &mut environment);
 					}
 					current_index = parent;
 					current_node = &mut interpretable_tree[current_index];
@@ -163,12 +163,9 @@ pub fn interpret_tree(tree: Vec<tree_creator::TreeNode>, key_list: &HashMap<Stri
 #[derive(Debug)]
 pub struct InterpretationResult {
 	pub message: String,
-	pub embed: Option<Embed>,
+	pub embed: Option<key_base::environment::Embed>,
 	pub next_rule: Option<String>,
 }
-
-#[derive(Debug)]
-pub struct Embed;
 
 struct InterpretableNode {
 	pub inner_node: tree_creator::TreeNode,

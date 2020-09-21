@@ -9,11 +9,26 @@ use std::collections::HashMap;
 #[path ="./interpreter.rs"] pub mod interpreter;
 
 
-pub fn run_ars_string(ars_string: String, key_list: &HashMap<String, Box<dyn key_base::Key>>) -> interpreter::InterpretationResult {
-	let tree = tree_creator::create_ars_tree(ars_string, key_list).unwrap().tree; //TODO: return warnings and errors
-	return run_ars_tree(tree, key_list);
+pub fn run_ars_string(ars_string: String, key_list: &HashMap<String, Box<dyn key_base::Key>>) -> Result<ResultAndWarnings, errors_and_warns::Error> {
+	match tree_creator::create_ars_tree(ars_string, key_list) {
+	    Ok(tree) => {
+			return Ok(ResultAndWarnings {
+				result: run_ars_tree(tree.tree, key_list),
+				warnings: tree.warnings,
+			});
+		}
+	    Err(error) => {
+			return Err(error);
+		}
+	}
 }
 
 pub fn run_ars_tree(tree: Vec<tree_creator::TreeNode>, key_list: &HashMap<String, Box<dyn key_base::Key>>) -> interpreter::InterpretationResult {
 	return interpreter::interpret_tree(tree, key_list, &mut key_base::environment::Environment::new());
+}
+
+#[derive(Debug)]
+pub struct ResultAndWarnings {
+	pub result: interpreter::InterpretationResult,
+	pub warnings: Option<Vec<errors_and_warns::Warning>>,
 }

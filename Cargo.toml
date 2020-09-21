@@ -14,5 +14,4 @@ libloading = "0.6"
 members = [
     "ars_generator",
     "key_base",
-    "std_key_cond",
 ]

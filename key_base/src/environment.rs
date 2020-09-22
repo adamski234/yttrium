@@ -1,65 +1,36 @@
+use crate::embed;
+use crate::databases;
+
 pub struct Environment {
-	pub embed: Option<Embed>,
-	pub database_manager: DatabaseManager,
+	pub embed: Option<embed::Embed>,
+	pub database_manager: databases::DatabaseManager,
 	pub target: String, //Default is the channel in which the bot was triggered
+	pub channel_id: String,
 	pub guild_id: String,
 	pub message_id: String,
 	pub user_id: String,
-	//TODO: Add user who triggered, the trigger, attachments, etc
+	pub attachments: Vec<String>, //For the attachments to send in url form
+	pub trigger: String,
+	pub event_info: EventInfo,
 }
 
-//This is gonna have A LOT of functions
 impl Environment {
-	pub fn new(message_id: String, trigger_channel: String, guild_id: String, user_id: String) -> Self {
+	pub fn new(message_id: String, trigger_channel: String, guild_id: String, user_id: String, trigger: String) -> Self {
 		return Self {
 			embed: None,
 			message_id: message_id,
-			target: trigger_channel,
+			target: trigger_channel.clone(),
+			channel_id: trigger_channel,
 			guild_id: guild_id.clone(),
 			user_id: user_id,
-			database_manager: DatabaseManager::new(guild_id),
+			database_manager: databases::DatabaseManager::new(guild_id),
+			attachments: Vec::new(),
+			trigger: trigger,
+			event_info: EventInfo::Default,
 		};
 	}
 }
-
 #[derive(Debug)]
-pub struct Embed;
-
-impl Embed {
-	pub fn new() -> Self {
-		return Self {};
-	}
-}
-
-#[derive(Debug)]
-pub struct DatabaseManager {
-	pub guild_id: String,
-}
-
-//This will be an issue with multiple people trying to write to a single database at the same time
-impl DatabaseManager {
-	pub fn new(guild_id: String) -> Self {
-		return Self {
-			guild_id
-		};
-	}
-	pub fn get_database(&self, name: String) -> Database {
-		todo!();
-	}
-}
-
-#[derive(Debug)]
-pub struct Database;
-
-impl Database {
-	pub fn new() -> Self {
-		return Self {};
-	}
-	//TODO: Arrays?
-	pub fn get_key(&self, name: String) -> Option<String> {
-		todo!();
-	}
-	pub fn write_key(&mut self, name: String, value: String) {
-		todo!();
-	}
+pub enum EventInfo {
+	Default,
 }

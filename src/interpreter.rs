@@ -163,7 +163,7 @@ pub fn interpret_tree(tree: Vec<tree_creator::TreeNode>, key_list: &HashMap<Stri
 #[derive(Debug)]
 pub struct InterpretationResult {
 	pub message: String,
-	pub embed: Option<key_base::environment::Embed>,
+	pub embed: Option<key_base::embed::Embed>,
 	pub next_rule: Option<String>,
 }
 

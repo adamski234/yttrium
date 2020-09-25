@@ -9,11 +9,11 @@ use std::collections::HashMap;
 #[path ="./interpreter.rs"] pub mod interpreter;
 
 
-pub fn run_ars_string(ars_string: String, key_list: &HashMap<String, Box<dyn key_base::Key>>, guild_id: String, trigger_channel: String, message_id: String, user_id: String, trigger: String) -> Result<ResultAndWarnings, errors_and_warns::Error> {
+pub fn run_ars_string(ars_string: String, key_list: &HashMap<String, Box<dyn key_base::Key>>, event_info: key_base::environment::events::EventType, guild_id: String) -> Result<ResultAndWarnings, errors_and_warns::Error> {
 	match tree_creator::create_ars_tree(ars_string, key_list) {
 	    Ok(tree) => {
 			return Ok(ResultAndWarnings {
-				result: run_ars_tree(tree.tree, key_list, message_id, trigger_channel, guild_id, user_id, trigger),
+				result: run_ars_tree(tree.tree, key_list, event_info, guild_id),
 				warnings: tree.warnings,
 			});
 		}
@@ -23,8 +23,8 @@ pub fn run_ars_string(ars_string: String, key_list: &HashMap<String, Box<dyn key
 	}
 }
 
-pub fn run_ars_tree(tree: Vec<tree_creator::TreeNode>, key_list: &HashMap<String, Box<dyn key_base::Key>>, guild_id: String, trigger_channel: String, message_id: String, user_id: String, trigger: String) -> interpreter::InterpretationResult {
-	return interpreter::interpret_tree(tree, key_list, key_base::environment::Environment::new(message_id, trigger_channel, guild_id, user_id, trigger));
+pub fn run_ars_tree(tree: Vec<tree_creator::TreeNode>, key_list: &HashMap<String, Box<dyn key_base::Key>>, event_info: key_base::environment::events::EventType, guild_id: String) -> interpreter::InterpretationResult {
+	return interpreter::interpret_tree(tree, key_list, key_base::environment::Environment::new(event_info, guild_id));
 }
 
 #[derive(Debug)]

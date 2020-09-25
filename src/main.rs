@@ -12,7 +12,7 @@ fn main() {
 		stdin()
 			.read_line(&mut input)
 			.expect("An error has happened while reading from the console");
-		println!("{:#?}", ars::run_ars_string(input.trim().into(), &load_keys_test(), String::new(), String::new(), String::new(), String::new(), String::new())); //This will crash when I'm done
+		println!("{:#?}", ars::run_ars_string(input.trim().into(), &load_keys_test(), key_base::environment::events::EventType::Default, String::new(), )); //This will crash when I'm done
 	}
 }
 

@@ -56,9 +56,6 @@ pub fn load_keys(directory: &str) -> Keys {
 		} else if !key_info.parameters_required.is_sorted() {
 			to_remove.push(index - to_remove.len());
 			println!("Key {} had `parameters_required` not sorted", key_info.name);
-		} else if key_info.parameters_required.len() == 1 && key_info.parameters_required[0] != 0 && key_info.allowed_key_names.len() == 0 {
-			to_remove.push(index - to_remove.len());
-			println!("Key {} had `allowed_key_names` empty", key_info.name);
 		}
 	}
 	for index in to_remove {

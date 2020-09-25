@@ -207,8 +207,6 @@ mod tests {
 				info: key_base::KeyInfo {
 					parameters_required: vec![0],
 					name: String::from("abc"),
-					opcode: 0,
-					allowed_key_names: vec![String::from("*")],
 				}
 			})
 		);
@@ -218,8 +216,6 @@ mod tests {
 				info: key_base::KeyInfo {
 					parameters_required: vec![1],
 					name: String::from("def"),
-					opcode: 0,
-					allowed_key_names: vec![String::from("*")],
 				}
 			})
 		);
@@ -229,8 +225,6 @@ mod tests {
 				info: key_base::KeyInfo {
 					parameters_required: vec![0, 1, 3],
 					name: String::from("ghi"),
-					opcode: 0,
-					allowed_key_names: vec![String::from("*")],
 				}
 			})
 		);
@@ -240,8 +234,6 @@ mod tests {
 				info: key_base::KeyInfo {
 					parameters_required: vec![0],
 					name: String::from("jkm"),
-					opcode: 0,
-					allowed_key_names: vec![String::from("*")],
 				}
 			})
 		);
@@ -251,8 +243,6 @@ mod tests {
 				info: key_base::KeyInfo {
 					parameters_required: vec![2],
 					name: String::from("ab"),
-					opcode: 0,
-					allowed_key_names: vec![String::from("*")],
 				}
 			})
 		);
@@ -262,8 +252,6 @@ mod tests {
 				info: key_base::KeyInfo {
 					parameters_required: vec![1, 2],
 					name: String::from("bc"),
-					opcode: 0,
-					allowed_key_names: vec![String::from("*")],
 				}
 			})
 		);

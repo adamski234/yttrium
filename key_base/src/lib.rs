@@ -11,6 +11,4 @@ pub trait Key {
 pub struct KeyInfo {
 	pub parameters_required: Vec<usize>,
 	pub name: String,
-	pub opcode: u8,
-	pub allowed_key_names: Vec<String>,
 }

@@ -1,6 +1,8 @@
 use crate::embed;
 use crate::databases;
+#[path = "./events.rs"] pub mod events;
 
+#[derive(Debug)]
 pub struct Environment {
 	pub embed: Option<embed::Embed>,
 	pub database_manager: databases::DatabaseManager,
@@ -11,7 +13,7 @@ pub struct Environment {
 	pub user_id: String,
 	pub attachments: Vec<String>, //For the attachments to send in url form
 	pub trigger: String,
-	pub event_info: EventInfo,
+	pub event_info: events::EventInfo,
 }
 
 impl Environment {
@@ -26,11 +28,7 @@ impl Environment {
 			database_manager: databases::DatabaseManager::new(guild_id),
 			attachments: Vec::new(),
 			trigger: trigger,
-			event_info: EventInfo::Default,
+			event_info: events::EventInfo::Default,
 		};
 	}
-}
-#[derive(Debug)]
-pub enum EventInfo {
-	Default,
 }

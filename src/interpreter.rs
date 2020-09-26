@@ -117,6 +117,8 @@ pub fn interpret_tree(tree: Vec<tree_creator::TreeNode>, key_list: &HashMap<Stri
 					if current_node.inner_node.key == "ars" {
 						next_rule = Some(current_node.returned_values.join(""));
 						returned = String::new();
+					} else if current_node.inner_node.key == "literal" {
+						returned = current_node.returned_values[0].clone();
 					} else {
 						returned = key_list.get(&current_node.inner_node.key).unwrap().get_key_function()(&current_node.returned_values, &mut environment);
 					}

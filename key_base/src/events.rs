@@ -1,4 +1,3 @@
-//This sadly ties the parser too strongly to the platform it's supposed to work on
 #[derive(Debug)]
 pub enum EventType {
 	Default,

@@ -6,6 +6,7 @@ version = "0.1.0"
 dependencies = [
  "key_base",
  "libloading",
+ "serde_json",
 ]
 
 [[package]]

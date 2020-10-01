@@ -1,3 +1,5 @@
+//This is a binary made specifically for testing and should be removed at some point
+
 #![allow(clippy::needless_return)] //I'm gonna use returns whether clippy likes it or not
 use std::collections::HashMap;
 use ars::tree_creator;
@@ -6,13 +8,13 @@ use ars::key_loader;
 use std::io::stdin;
 
 fn main() {
-	let key_list = key_loader::load_keys("keys");
 	loop {
 		let mut input = String::new();
 		stdin()
 			.read_line(&mut input)
 			.expect("An error has happened while reading from the console");
-		println!("{:#?}", ars::run_ars_string(input.trim().into(), &load_keys_test(), key_base::environment::events::EventType::Default, String::new(), )); //This will crash when I'm done
+		//println!("{:#?}", ars::run_ars_string(input.trim().into(), &load_keys_test(), key_base::environment::events::EventType::Default, String::new(), )); //This will crash when I'm done
+		println!("{:#?}", key_base::databases::Database::new_from_value(serde_json::from_str(&input).unwrap()));
 	}
 }
 

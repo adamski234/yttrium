@@ -1,7 +1,7 @@
 use std::fs;
 use std::collections::HashMap;
 
-static database_dir: &str = "./databases/";
+const DATABASE_DIR: &str = "./databases/";
 
 #[derive(Debug)]
 pub struct DatabaseManager {
@@ -12,15 +12,15 @@ pub struct DatabaseManager {
 impl DatabaseManager {
 	pub fn new(guild_id: String) -> Self {
 		//Converts a json file to a HashMap<String, Database>
-		match std::fs::read(format!("{}{}.json", database_dir, guild_id)) {
-		    Ok(value) => {
+		match fs::read(format!("{}{}.json", DATABASE_DIR, guild_id)) {
+			Ok(value) => {
 				//Convert the file
 				let values: serde_json::Value = serde_json::from_str(&String::from_utf8(value).unwrap()).unwrap();
 				match values {
 					serde_json::Value::Object(value) => {
-						let mut map = HashMap::new();
+						let mut map = HashMap::with_capacity(value.len());
 						for (db_name, db_value) in value.into_iter() {
-							map.insert(db_name, value_into_database(db_value));
+							map.insert(db_name, Database::new_from_value(db_value));
 						}
 					}
 					_ => {
@@ -28,16 +28,16 @@ impl DatabaseManager {
 					}
 				}
 			}
-		    Err(error) => {
+			Err(error) => {
 				//Create a new JSON file if it doesn't exist
 			}
 		}
 		return Self { guild_id };
 	}
-	pub fn get_database(&self, name: String) -> Option<&mut Database> {
+	pub fn get_database(&mut self, name: String) -> Option<&mut Database> {
 		todo!();
 	}
-	pub fn create_database(&self, name: String) -> &mut Database {
+	pub fn create_database(&mut self, name: String) -> &mut Database {
 		todo!();
 	}
 	pub fn write(&self) {
@@ -45,12 +45,51 @@ impl DatabaseManager {
 	}
 }
 
-#[derive(Debug)]
-pub struct Database;
+#[derive(Debug, PartialEq)]
+pub struct Database {
+	pub values: HashMap<String, StringOrArray>,
+}
 
 impl Database {
-	pub fn new() -> Self {
-		return Self {};
+	//TODO: Major!! Remove the panics and just ignore invalid values
+	pub fn new_from_value(value: serde_json::Value) -> Self {
+		let mut result = Self {
+			values: HashMap::new(),
+		};
+		match value {
+			serde_json::Value::Object(object) => {
+				let mut map = HashMap::with_capacity(object.len());
+				for (name, value) in object {
+					match value {
+						serde_json::Value::String(text) => {
+							map.insert(name, StringOrArray::String(text));
+						}
+						serde_json::Value::Array(array) => {
+							let mut values = Vec::with_capacity(array.len());
+							for entry in array {
+								match entry {
+									serde_json::Value::String(text) => {
+										values.push(text);
+									}
+									_ => {
+										panic!("Array didn't only contain strings");
+									}
+								};
+							}
+							map.insert(name, StringOrArray::Array(values));
+						}
+						_ => {
+							panic!("Database entry was not a string nor array of strings");
+						}
+					};
+				}
+				result.values = map;
+			}
+			_ => {
+				panic!("new_from_value: value passed wasn't an object");
+			}
+		};
+		return result;
 	}
 	//TODO: Arrays?
 	pub fn get_key(&self, name: String) -> Option<String> {
@@ -61,6 +100,24 @@ impl Database {
 	}
 }
 
-fn value_into_database(value: serde_json::Value) -> Database {
-	todo!();
+#[derive(Debug, PartialEq)]
+pub enum StringOrArray {
+	String(String),
+	Array(Vec<String>),
+}
+
+#[cfg(test)]
+mod tests {
+	#[test]
+	fn simple_database() {
+		use crate::databases::*;
+		let input = r#"{"string_value": "string", "array_value": ["entry1", "entry2"]} "#;
+		let mut correct_output = Database {
+			values: HashMap::new(),
+		};
+		correct_output.values.insert(String::from("string_value"), StringOrArray::String(String::from("string")));
+		correct_output.values.insert(String::from("array_value"), StringOrArray::Array(vec![String::from("entry1"), String::from("entry2")]));
+		let output = Database::new_from_value(serde_json::from_str(input).unwrap());
+		assert_eq!(correct_output, output);
+	}
 }

@@ -17,8 +17,8 @@ impl Environment {
 		return Self {
 			embed: None,
 			target: String::new(),
-			guild_id: guild_id.clone(),
-			database_manager: databases::DatabaseManager::new(guild_id),
+			database_manager: databases::DatabaseManager::new(&guild_id),
+			guild_id: guild_id,
 			attachments: Vec::new(),
 			event_info: event_info,
 		};

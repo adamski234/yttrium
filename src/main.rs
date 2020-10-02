@@ -14,7 +14,11 @@ fn main() {
 			.read_line(&mut input)
 			.expect("An error has happened while reading from the console");
 		//println!("{:#?}", ars::run_ars_string(input.trim().into(), &load_keys_test(), key_base::environment::events::EventType::Default, String::new(), )); //This will crash when I'm done
-		println!("{:#?}", key_base::databases::Database::new_from_value(serde_json::from_str(&input).unwrap()));
+		input = input.trim().to_string();
+		let mut manager = key_base::databases::DatabaseManager::new(&input);
+		manager.create_database(&String::from("test"));
+		println!("{:#?}", manager);
+		manager.write();
 	}
 }
 

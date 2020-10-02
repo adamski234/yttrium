@@ -22,7 +22,7 @@ impl DatabaseManager {
 			}
 			Err(error) => {
 				match error.kind() {
-				    std::io::ErrorKind::NotFound => {
+					std::io::ErrorKind::NotFound => {
 						//Create a new JSON file if it doesn't exist
 						let mut file = fs::File::create(format!("{}{}.json", DATABASE_DIR, guild_id)).unwrap();
 						file.write(b"{}").unwrap();
@@ -32,7 +32,7 @@ impl DatabaseManager {
 						};
 						return empty_manager;
 					}
-				    std::io::ErrorKind::PermissionDenied => {
+					std::io::ErrorKind::PermissionDenied => {
 						panic!("Permission denied on file {}{}.json", DATABASE_DIR, guild_id);
 					}
 					_ => {
@@ -62,27 +62,56 @@ impl DatabaseManager {
 		}
 		return result;
 	}
-	pub fn get_database(&mut self, name: String) -> Option<&mut Database> {
-		todo!();
+	pub fn get_database(&mut self, name: &String) -> Option<&mut Database> {
+		return self.databases.get_mut(name);
 	}
-	pub fn create_database(&mut self, name: String) -> &mut Database {
-		todo!();
+	///Creates a database if it doesn't exist and returns it, otherwise returns a pre-existing database
+	pub fn create_database(&mut self, name: &String) -> &mut Database {
+		if self.databases.contains_key(name) {
+			return self.databases.get_mut(name).unwrap();
+		} else {
+			self.databases.insert(name.clone(), Database::new_empty());
+			return self.databases.get_mut(name).unwrap();
+		}
 	}
-	pub fn write(&self) {
-		todo!();
+	///This serializes the databases and saves them into the file
+	pub fn write(self) {
+		let mut result = HashMap::new();
+		for (name, db) in self.databases {
+			let db_values = db.get_values();
+			let mut serialized_db = HashMap::with_capacity(db_values.len());
+			for (value_name, value) in db_values {
+				match value {
+				    StringOrArray::String(string) => {
+						serialized_db.insert(value_name, serde_json::Value::String(string));
+					}
+				    StringOrArray::Array(array) => {
+						let mut new_array = Vec::with_capacity(array.len());
+						for item in array {
+							new_array.push(serde_json::Value::String(item));
+						}
+						serialized_db.insert(value_name, serde_json::Value::Array(new_array));
+					}
+				}
+			}
+			result.insert(name, serialized_db);
+		}
+		fs::write(format!("{}{}.json", DATABASE_DIR, self.guild_id), serde_json::to_string(&result).unwrap()).unwrap();
 	}
 }
-
 #[derive(Debug, PartialEq)]
 pub struct Database {
 	values: HashMap<String, StringOrArray>,
 }
 
 impl Database {
-	pub fn new_from_value(value: serde_json::Value) -> Self {
-		let mut result = Self {
+	pub fn new_empty() -> Self {
+		return Self {
 			values: HashMap::new(),
 		};
+	}
+	pub fn new_from_value(value: serde_json::Value) -> Self {
+		let mut result = Self::new_empty();
 		match value {
 			serde_json::Value::Object(object) => {
 				for (name, value) in object {
@@ -141,6 +170,9 @@ impl Database {
 	pub fn write_key(&mut self, name: String, value: String) {
 		todo!();
 	}
+	pub(crate) fn get_values(self) -> HashMap<String, StringOrArray> {
+		return self.values;
+	}
 }
 
 #[derive(Debug, PartialEq)]
@@ -162,5 +194,18 @@ mod tests {
 		correct_output.values.insert(String::from("array_value"), StringOrArray::Array(vec![String::from("entry1"), String::from("entry2")]));
 		let output = Database::new_from_value(serde_json::from_str(input).unwrap());
 		assert_eq!(correct_output, output);
+	}
+	#[test]
+	fn simple_manager() {
+		use crate::databases::*;
+		let input = r#"{"db1": {"string_value": "string", "array_value": ["entry1", "entry2"]}}"#;
+		let guild_id = String::from("abc");
+		let mut correct_hashmap = HashMap::new();
+		//This bases on `simple_database` succeeding
+		correct_hashmap.insert(String::from("db1"), Database::new_from_value(serde_json::from_str(r#"{"string_value": "string", "array_value": ["entry1", "entry2"]}"#).unwrap()));
+		let mut correct_output = DatabaseManager {
+			guild_id: guild_id,
+			databases: HashMap::new(),
+		};
 	}
 }

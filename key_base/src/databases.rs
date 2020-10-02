@@ -75,7 +75,7 @@ impl DatabaseManager {
 
 #[derive(Debug, PartialEq)]
 pub struct Database {
-	pub values: HashMap<String, StringOrArray>,
+	values: HashMap<String, StringOrArray>,
 }
 
 impl Database {

@@ -3,7 +3,6 @@
 use std::collections::HashMap;
 
 #[path = "./errors_and_warns.rs"] pub mod errors_and_warns;
-#[path = "./tokenizer.rs"] mod tokenizer;
 #[path = "./key_loader.rs"] pub mod key_loader;
 #[path = "./tree_creator.rs"] pub mod tree_creator; //#[path] allows to load a module from an arbitrary part
 #[path ="./interpreter.rs"] pub mod interpreter;

@@ -1,5 +1,5 @@
 use std::collections::HashMap;
-use crate::tokenizer;
+#[path = "./tokenizer.rs"] mod tokenizer;
 use crate::errors_and_warns;
 use key_base;
 

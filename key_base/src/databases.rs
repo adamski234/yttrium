@@ -74,6 +74,9 @@ impl DatabaseManager {
 			return self.databases.get_mut(name).unwrap();
 		}
 	}
+	pub fn remove_database(&mut self, name: &String) {
+		self.databases.remove_entry(name);
+	}
 	///This serializes the databases and saves them into the file
 	pub fn write(self) {
 		let mut result = HashMap::new();
@@ -98,6 +101,12 @@ impl DatabaseManager {
 		}
 		fs::write(format!("{}{}.json", DATABASE_DIR, self.guild_id), serde_json::to_string(&result).unwrap()).unwrap();
 	}
+}
+
+impl PartialEq for DatabaseManager {
+    fn eq(&self, other: &Self) -> bool {
+        return self.databases == other.databases;
+    }
 }
 #[derive(Debug, PartialEq)]
 pub struct Database {
@@ -164,18 +173,31 @@ impl Database {
 		};
 		return result;
 	}
-	pub fn get_key(&self, name: String) -> Option<String> {
-		todo!();
+	pub fn get_key(&self, name: &String) -> Option<StringOrArray> {
+		match self.values.get(name) {
+			Some(value) => {
+				return Some(value.clone());
+			}
+			None => {
+				return None;
+			}
+		}
 	}
-	pub fn write_key(&mut self, name: String, value: String) {
-		todo!();
+	pub fn write_key(&mut self, name: String, value: StringOrArray) {
+		self.values.insert(name, value);
+	}
+	pub fn remove_key(&mut self, name: &String) {
+		self.values.remove(name);
+	}
+	pub fn key_exists(&self, name: &String) -> bool {
+		return self.values.contains_key(name);
 	}
 	pub(crate) fn get_values(self) -> HashMap<String, StringOrArray> {
 		return self.values;
 	}
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum StringOrArray {
 	String(String),
 	Array(Vec<String>),
@@ -198,14 +220,16 @@ mod tests {
 	#[test]
 	fn simple_manager() {
 		use crate::databases::*;
-		let input = r#"{"db1": {"string_value": "string", "array_value": ["entry1", "entry2"]}}"#;
+		let input = String::from(r#"{"db1": {"string_value": "string", "array_value": ["entry1", "entry2"]}}"#);
 		let guild_id = String::from("abc");
 		let mut correct_hashmap = HashMap::new();
 		//This bases on `simple_database` succeeding
 		correct_hashmap.insert(String::from("db1"), Database::new_from_value(serde_json::from_str(r#"{"string_value": "string", "array_value": ["entry1", "entry2"]}"#).unwrap()));
-		let mut correct_output = DatabaseManager {
+		let output = DatabaseManager::new_from_json(&input, &guild_id);
+		let correct_output = DatabaseManager {
 			guild_id: guild_id,
-			databases: HashMap::new(),
+			databases: correct_hashmap,
 		};
+		assert_eq!(output, correct_output);
 	}
 }

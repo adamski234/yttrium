@@ -85,10 +85,10 @@ impl DatabaseManager {
 			let mut serialized_db = HashMap::with_capacity(db_values.len());
 			for (value_name, value) in db_values {
 				match value {
-				    StringOrArray::String(string) => {
+					StringOrArray::String(string) => {
 						serialized_db.insert(value_name, serde_json::Value::String(string));
 					}
-				    StringOrArray::Array(array) => {
+					StringOrArray::Array(array) => {
 						let mut new_array = Vec::with_capacity(array.len());
 						for item in array {
 							new_array.push(serde_json::Value::String(item));
@@ -104,9 +104,9 @@ impl DatabaseManager {
 }
 
 impl PartialEq for DatabaseManager {
-    fn eq(&self, other: &Self) -> bool {
-        return self.databases == other.databases;
-    }
+	fn eq(&self, other: &Self) -> bool {
+		return self.databases == other.databases;
+	}
 }
 #[derive(Debug, PartialEq)]
 pub struct Database {

@@ -12,12 +12,12 @@ pub fn interpret_tree(tree: Vec<tree_creator::TreeNode>, key_list: &HashMap<Stri
 		let mut subparam_longest = 0;
 		for param in &node.parameters {
 			match param {
-			    tree_creator::Parameter::Nodes(nodes) => {
+				tree_creator::Parameter::Nodes(nodes) => {
 					if nodes.len() > subparam_longest {
 						subparam_longest = nodes.len();
 					}
 				}
-			    tree_creator::Parameter::String(_) => {
+				tree_creator::Parameter::String(_) => {
 					continue;
 				}
 			}
@@ -49,7 +49,7 @@ pub fn interpret_tree(tree: Vec<tree_creator::TreeNode>, key_list: &HashMap<Stri
 				//To do somewhere in the future: Extract this into a function
 				let current_parameter = &current_node.inner_node.parameters[current_node.interpreted_param];
 				match current_parameter {
-				    tree_creator::Parameter::Nodes(nodes) => {
+					tree_creator::Parameter::Nodes(nodes) => {
 						//Handle nodes as parameters
 						if nodes.len() == current_node.returned_subvalues.len() {
 							/* All parameter chunks were ran, now push the result of the parameter to the parent,
@@ -63,7 +63,7 @@ pub fn interpret_tree(tree: Vec<tree_creator::TreeNode>, key_list: &HashMap<Stri
 							current_node.interpreted_subparam += 1;
 						}
 					}
-				    tree_creator::Parameter::String(text) => {
+					tree_creator::Parameter::String(text) => {
 						//Handle just text as parameter
 						current_node.returned_values.push(text.clone());
 						current_node.interpreted_param += 1;
@@ -75,7 +75,7 @@ pub fn interpret_tree(tree: Vec<tree_creator::TreeNode>, key_list: &HashMap<Stri
 			if current_node.returned_values[0].is_empty() || current_node.returned_values[0] == "0" {
 				let current_parameter = &current_node.inner_node.parameters[current_node.interpreted_param];
 				match current_parameter {
-				    tree_creator::Parameter::Nodes(nodes) => {
+					tree_creator::Parameter::Nodes(nodes) => {
 						//Handle nodes as parameters
 						if nodes.len() == current_node.returned_subvalues.len() {
 							/* All parameter chunks were ran, now push the result of the parameter to the parent,
@@ -89,7 +89,7 @@ pub fn interpret_tree(tree: Vec<tree_creator::TreeNode>, key_list: &HashMap<Stri
 							current_node.interpreted_subparam += 1;
 						}
 					}
-				    tree_creator::Parameter::String(text) => {
+					tree_creator::Parameter::String(text) => {
 						//Handle just text as parameter
 						current_node.returned_values.push(text.clone());
 						current_node.interpreted_param += 1;
@@ -138,7 +138,7 @@ pub fn interpret_tree(tree: Vec<tree_creator::TreeNode>, key_list: &HashMap<Stri
 		} else {
 			let current_parameter = &current_node.inner_node.parameters[current_node.interpreted_param];
 			match current_parameter {
-			    tree_creator::Parameter::Nodes(nodes) => {
+				tree_creator::Parameter::Nodes(nodes) => {
 					//Handle nodes as parameters
 					if nodes.len() == current_node.returned_subvalues.len() {
 						/* All parameter chunks were ran, now push the result of the parameter to the parent,
@@ -152,7 +152,7 @@ pub fn interpret_tree(tree: Vec<tree_creator::TreeNode>, key_list: &HashMap<Stri
 						current_node.interpreted_subparam += 1;
 					}
 				}
-			    tree_creator::Parameter::String(text) => {
+				tree_creator::Parameter::String(text) => {
 					//Handle just text as parameter
 					current_node.returned_values.push(text.clone());
 					current_node.interpreted_param += 1;

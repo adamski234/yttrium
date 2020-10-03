@@ -10,13 +10,13 @@ use std::collections::HashMap;
 
 pub fn run_ars_string(ars_string: String, key_list: &HashMap<String, Box<dyn key_base::Key>>, event_info: key_base::environment::events::EventType, guild_id: String) -> Result<ResultAndWarnings, errors_and_warns::Error> {
 	match tree_creator::create_ars_tree(ars_string, key_list) {
-	    Ok(tree) => {
+		Ok(tree) => {
 			return Ok(ResultAndWarnings {
 				result: run_ars_tree(tree.tree, key_list, event_info, guild_id),
 				warnings: tree.warnings,
 			});
 		}
-	    Err(error) => {
+		Err(error) => {
 			return Err(error);
 		}
 	}

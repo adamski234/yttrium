@@ -78,10 +78,10 @@ fn main() {
 								manager.remove_database(&input[1].to_string());
 							} else if input.len() >= 3 {
 								match manager.get_database(&input[1].to_string()) {
-								    Some(db) => {
+									Some(db) => {
 										db.remove_key(&input[2].to_string());
 									}
-								    None => {}
+									None => {}
 								}
 								//Remove a database entry
 							}

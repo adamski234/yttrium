@@ -4,7 +4,7 @@ pub mod databases;
 
 pub trait Key {
 	fn get_key_info(&self) -> &KeyInfo;
-	fn get_key_function(&self) -> fn(parameter: &Vec<String>, environment: &environment::Environment) -> String;
+	fn get_key_function(&self) -> fn(parameter: &Vec<String>, environment: &mut environment::Environment) -> String;
 }
 
 #[derive(Clone, Debug)]

@@ -102,14 +102,14 @@ fn load_keys_test() -> HashMap<String, Box<dyn key_base::Key>> {
 	return keys;
 }
 struct Key1 {
-	function: fn(&Vec<String>, &key_base::environment::Environment) -> String,
+	function: fn(&Vec<String>, &mut key_base::environment::Environment) -> String,
 	info: key_base::KeyInfo,
 }
 impl key_base::Key for Key1 {
 	fn get_key_info(&self) -> &key_base::KeyInfo {
 		return &self.info;
 	}
-	fn get_key_function(&self) -> fn(&Vec<String>, &key_base::environment::Environment) -> String {
+	fn get_key_function(&self) -> fn(&Vec<String>, &mut key_base::environment::Environment) -> String {
 		return self.function;
 	}
 }

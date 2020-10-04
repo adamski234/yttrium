@@ -2,114 +2,42 @@
 
 #![allow(clippy::needless_return)] //I'm gonna use returns whether clippy likes it or not
 use std::collections::HashMap;
-use ars::tree_creator;
+use std::sync::Arc;
 use ars::key_loader;
+use reqwest::blocking::Client;
+use serenity::{
+    cache::CacheRwLock,
+    client::{bridge::gateway::ShardMessenger, Context},
+    http::client::Http,
+    prelude::{RwLock, ShareMap},
+};
 
 use std::io::stdin;
 
 fn main() {
+	let keys = key_loader::load_keys("./keys");
 	loop {
+		let data = Arc::new(RwLock::new(ShareMap::custom()));
+	    let (tx, _) = std::sync::mpsc::channel();
+    	let shard = ShardMessenger::new(tx);
+	    let shard_id = 0;
+    	let client = Arc::new(Client::new());
+	    let http = Arc::new(Http::new(client, ""));
+    	let cache = CacheRwLock::default();
+		let mut c = Context {data, shard, shard_id, http, cache};
+		let env = key_base::environment::Environment {
+			attachments: vec![],
+			database_manager: key_base::databases::DatabaseManager::new(&String::from("guild")),
+			discord_context: &mut c,
+			embed: None,
+			event_info: key_base::environment::events::EventType::Default,
+			guild_id: String::from("guild"),
+			target: String::from("channel"),
+		};
 		let mut input = String::new();
 		stdin()
 			.read_line(&mut input)
 			.expect("An error has happened while reading from the console");
-		//println!("{:#?}", ars::run_ars_string(input.trim().into(), &load_keys_test(), key_base::environment::events::EventType::Default, String::new(), )); //This will crash when I'm done
-		input = input.trim().to_string();
-		let mut manager = key_base::databases::DatabaseManager::new(&input);
-		manager.create_database(&String::from("test"));
-		println!("{:#?}", manager);
-		manager.write();
-	}
-}
-
-//This is for manual testing only
-fn load_keys_test() -> HashMap<String, Box<dyn key_base::Key>> {
-	let mut keys = HashMap::<String, Box<dyn key_base::Key>>::new();
-	keys.insert(String::from("abc"),
-		Box::new(Key1 {
-			function: |_param, _env| {
-				return String::from("abc");
-			},
-			info: key_base::KeyInfo {
-				parameters_required: vec![0],
-				name: String::from("abc"),
-			}
-		})
-	);
-	keys.insert(String::from("def"),
-		Box::new(Key1 {
-			function: |param, _env| {
-				let mut returned = String::from("def:");
-				returned.push_str(&param.join("|"));
-				return returned;
-			},
-			info: key_base::KeyInfo {
-				parameters_required: vec![1],
-				name: String::from("def"),
-			}
-		})
-	);
-	keys.insert(String::from("ghi"),
-		Box::new(Key1 {
-			function: |param, _env| {
-				let mut returned = String::from("ghi:");
-				returned.push_str(&param.join("|"));
-				return returned;
-			},
-			info: key_base::KeyInfo {
-				parameters_required: vec![0, 1, 3],
-				name: String::from("ghi"),
-			}
-		})
-	);
-	keys.insert(String::from("jkm"),
-		Box::new(Key1 {
-			function: |_param, _env| {
-				return String::from("jkm");
-			},
-			info: key_base::KeyInfo {
-				parameters_required: vec![0],
-				name: String::from("jkm"),
-			}
-		})
-	);
-	keys.insert(String::from("ab"),
-		Box::new(Key1 {
-			function: |param, _env| {
-				let mut returned = String::from("ab:");
-				returned.push_str(&param.join("|"));
-				return returned;
-			},
-			info: key_base::KeyInfo {
-				parameters_required: vec![2],
-				name: String::from("ab"),
-			}
-		})
-	);
-	keys.insert(String::from("bc"),
-		Box::new(Key1 {
-			function: |param, _env| {
-				let mut returned = String::from("bc:");
-				returned.push_str(&param.join("|"));
-				return returned;
-			},
-			info: key_base::KeyInfo {
-				parameters_required: vec![1, 2],
-				name: String::from("bc"),
-			}
-		})
-	);
-	return keys;
-}
-struct Key1 {
-	function: fn(&Vec<String>, &mut key_base::environment::Environment) -> String,
-	info: key_base::KeyInfo,
-}
-impl key_base::Key for Key1 {
-	fn get_key_info(&self) -> &key_base::KeyInfo {
-		return &self.info;
-	}
-	fn get_key_function(&self) -> fn(&Vec<String>, &mut key_base::environment::Environment) -> String {
-		return self.function;
+		println!("{:#?}", ars::run_ars_string(input.trim().into(), &keys.keys, env)); //This will crash when I'm done
 	}
 }

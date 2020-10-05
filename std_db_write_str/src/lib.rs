@@ -30,13 +30,8 @@ impl key_base::Key for std_db_read {
 }
 
 fn key_function(parameter: &Vec<String>, environment: &mut key_base::environment::Environment) -> String {
-	match environment.database_manager.get_database(&parameter[0]) {
-		Some(result) => {
-            result.write_key(parameter[1].clone(), key_base::databases::StringOrArray::String(parameter[2].clone()));
-            return String::new();
-		}
-		None => {
-			return String::new();
-		}
+	if let Some(result) = environment.database_manager.get_database(&parameter[0]) {
+        result.write_key(parameter[1].clone(), key_base::databases::StringOrArray::String(parameter[2].clone()));
 	}
+	return String::new();
 }

@@ -1,3 +1,5 @@
+#![allow(clippy::needless_return)]
+#![deny(clippy::implicit_return)]
 pub mod environment;
 pub mod embed;
 pub mod databases;

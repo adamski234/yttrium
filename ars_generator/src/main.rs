@@ -1,3 +1,5 @@
+#![allow(clippy::needless_return)]
+#![deny(clippy::implicit_return)]
 use rand;
 use std::fs;
 use std::io::Write;

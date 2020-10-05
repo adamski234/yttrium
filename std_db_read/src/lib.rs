@@ -1,4 +1,6 @@
 #![allow(non_camel_case_types)]
+#![allow(clippy::needless_return)]
+#![deny(clippy::implicit_return)]
 #[no_mangle]
 pub fn key_create() -> *mut dyn key_base::Key {
 	let key_info = key_base::KeyInfo {

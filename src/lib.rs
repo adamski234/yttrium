@@ -1,4 +1,5 @@
 #![allow(clippy::needless_return)]
+#![deny(clippy::implicit_return)]
 #![feature(is_sorted)]
 use std::collections::HashMap;
 

@@ -1,6 +1,7 @@
 //This is a binary made specifically for testing and should be removed at some point
 
 #![allow(clippy::needless_return)] //I'm gonna use returns whether clippy likes it or not
+#![deny(clippy::implicit_return)]
 use ars::key_loader;
 use serenity::{
     client::{bridge::gateway::ShardMessenger, Context},

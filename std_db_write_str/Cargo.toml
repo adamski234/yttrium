@@ -1,21 +1,12 @@
 [package]
-name = "ars"
+name = "std_db_write_str"
 version = "0.1.0"
 authors = ["adamski234 <adamski234@protonmail.com>"]
 edition = "2018"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[lib]
+type = "cdylib"
 
 [dependencies]
-key_base = { path = "./key_base" }
-libloading = "0.6"
-serde_json = "1"
-serenity = "0.8"
-
-[workspace]
-members = [
-    "ars_generator",
-    "key_base",
-    "std_db_read",
-    "std_db_write_str",
-]
+key_base = { path = "../key_base" }

@@ -8,18 +8,18 @@ pub fn key_create() -> *mut dyn key_base::Key {
 		name: String::from("db_write_str"),
 		parameters_required: vec![3],
 	};
-	return Box::into_raw(Box::new(std_db_read {
+	return Box::into_raw(Box::new(std_db_write_str {
 		info: key_info,
 		function: key_function,
 	}));
 }
 
-struct std_db_read {
+struct std_db_write_str {
 	pub info: key_base::KeyInfo,
 	pub function: fn(parameter: &Vec<String>, environment: &mut key_base::environment::Environment) -> String,
 }
 
-impl key_base::Key for std_db_read {
+impl key_base::Key for std_db_write_str {
 	fn get_key_info(&self) -> &key_base::KeyInfo {
 		return &self.info;
 	}

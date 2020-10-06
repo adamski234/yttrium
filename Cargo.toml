@@ -19,4 +19,5 @@ members = [
     "std_db_read",
     "std_db_write_str",
     "std_redirect",
+    "std_sleep",
 ]

@@ -1,0 +1,14 @@
+[tasks.echo1]
+command = "echo"
+args = ["1"]
+
+[tasks.echo2]
+command = "echo"
+args = ["2"]
+
+
+[tasks.my-flow]
+dependencies = [
+    "echo1",
+    "echo2",
+]

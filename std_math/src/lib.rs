@@ -1,6 +1,10 @@
+//I spent more time on this single piece of junk than I spent on the interpreter
+//Thanks, interop
 #![allow(non_camel_case_types)]
 #![allow(clippy::needless_return)]
 #![deny(clippy::implicit_return)]
+#[allow(unused_imports)]
+use cxx::{CxxString, UniquePtr};
 #[no_mangle]
 pub fn key_create() -> *mut dyn key_base::Key {
 	let key_info = key_base::KeyInfo {
@@ -29,14 +33,14 @@ impl key_base::Key for std_math {
 }
 
 fn key_function(parameter: &Vec<String>, _environment: &mut key_base::environment::Environment) -> String {
-	//
-	return String::new();
+	#[allow(unused_unsafe)]
+	return unsafe { ffi::calculate(&parameter[0]).to_str().unwrap().to_string() };
 }
 
 #[cxx::bridge]
 mod ffi {
 	extern "C" {
-		include!("/usr/include/libqalculate/Calculator.h");
-		fn calculate(cxx::CxxString) -> cxx::CxxString;
+		include!("std_math/cpp/qalc.hpp");
+		fn calculate(expression: &str) -> UniquePtr<CxxString>;
 	}
 }

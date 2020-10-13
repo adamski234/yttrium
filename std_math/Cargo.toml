@@ -12,3 +12,6 @@ crate-type = ["cdylib"]
 [dependencies]
 key_base = { path = "../key_base" }
 cxx = "0.5"
+
+[build-dependencies]
+cxx-build = "0.5"

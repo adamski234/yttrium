@@ -1,14 +1,20 @@
-[tasks.echo1]
-command = "echo"
-args = ["1"]
+#TODO make a release version of key copying
+[env]
+CARGO_MAKE_WORKSPACE_SKIP_MEMBERS = ["ars_generator"]
 
-[tasks.echo2]
-command = "echo"
-args = ["2"]
+[tasks.build]
+command = "cargo"
+args = ["build"]
+run_task = "copykeys"
 
-
-[tasks.my-flow]
-dependencies = [
-    "echo1",
-    "echo2",
+[tasks.copykeys]
+workspace = false
+script = [
+    '''
+    mkdir -p keys
+    for file in target/debug/libstd_*.so
+    do
+    cp $file ./keys
+    done
+    '''
 ]

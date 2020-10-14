@@ -2,19 +2,20 @@
 [env]
 CARGO_MAKE_WORKSPACE_SKIP_MEMBERS = ["ars_generator"]
 
+[config]
+end_task = "keycopy" #This should be a dependency of build task, but I couldn't get it to work
+
 [tasks.build]
 command = "cargo"
 args = ["build"]
-run_task = "copykeys"
 
-[tasks.copykeys]
-workspace = false
+[tasks.keycopy]
 script = [
-    '''
-    mkdir -p keys
-    for file in target/debug/libstd_*.so
-    do
-    cp $file ./keys
-    done
-    '''
+	'''
+	mkdir -p keys
+	for file in target/debug/libstd_*.so
+	do
+		cp $file ./keys
+	done
+	'''
 ]

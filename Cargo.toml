@@ -22,4 +22,5 @@ members = [
     "std_sleep",
     "std_math",
     "std_attach",
+    "std_setnickname",
 ]

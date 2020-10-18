@@ -119,6 +119,13 @@ pub fn interpret_tree(tree: Vec<tree_creator::TreeNode>, key_list: &HashMap<Stri
 						returned = String::new();
 					} else if current_node.inner_node.key == "literal" {
 						returned = current_node.returned_values[0].clone();
+					} else if current_node.inner_node.key == "exit" {
+						//Stop the interepreter
+						return InterpretationResult {
+							message: current_node.returned_values.join(""),
+							embed: None,
+							next_rule: next_rule,
+						};
 					} else {
 						returned = key_list.get(&current_node.inner_node.key).unwrap().get_key_function()(&current_node.returned_values, &mut environment);
 					}

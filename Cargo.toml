@@ -27,4 +27,5 @@ members = [
     "std_trigger",
     "std_take",
     "std_role",
+    "std_ban",
 ]

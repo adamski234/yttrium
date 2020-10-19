@@ -1111,6 +1111,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "std_ban"
+version = "0.1.0"
+dependencies = [
+ "key_base",
+ "serenity",
+]
+
+[[package]]
 name = "std_db_read"
 version = "0.1.0"
 dependencies = [

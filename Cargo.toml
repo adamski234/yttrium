@@ -23,4 +23,5 @@ members = [
     "std_math",
     "std_attach",
     "std_setnickname",
+    "std_pin",
 ]

@@ -1134,6 +1134,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "std_pin"
+version = "0.1.0"
+dependencies = [
+ "key_base",
+ "serenity",
+]
+
+[[package]]
 name = "std_redirect"
 version = "0.1.0"
 dependencies = [

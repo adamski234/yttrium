@@ -25,4 +25,5 @@ members = [
     "std_setnickname",
     "std_pin",
     "std_trigger",
+    "std_take",
 ]

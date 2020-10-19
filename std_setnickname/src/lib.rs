@@ -38,7 +38,6 @@ fn key_function(parameter: &Vec<String>, environment: &mut key_base::environment
 					return member;
 				}).unwrap();
 			}
-			key_base::environment::events::EventType::MemberLeave(_) => {}
 			key_base::environment::events::EventType::Message(event) => {
 				guild.read().edit_member(&environment.discord_context.http, event.user_id.parse::<u64>().unwrap(), |member| {
 					member.nickname(parameter[0].clone());

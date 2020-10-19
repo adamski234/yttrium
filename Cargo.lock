@@ -1166,6 +1166,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "std_trigger"
+version = "0.1.0"
+dependencies = [
+ "key_base",
+]
+
+[[package]]
 name = "syn"
 version = "1.0.45"
 source = "registry+https://github.com/rust-lang/crates.io-index"

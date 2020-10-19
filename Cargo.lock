@@ -1150,6 +1150,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "std_role"
+version = "0.1.0"
+dependencies = [
+ "key_base",
+ "regex",
+ "serenity",
+]
+
+[[package]]
 name = "std_setnickname"
 version = "0.1.0"
 dependencies = [

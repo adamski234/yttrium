@@ -15,7 +15,7 @@ script = [
 	mkdir -p keys
 	for file in target/debug/libstd_*.so
 	do
-		cp $file ./keys
+		ln $file ./keys -s
 	done
 	'''
 ]

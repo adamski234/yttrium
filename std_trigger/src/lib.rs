@@ -1,4 +1,3 @@
-#![allow(non_camel_case_types)]
 #![allow(clippy::needless_return)]
 #![deny(clippy::implicit_return)]
 
@@ -15,9 +14,10 @@ pub fn key_create() -> *mut dyn key_base::Key {
 	}));
 }
 
+#[allow(non_camel_case_types)]
 struct std_trigger {
 	pub info: key_base::KeyInfo,
-	pub function: fn(parameter: &Vec<String>, environment: &mut key_base::environment::Environment) -> String,
+	pub function: fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> String,
 }
 
 impl key_base::Key for std_trigger {
@@ -25,12 +25,12 @@ impl key_base::Key for std_trigger {
 		return &self.info;
 	}
 
-	fn get_key_function(&self) -> fn(parameter: &Vec<String>, environment: &mut key_base::environment::Environment) -> String {
+	fn get_key_function(&self) -> fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> String {
 		return self.function;
 	}
 }
 
-fn key_function(_parameter: &Vec<String>, environment: &mut key_base::environment::Environment) -> String {
+fn key_function(_parameter: &[String], environment: &mut key_base::environment::Environment) -> String {
 	match &environment.event_info {
 		events::EventType::Message(event) => {
 			return event.trigger.clone();

@@ -151,6 +151,12 @@ impl GuildUpdateEventInfo {
 	}
 }
 
+impl Default for GuildUpdateEventInfo {
+	fn default() -> Self {
+		return Self::new();
+	}
+}
+
 #[derive(Debug)]
 pub struct ReactionAddEventInfo {
 	pub channel_id: String,

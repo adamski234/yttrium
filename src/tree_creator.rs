@@ -1,7 +1,6 @@
 use std::collections::HashMap;
 #[path = "./tokenizer.rs"] mod tokenizer;
 use crate::errors_and_warns;
-use key_base;
 
 type Id = usize;
 
@@ -184,19 +183,19 @@ pub struct TreeReturn {
 mod tests {
 	//Some basic definitions for testing
 	struct Key1 {
-		function: fn(parameter: &Vec<String>, env: &mut key_base::environment::Environment) -> String,
+		function: fn(parameter: &[String], env: &mut key_base::environment::Environment) -> String,
 		info: key_base::KeyInfo,
 	}
 	impl key_base::Key for Key1 {
 		fn get_key_info(&self) -> &key_base::KeyInfo {
 			return &self.info;
 		}
-		fn get_key_function(&self) -> fn(parameter: &Vec<String>, env: &mut key_base::environment::Environment) -> String {
+		fn get_key_function(&self) -> fn(parameter: &[String], env: &mut key_base::environment::Environment) -> String {
 			return self.function;
 		}
 	}
 	#[allow(dead_code)]
-	fn placeholder_fn(_param: &Vec<String>, _env: &mut key_base::environment::Environment) -> String {
+	fn placeholder_fn(_param: &[String], _env: &mut key_base::environment::Environment) -> String {
 		return String::from("return");
 	}
 	fn load_keys_test() -> HashMap<String, Box<dyn key_base::Key>> {

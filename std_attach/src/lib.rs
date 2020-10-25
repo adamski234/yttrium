@@ -1,4 +1,3 @@
-#![allow(non_camel_case_types)]
 #![allow(clippy::needless_return)]
 #![deny(clippy::implicit_return)]
 #[no_mangle]
@@ -13,9 +12,10 @@ pub fn key_create() -> *mut dyn key_base::Key {
 	}));
 }
 
+#[allow(non_camel_case_types)]
 struct std_attach {
 	pub info: key_base::KeyInfo,
-	pub function: fn(parameter: &Vec<String>, environment: &mut key_base::environment::Environment) -> String,
+	pub function: fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> String,
 }
 
 impl key_base::Key for std_attach {
@@ -23,12 +23,12 @@ impl key_base::Key for std_attach {
 		return &self.info;
 	}
 
-	fn get_key_function(&self) -> fn(parameter: &Vec<String>, environment: &mut key_base::environment::Environment) -> String {
+	fn get_key_function(&self) -> fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> String {
 		return self.function;
 	}
 }
 
-fn key_function(parameter: &Vec<String>, environment: &mut key_base::environment::Environment) -> String {
+fn key_function(parameter: &[String], environment: &mut key_base::environment::Environment) -> String {
 	environment.attachments.push(parameter[0].clone());
 	return String::new();
 }

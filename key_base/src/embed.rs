@@ -9,6 +9,12 @@ pub struct Embed {
 	pub timestamp: Option<String>,
 }
 
+impl Default for Embed {
+	fn default() -> Self {
+		return Self::new();
+	}
+}
+
 impl Embed {
 	pub fn new() -> Self {
 		return Self {

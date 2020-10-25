@@ -12,7 +12,7 @@ pub struct DatabaseManager {
 
 //This will be an issue with multiple people trying to write to a single database at the same time
 impl DatabaseManager {
-	pub fn new(guild_id: &String) -> Self {
+	pub fn new(guild_id: &str) -> Self {
 		//Converts a json file to a HashMap<String, Database>
 		match fs::read(format!("{}{}.json", DATABASE_DIR, guild_id)) {
 			Ok(content) => {
@@ -25,9 +25,9 @@ impl DatabaseManager {
 					std::io::ErrorKind::NotFound => {
 						//Create a new JSON file if it doesn't exist
 						let mut file = fs::File::create(format!("{}{}.json", DATABASE_DIR, guild_id)).unwrap();
-						file.write(b"{}").unwrap();
+						file.write_all(b"{}").unwrap();
 						let empty_manager = Self {
-							guild_id: guild_id.clone(),
+							guild_id: guild_id.to_owned(),
 							databases: HashMap::new(),
 						};
 						return empty_manager;
@@ -42,12 +42,12 @@ impl DatabaseManager {
 			}
 		}
 	}
-	pub fn new_from_json(json: &String, guild_id: &String) -> Self {
+	pub fn new_from_json(json: &str, guild_id: &str) -> Self {
 		return Self::new_from_value(serde_json::from_str(json).unwrap(), guild_id);
 	}
-	pub fn new_from_value(value: serde_json::Value, guild_id: &String) -> Self {
+	pub fn new_from_value(value: serde_json::Value, guild_id: &str) -> Self {
 		let mut result = Self {
-			guild_id: guild_id.clone(),
+			guild_id: guild_id.to_owned(),
 			databases: HashMap::new(),
 		};
 		match value {
@@ -62,19 +62,19 @@ impl DatabaseManager {
 		}
 		return result;
 	}
-	pub fn get_database(&mut self, name: &String) -> Option<&mut Database> {
+	pub fn get_database(&mut self, name: &str) -> Option<&mut Database> {
 		return self.databases.get_mut(name);
 	}
 	///Creates a database if it doesn't exist and returns it, otherwise returns a pre-existing database
-	pub fn create_database(&mut self, name: &String) -> &mut Database {
+	pub fn create_database(&mut self, name: &str) -> &mut Database {
 		if self.databases.contains_key(name) {
 			return self.databases.get_mut(name).unwrap();
 		} else {
-			self.databases.insert(name.clone(), Database::new_empty());
+			self.databases.insert(name.to_owned(), Database::new_empty());
 			return self.databases.get_mut(name).unwrap();
 		}
 	}
-	pub fn remove_database(&mut self, name: &String) {
+	pub fn remove_database(&mut self, name: &str) {
 		self.databases.remove_entry(name);
 	}
 	///This serializes the databases and saves them into the file
@@ -121,59 +121,56 @@ impl Database {
 	}
 	pub fn new_from_value(value: serde_json::Value) -> Self {
 		let mut result = Self::new_empty();
-		match value {
-			serde_json::Value::Object(object) => {
-				for (name, value) in object {
-					match value {
-						serde_json::Value::String(text) => {
-							result.values.insert(name, StringOrArray::String(text));
+		if let serde_json::Value::Object(object) = value {
+			for (name, value) in object {
+				match value {
+					serde_json::Value::String(text) => {
+						result.values.insert(name, StringOrArray::String(text));
+					}
+					serde_json::Value::Array(array) => {
+						let mut values = Vec::with_capacity(array.len());
+						for entry in array {
+							match entry {
+								serde_json::Value::String(text) => {
+									values.push(text);
+								}
+								serde_json::Value::Array(array) => {
+									values.push(serde_json::to_string(&array).unwrap());
+								}
+								serde_json::Value::Bool(inner) => {
+									values.push(inner.to_string());
+								}
+								serde_json::Value::Number(number) => {
+									values.push(number.to_string());
+								}
+								serde_json::Value::Object(object) => {
+									values.push(serde_json::to_string(&object).unwrap());
+								}
+								serde_json::Value::Null => {
+									values.push(String::from("null"));
+								}
+							};
 						}
-						serde_json::Value::Array(array) => {
-							let mut values = Vec::with_capacity(array.len());
-							for entry in array {
-								match entry {
-									serde_json::Value::String(text) => {
-										values.push(text);
-									}
-									serde_json::Value::Array(array) => {
-										values.push(serde_json::to_string(&array).unwrap());
-									}
-									serde_json::Value::Bool(inner) => {
-										values.push(inner.to_string());
-									}
-									serde_json::Value::Number(number) => {
-										values.push(number.to_string());
-									}
-									serde_json::Value::Object(object) => {
-										values.push(serde_json::to_string(&object).unwrap());
-									}
-									serde_json::Value::Null => {
-										values.push(String::from("null"));
-									}
-								};
-							}
-							result.values.insert(name, StringOrArray::Array(values));
-						}
-						serde_json::Value::Bool(inner) => {
-							result.values.insert(name, StringOrArray::String(inner.to_string()));
-						}
-						serde_json::Value::Number(number) => {
-							result.values.insert(name, StringOrArray::String(number.to_string()));
-						}
-						serde_json::Value::Object(object) => {
-							result.values.insert(name, StringOrArray::String(serde_json::to_string(&object).unwrap()));
-						}
-						serde_json::Value::Null => {
-							result.values.insert(name, StringOrArray::String(String::from("null")));
-						}
-					};
-				}
+						result.values.insert(name, StringOrArray::Array(values));
+					}
+					serde_json::Value::Bool(inner) => {
+						result.values.insert(name, StringOrArray::String(inner.to_string()));
+					}
+					serde_json::Value::Number(number) => {
+						result.values.insert(name, StringOrArray::String(number.to_string()));
+					}
+					serde_json::Value::Object(object) => {
+						result.values.insert(name, StringOrArray::String(serde_json::to_string(&object).unwrap()));
+					}
+					serde_json::Value::Null => {
+						result.values.insert(name, StringOrArray::String(String::from("null")));
+					}
+				};
 			}
-			_ => {}
 		};
 		return result;
 	}
-	pub fn get_key(&self, name: &String) -> Option<StringOrArray> {
+	pub fn get_key(&self, name: &str) -> Option<StringOrArray> {
 		match self.values.get(name) {
 			Some(value) => {
 				return Some(value.clone());
@@ -186,10 +183,10 @@ impl Database {
 	pub fn write_key(&mut self, name: String, value: StringOrArray) {
 		self.values.insert(name, value);
 	}
-	pub fn remove_key(&mut self, name: &String) {
+	pub fn remove_key(&mut self, name: &str) {
 		self.values.remove(name);
 	}
-	pub fn key_exists(&self, name: &String) -> bool {
+	pub fn key_exists(&self, name: &str) -> bool {
 		return self.values.contains_key(name);
 	}
 	pub(crate) fn get_values(self) -> HashMap<String, StringOrArray> {

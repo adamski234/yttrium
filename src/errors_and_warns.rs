@@ -16,7 +16,7 @@ pub enum Warning {
 	UnclosedKeys,
 }
 
-pub fn check_for_errors(nodes: &Vec<tree_creator::TreeNode>, keys: &HashMap<String, Box<dyn key_base::Key>>) -> Option<Error> {
+pub fn check_for_errors(nodes: &[tree_creator::TreeNode], keys: &HashMap<String, Box<dyn key_base::Key>>) -> Option<Error> {
 	for node in nodes {
 		//TODO implement the rest of errors and add tests
 		if node.is_editing_parameter {
@@ -39,10 +39,8 @@ pub fn check_for_errors(nodes: &Vec<tree_creator::TreeNode>, keys: &HashMap<Stri
 		} else {
 			for key in keys.values() {
 				let key_info = key.get_key_info();
-				if key_info.name == node.key {
-					if key_info.parameters_required[0] != 0 {
-						return Some(Error::WrongAmountOfParameters);
-					}
+				if key_info.name == node.key && key_info.parameters_required[0] != 0 {
+					return Some(Error::WrongAmountOfParameters);
 				}
 			}
 		}
@@ -55,19 +53,19 @@ mod tests {
 	use super::*;
 	//Some basic definitions for testing
 	struct Key1 {
-		function: fn(parameter: &Vec<String>, env: &mut key_base::environment::Environment) -> String,
+		function: fn(parameter: &[String], env: &mut key_base::environment::Environment) -> String,
 		info: key_base::KeyInfo,
 	}
 	impl key_base::Key for Key1 {
 		fn get_key_info(&self) -> &key_base::KeyInfo {
 			return &self.info;
 		}
-		fn get_key_function(&self) -> fn(parameter: &Vec<String>, env: &mut key_base::environment::Environment) -> String {
+		fn get_key_function(&self) -> fn(parameter: &[String], env: &mut key_base::environment::Environment) -> String {
 			return self.function;
 		}
 	}
 	#[allow(dead_code)]
-	fn placeholder_fn(_param: &Vec<String>, _env: &mut key_base::environment::Environment) -> String {
+	fn placeholder_fn(_param: &[String], _env: &mut key_base::environment::Environment) -> String {
 		return String::from("return");
 	}
 	fn load_keys_test() -> HashMap<String, Box<dyn key_base::Key>> {

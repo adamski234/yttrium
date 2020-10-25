@@ -7,7 +7,7 @@ pub fn interpret_tree(tree: Vec<tree_creator::TreeNode>, key_list: &HashMap<Stri
 	let mut interpretable_tree = Vec::with_capacity(tree.len());
 	let mut next_rule = None;
 	for node in tree {
-		let cond_if_false = if node.key == "cond" && node.parameters.len() == 3 { true } else { false };
+		let cond_if_false = node.key == "cond" && node.parameters.len() == 3;
 		let param_count = node.parameters.len();
 		let mut subparam_longest = 0;
 		for param in &node.parameters {

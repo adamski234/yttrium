@@ -1,6 +1,5 @@
 //This is a binary made specifically for testing and should be removed at some point
-
-#![allow(clippy::needless_return)] //I'm gonna use returns whether clippy likes it or not
+#![allow(clippy::needless_return, clippy::redundant_field_names)]
 #![deny(clippy::implicit_return)]
 use ars::key_loader;
 use serenity::{

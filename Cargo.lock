@@ -1160,6 +1160,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "std_kick"
+version = "0.1.0"
+dependencies = [
+ "key_base",
+ "serenity",
+]
+
+[[package]]
 name = "std_math"
 version = "0.1.0"
 dependencies = [

@@ -1,4 +1,3 @@
-#![allow(non_camel_case_types)]
 #![allow(clippy::needless_return)]
 #![deny(clippy::implicit_return)]
 
@@ -15,9 +14,10 @@ pub fn key_create() -> *mut dyn key_base::Key {
 	}));
 }
 
+#[allow(non_camel_case_types)]
 struct std_pin {
 	pub info: key_base::KeyInfo,
-	pub function: fn(parameter: &Vec<String>, environment: &mut key_base::environment::Environment) -> String,
+	pub function: fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> String,
 }
 
 impl key_base::Key for std_pin {
@@ -25,20 +25,17 @@ impl key_base::Key for std_pin {
 		return &self.info;
 	}
 
-	fn get_key_function(&self) -> fn(parameter: &Vec<String>, environment: &mut key_base::environment::Environment) -> String {
+	fn get_key_function(&self) -> fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> String {
 		return self.function;
 	}
 }
 
-fn key_function(_parameter: &Vec<String>, environment: &mut key_base::environment::Environment) -> String {
-	match &environment.event_info {
-	    events::EventType::Message(event) => {
-			let message_id = serenity::model::id::MessageId::from(event.message_id.parse::<u64>().unwrap());
-			let channel_id = serenity::model::id::ChannelId::from(event.channel_id.parse::<u64>().unwrap());
-			let message = environment.discord_context.cache.read().message(channel_id, message_id).unwrap();
-			message.pin(&environment.discord_context.http).unwrap();
-		}
-		_ => {}
+fn key_function(_parameter: &[String], environment: &mut key_base::environment::Environment) -> String {
+	if let events::EventType::Message(event) = &environment.event_info {
+		let message_id = serenity::model::id::MessageId::from(event.message_id.parse::<u64>().unwrap());
+		let channel_id = serenity::model::id::ChannelId::from(event.channel_id.parse::<u64>().unwrap());
+		let message = environment.discord_context.cache.read().message(channel_id, message_id).unwrap();
+		message.pin(&environment.discord_context.http).unwrap();
 	}
 	return String::new();
 }

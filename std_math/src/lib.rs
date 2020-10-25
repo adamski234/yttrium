@@ -1,6 +1,5 @@
 //I spent more time on this single piece of junk than I spent on the interpreter
 //Thanks, interop
-#![allow(non_camel_case_types)]
 #![allow(clippy::needless_return)]
 #![deny(clippy::implicit_return)]
 #[allow(unused_imports)]
@@ -17,9 +16,10 @@ pub fn key_create() -> *mut dyn key_base::Key {
 	}));
 }
 
+#[allow(non_camel_case_types)]
 struct std_math {
 	pub info: key_base::KeyInfo,
-	pub function: fn(parameter: &Vec<String>, environment: &mut key_base::environment::Environment) -> String,
+	pub function: fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> String,
 }
 
 impl key_base::Key for std_math {
@@ -27,12 +27,12 @@ impl key_base::Key for std_math {
 		return &self.info;
 	}
 
-	fn get_key_function(&self) -> fn(parameter: &Vec<String>, environment: &mut key_base::environment::Environment) -> String {
+	fn get_key_function(&self) -> fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> String {
 		return self.function;
 	}
 }
 
-fn key_function(parameter: &Vec<String>, _environment: &mut key_base::environment::Environment) -> String {
+fn key_function(parameter: &[String], _environment: &mut key_base::environment::Environment) -> String {
 	#[allow(unused_unsafe)]
 	return unsafe { ffi::calculate(&parameter[0]).to_str().unwrap().to_string() };
 }

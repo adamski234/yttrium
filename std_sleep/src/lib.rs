@@ -1,4 +1,3 @@
-#![allow(non_camel_case_types)]
 #![allow(clippy::needless_return)]
 #![deny(clippy::implicit_return)]
 #[no_mangle]
@@ -13,9 +12,10 @@ pub fn key_create() -> *mut dyn key_base::Key {
 	}));
 }
 
+#[allow(non_camel_case_types)]
 struct std_sleep {
 	pub info: key_base::KeyInfo,
-	pub function: fn(parameter: &Vec<String>, environment: &mut key_base::environment::Environment) -> String,
+	pub function: fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> String,
 }
 
 impl key_base::Key for std_sleep {
@@ -23,17 +23,14 @@ impl key_base::Key for std_sleep {
 		return &self.info;
 	}
 
-	fn get_key_function(&self) -> fn(parameter: &Vec<String>, environment: &mut key_base::environment::Environment) -> String {
+	fn get_key_function(&self) -> fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> String {
 		return self.function;
 	}
 }
 
-fn key_function(parameter: &Vec<String>, _environment: &mut key_base::environment::Environment) -> String {
-	match humantime::parse_duration(&parameter[0]) {
-		Ok(result) => {
-			std::thread::sleep(result);
-		}
-		Err(_) => {}
+fn key_function(parameter: &[String], _environment: &mut key_base::environment::Environment) -> String {
+	if let Ok(result) = humantime::parse_duration(&parameter[0]) {
+		std::thread::sleep(result);
 	}
 	return String::new();
 }

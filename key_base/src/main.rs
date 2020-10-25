@@ -77,11 +77,8 @@ fn main() {
 								//Remove database
 								manager.remove_database(&input[1].to_string());
 							} else if input.len() >= 3 {
-								match manager.get_database(&input[1].to_string()) {
-									Some(db) => {
-										db.remove_key(&input[2].to_string());
-									}
-									None => {}
+								if let Some(db) = manager.get_database(&input[1].to_string()) {
+									db.remove_key(&input[2].to_string());
 								}
 								//Remove a database entry
 							}

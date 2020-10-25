@@ -29,4 +29,5 @@ members = [
     "std_role",
     "std_ban",
     "std_kick",
+    "std_guild",
 ]

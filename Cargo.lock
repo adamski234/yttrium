@@ -1160,6 +1160,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "std_guild"
+version = "0.1.0"
+dependencies = [
+ "key_base",
+ "regex",
+ "serenity",
+]
+
+[[package]]
 name = "std_kick"
 version = "0.1.0"
 dependencies = [

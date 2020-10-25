@@ -20,7 +20,7 @@ script = [
 	mkdir -p keys
 	for file in target/release/libstd_*.so
 	do
-		ln $file ./keys -sf
+		ln $file ./keys -f
 	done
 	'''
 ]
@@ -31,7 +31,7 @@ script = [
 	mkdir -p keys
 	for file in target/debug/libstd_*.so
 	do
-		ln $file ./keys -sf
+		ln $file ./keys -f
 	done
 	'''
 ]

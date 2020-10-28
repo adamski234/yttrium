@@ -29,7 +29,7 @@ impl key_base::Key for std_guild {
 	}
 }
 fn key_function(parameter: &[String], environment: &mut key_base::environment::Environment) -> String {
-	if parameter.len() == 0 {
+	if parameter.is_empty() {
 		return String::new();
 	}
 	let guild_id = GuildId::from(environment.guild_id.parse::<u64>().unwrap());

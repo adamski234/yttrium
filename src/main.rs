@@ -19,15 +19,8 @@ fn main() {
 			http: Default::default(),
 			cache: Default::default(),
 		};
-		let env = key_base::environment::Environment {
-			attachments: vec![],
-			database_manager: key_base::databases::DatabaseManager::new(&String::from("guild")),
-			discord_context: &mut c,
-			embed: None,
-			event_info: key_base::environment::events::EventType::Default,
-			guild_id: String::from("guild"),
-			target: String::from("channel"),
-		};
+		use key_base::environment::events::EventType;
+		let env = key_base::environment::Environment::new(EventType::Default, String::from("guild"), &mut c);
 		let mut input = String::new();
 		stdin()
 			.read_line(&mut input)

@@ -10,6 +10,8 @@ pub struct Environment<'a> {
 	pub attachments: Vec<String>, //For the attachments to send in url form
 	pub event_info: events::EventType,
 	pub discord_context: &'a mut serenity::client::Context,
+	pub delete_option: Option<usize>,
+	pub reactions_to_add: Vec<serenity::model::channel::ReactionType>
 }
 
 impl<'a> Environment<'a> {
@@ -22,6 +24,8 @@ impl<'a> Environment<'a> {
 			attachments: Vec::new(),
 			event_info: event_info,
 			discord_context: context,
+			delete_option: None,
+			reactions_to_add: vec![],
 		};
 	}
 }

@@ -1160,6 +1160,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "std_delete"
+version = "0.1.0"
+dependencies = [
+ "humantime",
+ "key_base",
+ "regex",
+ "serenity",
+]
+
+[[package]]
 name = "std_guild"
 version = "0.1.0"
 dependencies = [

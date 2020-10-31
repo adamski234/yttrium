@@ -72,8 +72,36 @@ fn key_function(parameter: &[String], environment: &mut key_base::environment::E
 				}
 				_ => {}
 			}
+		} else if parameter.len() == 2 {
+			let channel_id;
+			let delete_count = parameter[1].parse().unwrap();
+			match &environment.event_info {
+				EventType::Message(event) => {
+					channel_id = ChannelId::from(event.channel_id.parse::<u64>().unwrap());
+				}
+				EventType::ReactionAdd(event) => {
+					channel_id = ChannelId::from(event.channel_id.parse::<u64>().unwrap());
+				}
+				EventType::ReactionRemove(event) => {
+					channel_id = ChannelId::from(event.channel_id.parse::<u64>().unwrap());
+				}
+				EventType::ChannelUpdate(event) => {
+					channel_id = ChannelId::from(event.channel_id.parse::<u64>().unwrap());
+				}
+				_ => {
+					return String::new();
+				}
+			}
+			let channel = environment.discord_context.cache.read().channel(&channel_id).unwrap();
+			if let serenity::model::channel::Channel::Guild(chan) = channel {
+				let messages = chan.read().messages(&environment.discord_context.http, |retriever| {
+					return retriever.limit(delete_count);
+				}).unwrap();
+				chan.read().delete_messages(&environment.discord_context.http, &messages).unwrap();
+			}
 		} else {
-			if parameter.len() == 2 {
+			let matcher = regex::Regex::new("[0-9]{18}").unwrap();
+			if matcher.is_match(&parameter[2]) {
 				let channel_id;
 				let delete_count = parameter[1].parse().unwrap();
 				match &environment.event_info {
@@ -84,7 +112,7 @@ fn key_function(parameter: &[String], environment: &mut key_base::environment::E
 						channel_id = ChannelId::from(event.channel_id.parse::<u64>().unwrap());
 					}
 					EventType::ReactionRemove(event) => {
-						channel_id = ChannelId::from(event.channel_id.parse::<u64>().unwrap());
+					channel_id = ChannelId::from(event.channel_id.parse::<u64>().unwrap());
 					}
 					EventType::ChannelUpdate(event) => {
 						channel_id = ChannelId::from(event.channel_id.parse::<u64>().unwrap());
@@ -95,43 +123,13 @@ fn key_function(parameter: &[String], environment: &mut key_base::environment::E
 				}
 				let channel = environment.discord_context.cache.read().channel(&channel_id).unwrap();
 				if let serenity::model::channel::Channel::Guild(chan) = channel {
-					let messages = chan.read().messages(&environment.discord_context.http, |retriever| {
-						return retriever.limit(delete_count);
+					let mut messages = chan.read().messages(&environment.discord_context.http, |retriever| {
+						return retriever.limit(100);
 					}).unwrap();
+					messages = messages.into_iter().filter(|message| {
+						return message.author.id.to_string() == parameter[2];
+					}).take(delete_count).collect();
 					chan.read().delete_messages(&environment.discord_context.http, &messages).unwrap();
-				}
-			} else {
-				let matcher = regex::Regex::new("[0-9]{18}").unwrap();
-				if matcher.is_match(&parameter[2]) {
-					let channel_id;
-					let delete_count = parameter[1].parse().unwrap();
-					match &environment.event_info {
-						EventType::Message(event) => {
-							channel_id = ChannelId::from(event.channel_id.parse::<u64>().unwrap());
-						}
-						EventType::ReactionAdd(event) => {
-							channel_id = ChannelId::from(event.channel_id.parse::<u64>().unwrap());
-						}
-						EventType::ReactionRemove(event) => {
-							channel_id = ChannelId::from(event.channel_id.parse::<u64>().unwrap());
-						}
-						EventType::ChannelUpdate(event) => {
-							channel_id = ChannelId::from(event.channel_id.parse::<u64>().unwrap());
-						}
-						_ => {
-							return String::new();
-						}
-					}
-					let channel = environment.discord_context.cache.read().channel(&channel_id).unwrap();
-					if let serenity::model::channel::Channel::Guild(chan) = channel {
-						let mut messages = chan.read().messages(&environment.discord_context.http, |retriever| {
-							return retriever.limit(100);
-						}).unwrap();
-						messages = messages.into_iter().filter(|message| {
-							return message.author.id.to_string() == parameter[2];
-						}).take(delete_count).collect();
-						chan.read().delete_messages(&environment.discord_context.http, &messages).unwrap();
-					}
 				}
 			}
 		}

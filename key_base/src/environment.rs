@@ -10,7 +10,7 @@ pub struct Environment<'a> {
 	pub attachments: Vec<String>, //For the attachments to send in url form
 	pub event_info: events::EventType,
 	pub discord_context: &'a mut serenity::client::Context,
-	pub delete_option: Option<usize>,
+	pub delete_option: Option<std::time::Duration>,
 	pub reactions_to_add: Vec<serenity::model::channel::ReactionType>
 }
 

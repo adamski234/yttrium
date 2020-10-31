@@ -31,4 +31,5 @@ members = [
     "std_kick",
     "std_guild",
     "std_delete",
+    "std_selfdelete",
 ]

@@ -1265,6 +1265,7 @@ dependencies = [
 name = "std_delete"
 version = "0.1.0"
 dependencies = [
+ "futures",
  "humantime",
  "key_base",
  "regex",

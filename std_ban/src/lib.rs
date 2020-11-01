@@ -41,7 +41,7 @@ fn key_function(parameter: &[String], environment: &mut key_base::environment::E
 	let user_id;
 	let mut reason = &String::new();
 	let mut days_to_remove = 0;
-	if parameter.len() >= 1 {
+	if !parameter.is_empty() {
 		reason = &parameter[0];
 	}
 	if parameter.len() >= 2 {

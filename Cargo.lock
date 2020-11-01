@@ -19,10 +19,11 @@ dependencies = [
 name = "ars"
 version = "0.1.0"
 dependencies = [
+ "futures",
  "key_base",
  "libloading",
  "serde_json",
- "serenity",
+ "serenity 0.9.0",
 ]
 
 [[package]]
@@ -30,6 +31,33 @@ name = "ars_generator"
 version = "0.1.0"
 dependencies = [
  "rand",
+]
+
+[[package]]
+name = "async-trait"
+version = "0.1.41"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b246867b8b3b6ae56035f1eb1ed557c1d8eae97f0d53696138a50fa0e3a3b8c0"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
+name = "async-tungstenite"
+version = "0.9.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9ce503a5cb1e7450af7d211b86b84807791b251f335b2f43f1e26b85a416f315"
+dependencies = [
+ "futures-io",
+ "futures-util",
+ "log",
+ "pin-project 1.0.1",
+ "tokio",
+ "tokio-rustls",
+ "tungstenite",
+ "webpki-roots 0.20.0",
 ]
 
 [[package]]
@@ -49,6 +77,12 @@ name = "base64"
 version = "0.12.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3441f0f7b02788e948e47f457ca01f1d7e6d92c693bc132c22b087d3141c03ff"
+
+[[package]]
+name = "base64"
+version = "0.13.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "904dfeac50f3cdaba28fc6f57fdcddb75f49ed61346676a78c4ffe55877802fd"
 
 [[package]]
 name = "bitflags"
@@ -139,6 +173,17 @@ name = "command_attr"
 version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c27d6155f93d880b6379d93ddc9b2417b3b69b715360c5f25525e4576338a381"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
+name = "command_attr"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "58318b9598731017d40482fc428a1299e943f51d56522af5edc0ba4c1e69a628"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -263,12 +308,28 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3dcaa9ae7725d12cdb85b3ad99a434db70b468c09ded17e012d86b5c1010f7a7"
 
 [[package]]
+name = "futures"
+version = "0.3.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "95314d38584ffbfda215621d723e0a3906f032e03ae5551e650058dac83d4797"
+dependencies = [
+ "futures-channel",
+ "futures-core",
+ "futures-executor",
+ "futures-io",
+ "futures-sink",
+ "futures-task",
+ "futures-util",
+]
+
+[[package]]
 name = "futures-channel"
 version = "0.3.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0448174b01148032eed37ac4aed28963aaaa8cfa93569a08e5b479bbc6c2c151"
 dependencies = [
  "futures-core",
+ "futures-sink",
 ]
 
 [[package]]
@@ -276,6 +337,17 @@ name = "futures-core"
 version = "0.3.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "18eaa56102984bed2c88ea39026cff3ce3b4c7f508ca970cedf2450ea10d4e46"
+
+[[package]]
+name = "futures-executor"
+version = "0.3.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f5f8e0c9258abaea85e78ebdda17ef9666d390e987f006be6080dfe354b708cb"
+dependencies = [
+ "futures-core",
+ "futures-task",
+ "futures-util",
+]
 
 [[package]]
 name = "futures-io"
@@ -316,9 +388,11 @@ version = "0.3.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "abcb44342f62e6f3e8ac427b8aa815f724fd705dfad060b18ac7866c15bb8e34"
 dependencies = [
+ "futures-channel",
  "futures-core",
  "futures-io",
  "futures-macro",
+ "futures-sink",
  "futures-task",
  "memchr",
  "pin-project 1.0.1",
@@ -547,7 +621,7 @@ name = "key_base"
 version = "0.1.0"
 dependencies = [
  "serde_json",
- "serenity",
+ "serenity 0.9.0",
 ]
 
 [[package]]
@@ -889,9 +963,9 @@ checksum = "41cc0f7e4d5d4544e8861606a285bb08d3e70712ccc7d2b84d7c0ccfaf4b05ce"
 
 [[package]]
 name = "regex"
-version = "1.4.1"
+version = "1.4.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8963b85b8ce3074fecffde43b4b0dded83ce2f367dc8d363afc56679f3ee820b"
+checksum = "38cf2c13ed4745de91a5eb834e11c00bcc3709e773173b2ce4c56c9fbde04b9c"
 dependencies = [
  "aho-corasick",
  "memchr",
@@ -901,9 +975,9 @@ dependencies = [
 
 [[package]]
 name = "regex-syntax"
-version = "0.6.20"
+version = "0.6.21"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8cab7a364d15cde1e505267766a2d3c4e22a843e1a601f0fa7564c0f82ced11c"
+checksum = "3b181ba2dcf07aaccad5448e8ead58db5b742cf85dfe035e2227f137a539a189"
 
 [[package]]
 name = "reqwest"
@@ -938,7 +1012,7 @@ dependencies = [
  "wasm-bindgen",
  "wasm-bindgen-futures",
  "web-sys",
- "webpki-roots",
+ "webpki-roots 0.19.0",
  "winreg",
 ]
 
@@ -1063,7 +1137,7 @@ dependencies = [
  "base64 0.12.3",
  "bitflags",
  "chrono",
- "command_attr",
+ "command_attr 0.2.0",
  "flate2",
  "log",
  "parking_lot",
@@ -1078,7 +1152,34 @@ dependencies = [
  "url",
  "uwl",
  "webpki",
- "webpki-roots",
+ "webpki-roots 0.19.0",
+]
+
+[[package]]
+name = "serenity"
+version = "0.9.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "166bf9762b5c7398f4410ff3c34fccb97fd8b8961845224bd758b3cfe0c39053"
+dependencies = [
+ "async-trait",
+ "async-tungstenite",
+ "base64 0.13.0",
+ "bitflags",
+ "bytes",
+ "chrono",
+ "command_attr 0.3.0",
+ "flate2",
+ "futures",
+ "reqwest",
+ "serde",
+ "serde_json",
+ "static_assertions",
+ "tokio",
+ "tracing",
+ "tracing-futures",
+ "typemap_rev",
+ "url",
+ "uwl",
 ]
 
 [[package]]
@@ -1141,8 +1242,9 @@ dependencies = [
 name = "std_ban"
 version = "0.1.0"
 dependencies = [
+ "futures",
  "key_base",
- "serenity",
+ "serenity 0.9.0",
 ]
 
 [[package]]
@@ -1166,7 +1268,7 @@ dependencies = [
  "humantime",
  "key_base",
  "regex",
- "serenity",
+ "serenity 0.9.0",
 ]
 
 [[package]]
@@ -1175,7 +1277,7 @@ version = "0.1.0"
 dependencies = [
  "key_base",
  "regex",
- "serenity",
+ "serenity 0.8.7",
 ]
 
 [[package]]
@@ -1183,7 +1285,7 @@ name = "std_kick"
 version = "0.1.0"
 dependencies = [
  "key_base",
- "serenity",
+ "serenity 0.8.7",
 ]
 
 [[package]]
@@ -1200,7 +1302,7 @@ name = "std_pin"
 version = "0.1.0"
 dependencies = [
  "key_base",
- "serenity",
+ "serenity 0.8.7",
 ]
 
 [[package]]
@@ -1217,7 +1319,7 @@ version = "0.1.0"
 dependencies = [
  "key_base",
  "regex",
- "serenity",
+ "serenity 0.8.7",
 ]
 
 [[package]]
@@ -1233,7 +1335,7 @@ name = "std_setnickname"
 version = "0.1.0"
 dependencies = [
  "key_base",
- "serenity",
+ "serenity 0.8.7",
 ]
 
 [[package]]
@@ -1250,7 +1352,7 @@ version = "0.1.0"
 dependencies = [
  "key_base",
  "regex",
- "serenity",
+ "serenity 0.8.7",
 ]
 
 [[package]]
@@ -1331,6 +1433,18 @@ dependencies = [
  "num_cpus",
  "pin-project-lite",
  "slab",
+ "tokio-macros",
+]
+
+[[package]]
+name = "tokio-macros"
+version = "0.2.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f0c3acc6aa564495a0f2e1d59fab677cd7f81a19994cfc7f3ad0e64301560389"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
 ]
 
 [[package]]
@@ -1374,7 +1488,19 @@ dependencies = [
  "cfg-if 0.1.10",
  "log",
  "pin-project-lite",
+ "tracing-attributes",
  "tracing-core",
+]
+
+[[package]]
+name = "tracing-attributes"
+version = "0.1.11"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "80e0ccfc3378da0cce270c946b676a376943f5cd16aeba64568e7939806f4ada"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
 ]
 
 [[package]]
@@ -1435,6 +1561,12 @@ checksum = "653be63c80a3296da5551e1bfd2cca35227e13cdd08c6668903ae2f4f77aa1f6"
 dependencies = [
  "unsafe-any",
 ]
+
+[[package]]
+name = "typemap_rev"
+version = "0.1.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "078d41124321488746becfa144977b9b54667af408ff933cbbce9d83e7796ac9"
 
 [[package]]
 name = "typenum"
@@ -1640,6 +1772,15 @@ name = "webpki-roots"
 version = "0.19.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f8eff4b7516a57307f9349c64bf34caa34b940b66fed4b2fb3136cb7386e5739"
+dependencies = [
+ "webpki",
+]
+
+[[package]]
+name = "webpki-roots"
+version = "0.20.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0f20dea7535251981a9670857150d571846545088359b28e4951d350bdaf179f"
 dependencies = [
  "webpki",
 ]

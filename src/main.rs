@@ -4,7 +4,7 @@
 use ars::key_loader;
 use serenity::{
     client::{bridge::gateway::ShardMessenger, Context},
-    prelude::{RwLock, ShareMap},
+    prelude::{RwLock, TypeMap},
 };
 
 use std::io::stdin;
@@ -13,8 +13,8 @@ fn main() {
 	let keys = key_loader::load_keys("./keys");
 	loop {
 		let mut c = Context {
-			data: std::sync::Arc::new(RwLock::new(ShareMap::custom())),
-			shard: ShardMessenger::new(std::sync::mpsc::channel().0),
+			data: std::sync::Arc::new(RwLock::new(TypeMap::new())),
+			shard: ShardMessenger::new(futures::channel::mpsc::unbounded().0),
 			shard_id: 0,
 			http: Default::default(),
 			cache: Default::default(),

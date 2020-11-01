@@ -11,6 +11,6 @@ crate-type = ["cdylib"]
 
 [dependencies]
 key_base = { path = "../key_base" }
-serenity = "0.8"
+serenity = "0.9"
 humantime = "2"
 regex = "1"

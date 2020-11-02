@@ -3,6 +3,7 @@
 
 use key_base::environment::events;
 use serenity::model::id::{UserId, GuildId};
+use futures::executor;
 #[no_mangle]
 pub fn key_create() -> *mut dyn key_base::Key {
 	let key_info = key_base::KeyInfo {
@@ -56,10 +57,11 @@ fn key_function(parameter: &[String], environment: &mut key_base::environment::E
 			return String::new();
 		}
 	}
+	let member = executor::block_on(environment.discord_context.cache.member(guild_id, user_id)).unwrap();
 	if parameter.len() == 1 {
-		environment.discord_context.cache.read().member(guild_id, user_id).unwrap().kick_with_reason(&environment.discord_context.http, &parameter[0]).unwrap();
+		executor::block_on(member.kick_with_reason(&environment.discord_context.http, &parameter[0])).unwrap();
 	} else {
-		environment.discord_context.cache.read().member(guild_id, user_id).unwrap().kick(&environment.discord_context.http).unwrap();
+		executor::block_on(member.kick(&environment.discord_context.http)).unwrap();
 	}
 	return String::new();
 }

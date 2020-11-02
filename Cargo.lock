@@ -1286,8 +1286,9 @@ dependencies = [
 name = "std_kick"
 version = "0.1.0"
 dependencies = [
+ "futures",
  "key_base",
- "serenity 0.8.7",
+ "serenity 0.9.0",
 ]
 
 [[package]]

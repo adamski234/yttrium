@@ -1,6 +1,7 @@
 #![allow(clippy::needless_return)]
 #![deny(clippy::implicit_return)]
 use serenity::model::id::GuildId;
+use futures::executor;
 #[no_mangle]
 pub fn key_create() -> *mut dyn key_base::Key {
 	let key_info = key_base::KeyInfo {
@@ -33,25 +34,25 @@ fn key_function(parameter: &[String], environment: &mut key_base::environment::E
 		return String::new();
 	}
 	let guild_id = GuildId::from(environment.guild_id.parse::<u64>().unwrap());
-	let guild = environment.discord_context.cache.read().guild(&guild_id).unwrap();
+	let guild = executor::block_on(environment.discord_context.cache.guild(&guild_id)).unwrap();
 	match parameter[0].as_str() {
 		"id" => {
-			return guild.read().id.to_string();
+			return guild.id.to_string();
 		}
 		"owner" => {
-			return guild.read().owner_id.to_string();
+			return guild.owner_id.to_string();
 		}
 		"membercount" => {
-			return guild.read().members.len().to_string();
+			return guild.members.len().to_string();
 		}
 		"rolecount" => {
-			return guild.read().roles.len().to_string();
+			return guild.roles.len().to_string();
 		}
 		"channelcount" => {
-			return guild.read().channels.len().to_string();
+			return guild.channels.len().to_string();
 		}
 		"icon" => {
-			match guild.read().icon_url() {
+			match guild.icon_url() {
 				Some(url) => {
 					return url;
 				}
@@ -61,7 +62,7 @@ fn key_function(parameter: &[String], environment: &mut key_base::environment::E
 			}
 		}
 		"region" => {
-			return guild.read().region.clone();
+			return guild.region.clone();
 		}
 		_ => {
 			return String::new();

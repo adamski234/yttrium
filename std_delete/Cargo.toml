@@ -11,7 +11,7 @@ crate-type = ["cdylib"]
 
 [dependencies]
 key_base = { path = "../key_base" }
-serenity = { version = "0.9", default-features = false, features = ["http", "model", "gateway", "cache"] }
+serenity = "0.9"
 futures = "0.3"
 humantime = "2"
 regex = "1"

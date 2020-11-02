@@ -3,6 +3,7 @@
 
 use key_base::environment::events;
 use serenity::model::id::{UserId, GuildId, RoleId};
+use futures::executor;
 #[no_mangle]
 pub fn key_create() -> *mut dyn key_base::Key {
 	let key_info = key_base::KeyInfo {
@@ -61,18 +62,18 @@ fn key_function(parameter: &[String], environment: &mut key_base::environment::E
 	} else {
 		user_id = UserId::from(parameter[1].parse::<u64>().unwrap());
 	}
-	let guild = environment.discord_context.cache.read().guild(guild_id).unwrap();
+	let guild = executor::block_on(environment.discord_context.cache.guild(guild_id)).unwrap();
 	let mut role_id;
 	if matcher.is_match(&parameter[0]) {
 		role_id = RoleId::from(parameter[0].parse::<u64>().unwrap());
-		if !guild.read().roles.contains_key(&role_id) {
+		if !guild.roles.contains_key(&role_id) {
 			//Safeguard against 18 characters long role names composed only of digits
-			role_id = guild.read().role_by_name(&parameter[0]).unwrap().id;
+			role_id = guild.role_by_name(&parameter[0]).unwrap().id;
 		}
 	} else {
-		role_id = guild.read().role_by_name(&parameter[0]).unwrap().id;
+		role_id = guild.role_by_name(&parameter[0]).unwrap().id;
 	}
-	let mut member = guild.read().member(&environment.discord_context.http, user_id).unwrap();
-	member.add_role(&environment.discord_context.http, role_id).unwrap();
+	let mut member = executor::block_on(guild.member(&environment.discord_context.http, user_id)).unwrap();
+	executor::block_on(member.add_role(&environment.discord_context.http, role_id)).unwrap();
 	return String::new();
 }

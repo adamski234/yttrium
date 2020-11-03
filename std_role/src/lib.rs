@@ -32,7 +32,7 @@ impl key_base::Key for std_role {
 	}
 }
 fn key_function(parameter: &[String], environment: &mut key_base::environment::Environment) -> String {
-	let matcher = regex::Regex::new("[0-9]{18}").unwrap();
+	let matcher = regex::Regex::new(key_base::regexes::DISCORD_ID).unwrap();
 	let guild_id = GuildId::from(environment.guild_id.parse::<u64>().unwrap());
 	let user_id;
 	if parameter.len() == 1 {

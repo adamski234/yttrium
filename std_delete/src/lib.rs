@@ -95,7 +95,7 @@ fn key_function(parameter: &[String], environment: &mut key_base::environment::E
 				return String::new();
 			}
 		} else {
-			let matcher = regex::Regex::new(r"\d{18}").unwrap();
+			let matcher = regex::Regex::new(key_base::regexes::DISCORD_ID).unwrap();
 			if matcher.is_match(&parameter[2]) {
 				let channel_id = ChannelId::from(parameter[2].parse::<u64>().unwrap());
 				let channel = executor::block_on(environment.discord_context.cache.channel(&channel_id)).unwrap();

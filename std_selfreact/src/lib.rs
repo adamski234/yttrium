@@ -33,7 +33,7 @@ impl key_base::Key for std_selfdelete {
 }
 
 fn key_function(parameter: &[String], environment: &mut key_base::environment::Environment) -> String {
-	let matcher = regex::Regex::new("\\d{18}").unwrap();
+	let matcher = regex::Regex::new(key_base::regexes::DISCORD_ID).unwrap();
 	let reaction;
 	if matcher.is_match(&parameter[0]) {
 		//Guild reaction

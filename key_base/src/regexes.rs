@@ -1,4 +1,4 @@
-pub static DISCORD_ID: &str = "\\d{18}";
+pub static DISCORD_ID: &str = r"\d{18}";
 
 #[cfg(test)]
 mod tests {

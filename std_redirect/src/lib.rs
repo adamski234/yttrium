@@ -30,7 +30,7 @@ impl key_base::Key for std_redirect {
 
 fn key_function(parameter: &[String], environment: &mut key_base::environment::Environment) -> String {
 	let possibly_id = &parameter[0];
-	let matcher = regex::Regex::new("[0-9]{18}").unwrap();
+	let matcher = regex::Regex::new(key_base::regexes::DISCORD_ID).unwrap();
 	if matcher.is_match(possibly_id) {
 		environment.target = possibly_id.clone();
 	};

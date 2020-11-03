@@ -33,5 +33,6 @@ members = [
     "std_guild",
     "std_delete",
     "std_selfdelete",
-    "std_selfreact"
+    "std_selfreact",
+    "std_joined",
 ]

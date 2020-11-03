@@ -3,6 +3,7 @@
 pub mod environment;
 pub mod embed;
 pub mod databases;
+pub mod regexes;
 
 pub trait Key {
 	fn get_key_info(&self) -> &KeyInfo;

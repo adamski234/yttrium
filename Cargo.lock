@@ -576,6 +576,7 @@ dependencies = [
 name = "key_base"
 version = "0.1.0"
 dependencies = [
+ "regex",
  "serde_json",
  "serenity",
 ]

@@ -13,3 +13,4 @@ crate-type = ["cdylib"]
 key_base = { path = "../key_base" }
 serenity = "0.9"
 regex = "1.4"
+unicode-segmentation = "1"

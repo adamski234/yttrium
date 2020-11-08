@@ -37,11 +37,15 @@ fn key_function(parameter: &[String], environment: &mut key_base::environment::E
 	let reaction;
 	if matcher.is_match(&parameter[0]) {
 		//Guild reaction
-		let emoji_id = serenity::model::id::EmojiId::from(parameter[0].parse::<u64>().unwrap());
-		reaction = serenity::model::channel::ReactionType::from(emoji_id);
+		reaction = parameter[0].clone();
 	} else {
 		//Normal unicode reaction
-		reaction = serenity::model::channel::ReactionType::Unicode(parameter[0].clone());
+		let grapheme_count = unicode_segmentation::UnicodeSegmentation::graphemes(parameter[0].as_str(), true).count();
+		if grapheme_count == 1 {
+			reaction = parameter[0].clone();
+		} else {
+			return String::new();
+		}
 	}
 	environment.reactions_to_add.push(reaction);
 	return String::new();

@@ -123,8 +123,11 @@ pub fn interpret_tree(tree: Vec<tree_creator::TreeNode>, key_list: &HashMap<Stri
 						//Stop the interepreter
 						return InterpretationResult {
 							message: current_node.returned_values.join(""),
-							embed: None,
+							embed: environment.embed,
 							next_rule: next_rule,
+							attachments: environment.attachments,
+							reactions: environment.reactions_to_add,
+							self_delete: environment.delete_option,
 						};
 					} else {
 						returned = key_list.get(&current_node.inner_node.key).unwrap().get_key_function()(&current_node.returned_values, &mut environment);
@@ -137,8 +140,11 @@ pub fn interpret_tree(tree: Vec<tree_creator::TreeNode>, key_list: &HashMap<Stri
 					//No more keys to interpret, return the result
 					return InterpretationResult {
 						message: current_node.returned_values.join(""),
-						embed: None,
+						embed: environment.embed,
 						next_rule: next_rule,
+						attachments: environment.attachments,
+						reactions: environment.reactions_to_add,
+						self_delete: environment.delete_option,
 					};
 				}
 			}
@@ -174,6 +180,9 @@ pub struct InterpretationResult {
 	pub message: String,
 	pub embed: Option<key_base::embed::Embed>,
 	pub next_rule: Option<String>,
+	pub attachments: Vec<String>,
+	pub reactions: Vec<String>,
+	pub self_delete: Option<std::time::Duration>,
 }
 
 struct InterpretableNode {

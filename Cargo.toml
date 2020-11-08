@@ -35,4 +35,5 @@ members = [
     "std_selfdelete",
     "std_selfreact",
     "std_joined",
+    "std_channel",
 ]

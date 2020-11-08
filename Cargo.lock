@@ -113,9 +113,9 @@ checksum = "0e4cec68f03f32e44924783795810fa50a7035d8c8ebe78580ad7e6c703fba38"
 
 [[package]]
 name = "cc"
-version = "1.0.61"
+version = "1.0.62"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ed67cbde08356238e75fc4656be4749481eeffb09e19f320a25237d5221c985d"
+checksum = "f1770ced377336a88a67c473594ccc14eca6f4559217c34f64aac8f83d641b40"
 
 [[package]]
 name = "cfg-if"
@@ -181,9 +181,9 @@ dependencies = [
 
 [[package]]
 name = "cxx"
-version = "0.5.2"
+version = "0.5.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "93b81cf2d0c98959da40a2b5c5361223de29191d07d7f1b27cd60574f022bfd0"
+checksum = "0261352dd384e16f80185960f2f4cee3ae213670284df6028802f042a1110d35"
 dependencies = [
  "cc",
  "cxxbridge-flags",
@@ -193,9 +193,9 @@ dependencies = [
 
 [[package]]
 name = "cxx-build"
-version = "0.5.2"
+version = "0.5.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d4a8efb1a1e9076c14bf899862063187eb5e9044ffc71264e21239a8e02fd681"
+checksum = "14fad5da37d09d0835344dc78151dce3afe2843ea9da448df55e71076ffd8895"
 dependencies = [
  "cc",
  "codespan-reporting",
@@ -208,15 +208,15 @@ dependencies = [
 
 [[package]]
 name = "cxxbridge-flags"
-version = "0.5.2"
+version = "0.5.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bc76a4ed44210291af98586f6230220d8ec0fcfa35fe4593a75a2888f9f9bc7a"
+checksum = "37cf15eb4cc1303da0d2f79ba27be98a243e78c9fa8f2a5791ea2a433037a900"
 
 [[package]]
 name = "cxxbridge-macro"
-version = "0.5.2"
+version = "0.5.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0bbc56d221f8c35123784c432bde67832cd0c54993271560fb9bb5f42339e001"
+checksum = "aa2e3a11b23a9f260a642dff6ddeb4f98f7de9e67ecbe6cc32983ae65db03c0e"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -264,6 +264,16 @@ name = "fnv"
 version = "1.0.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3f9eec918d3f24069decb9af1554cad7c880e2da24a9afd88aca000531ab82c1"
+
+[[package]]
+name = "form_urlencoded"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ece68d15c92e84fa4f19d3780f1294e5ca82a78a6d515f1efaabcc144688be00"
+dependencies = [
+ "matches",
+ "percent-encoding",
+]
 
 [[package]]
 name = "fuchsia-zircon"
@@ -1108,6 +1118,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "std_channel"
+version = "0.1.0"
+dependencies = [
+ "key_base",
+ "regex",
+ "serenity",
+]
+
+[[package]]
 name = "std_db_read"
 version = "0.1.0"
 dependencies = [
@@ -1488,10 +1507,11 @@ checksum = "a156c684c91ea7d62626509bce3cb4e1d9ed5c4d978f7b4352658f96a4c26b4a"
 
 [[package]]
 name = "url"
-version = "2.1.1"
+version = "2.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "829d4a8476c35c9bf0bbce5a3b23f4106f79728039b726d292bb93bc106787cb"
+checksum = "5909f2b0817350449ed73e8bcd81c8c3c8d9a7a5d8acba4b27db277f1868976e"
 dependencies = [
+ "form_urlencoded",
  "idna",
  "matches",
  "percent-encoding",

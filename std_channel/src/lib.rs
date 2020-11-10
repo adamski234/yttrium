@@ -68,7 +68,7 @@ fn key_function(parameter: &[String], environment: &mut key_base::environment::E
 	if parameter.is_empty() || parameter[0] == "id" {
 		return channel_id.to_string();
 	}
-	let channel = serenity::futures::executor::block_on(environment.discord_context.cache.guild_channel(channel_id)).unwrap();
+	let channel = futures::executor::block_on(environment.discord_context.cache.guild_channel(channel_id)).unwrap();
 	match parameter[0].as_str() {
 		"name" => {
 			return channel.name;

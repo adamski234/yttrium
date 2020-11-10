@@ -36,4 +36,5 @@ members = [
     "std_selfreact",
     "std_joined",
     "std_channel",
+    "std_mention",
 ]

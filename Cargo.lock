@@ -1121,6 +1121,7 @@ dependencies = [
 name = "std_channel"
 version = "0.1.0"
 dependencies = [
+ "futures",
  "key_base",
  "regex",
  "serenity",

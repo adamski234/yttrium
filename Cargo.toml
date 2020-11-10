@@ -38,4 +38,5 @@ members = [
     "std_channel",
     "std_mention",
     "std_user",
+    "std_rand",
 ]

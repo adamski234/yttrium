@@ -1207,6 +1207,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "std_rand"
+version = "0.1.0"
+dependencies = [
+ "key_base",
+ "rand",
+]
+
+[[package]]
 name = "std_redirect"
 version = "0.1.0"
 dependencies = [

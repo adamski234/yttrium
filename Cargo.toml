@@ -37,4 +37,5 @@ members = [
     "std_joined",
     "std_channel",
     "std_mention",
+    "std_user",
 ]

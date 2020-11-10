@@ -1277,6 +1277,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "std_user"
+version = "0.1.0"
+dependencies = [
+ "futures",
+ "key_base",
+ "serenity",
+]
+
+[[package]]
 name = "syn"
 version = "1.0.48"
 source = "registry+https://github.com/rust-lang/crates.io-index"

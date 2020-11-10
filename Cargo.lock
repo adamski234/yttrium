@@ -1153,6 +1153,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "std_everyone"
+version = "0.1.0"
+dependencies = [
+ "key_base",
+]
+
+[[package]]
 name = "std_guild"
 version = "0.1.0"
 dependencies = [

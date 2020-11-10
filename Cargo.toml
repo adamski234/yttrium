@@ -39,4 +39,5 @@ members = [
     "std_mention",
     "std_user",
     "std_rand",
+    "std_everyone",
 ]

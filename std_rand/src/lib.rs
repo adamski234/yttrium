@@ -37,6 +37,9 @@ impl key_base::Key for std_mention {
 fn key_function(parameter: &[String], _environment: &mut key_base::environment::Environment) -> String {
 	let lower = if !parameter.is_empty() { parameter[0].parse().unwrap() } else { 0 };
 	let upper = if parameter.len() == 2 { parameter[1].parse().unwrap() } else { 10 };
+	if lower > upper {
+		return String::new();
+	}
 	let result = rand::thread_rng().gen_range(lower, upper);
 	return result.to_string();
 }

@@ -1,7 +1,5 @@
 #![allow(clippy::needless_return)]
 #![deny(clippy::implicit_return)]
-use key_base::environment::events::*;
-use serenity::model::id::{ChannelId, MessageId};
 #[no_mangle]
 pub fn key_create() -> *mut dyn key_base::Key {
 	/*

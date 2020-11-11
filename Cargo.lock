@@ -181,9 +181,9 @@ dependencies = [
 
 [[package]]
 name = "cxx"
-version = "0.5.6"
+version = "0.5.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9f33ed19f45209fb43e18da45a2128500a1a843599ed62877f9ad46e71608729"
+checksum = "645647e76920443ca0f872b0cbe971f690c199e8d3f3bd57134a9b89398c51e3"
 dependencies = [
  "cc",
  "cxxbridge-flags",
@@ -193,9 +193,9 @@ dependencies = [
 
 [[package]]
 name = "cxx-build"
-version = "0.5.6"
+version = "0.5.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "dbcc93fd02276f98494ef27e386557f1a7b75c4e0b256883f699e0ac449e9a4b"
+checksum = "dffd04849b3bf7c4200dc4e4e3bfae084b968e6fae7f2020871dc2f62ecd1782"
 dependencies = [
  "cc",
  "codespan-reporting",
@@ -208,15 +208,15 @@ dependencies = [
 
 [[package]]
 name = "cxxbridge-flags"
-version = "0.5.6"
+version = "0.5.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ee85fb84105c8f314d3d68b6245f7ddafd3cdb0f95de72eb0f2f97c8fb7b3ee0"
+checksum = "8f6fd8dfdfc00a160c392ec0be482a62b9d9c4cb8a40c80d52baeb79a51a31c5"
 
 [[package]]
 name = "cxxbridge-macro"
-version = "0.5.6"
+version = "0.5.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "744e4a23f1b65ccc7b29be18795c417d5ee79d86755368468db1ce02d2e0e2e1"
+checksum = "9ff40bada5d2e58210ba0ece1c08a716d9dc18cc358f1fb476271a03177513c1"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -732,9 +732,9 @@ dependencies = [
 
 [[package]]
 name = "once_cell"
-version = "1.4.1"
+version = "1.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "260e51e7efe62b592207e9e13a68e43692a7a279171d6ba57abd208bf23645ad"
+checksum = "f53cef67919d7d247eb9a2f128ca9e522789967ef1eb4ccd8c71a95a8aedf596"
 
 [[package]]
 name = "opaque-debug"
@@ -1079,9 +1079,9 @@ checksum = "c111b5bd5695e56cffe5129854aa230b39c93a305372fdbb2668ca2394eea9f8"
 
 [[package]]
 name = "socket2"
-version = "0.3.15"
+version = "0.3.16"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b1fa70dc5c8104ec096f4fe7ede7a221d35ae13dcd19ba1ad9a81d2cab9a1c44"
+checksum = "7fd8b795c389288baa5f355489c65e71fd48a02104600d15c4cfbc561e9e429d"
 dependencies = [
  "cfg-if 0.1.10",
  "libc",
@@ -1125,6 +1125,13 @@ dependencies = [
  "key_base",
  "regex",
  "serenity",
+]
+
+[[package]]
+name = "std_database_exists"
+version = "0.1.0"
+dependencies = [
+ "key_base",
 ]
 
 [[package]]
@@ -1343,9 +1350,18 @@ dependencies = [
 
 [[package]]
 name = "tinyvec"
-version = "0.3.4"
+version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "238ce071d267c5710f9d31451efec16c5ee22de34df17cc05e56cbc92e967117"
+checksum = "b78a366903f506d2ad52ca8dc552102ffdd3e937ba8a227f024dc1d1eae28575"
+dependencies = [
+ "tinyvec_macros",
+]
+
+[[package]]
+name = "tinyvec_macros"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "cda74da7e1a664f795bb1f8a87ec406fb89a02522cf6e50620d016add6dbbf5c"
 
 [[package]]
 name = "tokio"
@@ -1508,9 +1524,9 @@ dependencies = [
 
 [[package]]
 name = "unicode-normalization"
-version = "0.1.13"
+version = "0.1.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6fb19cf769fa8c6a80a162df694621ebeb4dafb606470b2b2fce0be40a98a977"
+checksum = "b7f98e67a4d84f730d343392f9bfff7d21e3fca562b9cb7a43b768350beeddc6"
 dependencies = [
  "tinyvec",
 ]

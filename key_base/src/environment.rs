@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use crate::embed;
 use crate::databases;
 #[path = "./events.rs"] pub mod events;
@@ -12,11 +13,13 @@ pub struct Environment<'a> {
 	pub event_info: events::EventType,
 	pub discord_context: &'a mut serenity::client::Context,
 	pub delete_option: Option<std::time::Duration>,
-	pub reactions_to_add: Vec<String>
+	pub reactions_to_add: Vec<String>,
+	pub parameter: String,
+	pub split_parameters: HashMap<String, Vec<String>>,
 }
 
 impl<'a> Environment<'a> {
-	pub fn new(event_info: events::EventType, guild_id: String, context: &'a mut serenity::client::Context) -> Self {
+	pub fn new(event_info: events::EventType, guild_id: String, parameter: String, context: &'a mut serenity::client::Context) -> Self {
 		return Self {
 			embed: None,
 			target: String::new(),
@@ -27,6 +30,8 @@ impl<'a> Environment<'a> {
 			discord_context: context,
 			delete_option: None,
 			reactions_to_add: vec![],
+			parameter: parameter,
+			split_parameters: HashMap::new(),
 		};
 	}
 }

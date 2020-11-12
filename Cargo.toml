@@ -42,4 +42,5 @@ members = [
     "std_everyone",
     "std_database_exists",
     "std_text_equals",
+    "std_parameter",
 ]

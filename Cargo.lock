@@ -1213,6 +1213,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "std_parameter"
+version = "0.1.0"
+dependencies = [
+ "key_base",
+]
+
+[[package]]
 name = "std_pin"
 version = "0.1.0"
 dependencies = [

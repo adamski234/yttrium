@@ -72,5 +72,4 @@ fn key_function(parameter: &[String], _environment: &mut key_base::environment::
 			return String::new();
 		}
 	}
-	return String::from("0");
 }

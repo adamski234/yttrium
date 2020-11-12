@@ -43,4 +43,5 @@ members = [
     "std_database_exists",
     "std_text_equals",
     "std_parameter",
+    "std_match",
 ]

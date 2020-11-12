@@ -14,8 +14,6 @@ pub struct Environment<'a> {
 	pub discord_context: &'a mut serenity::client::Context,
 	pub delete_option: Option<std::time::Duration>,
 	pub reactions_to_add: Vec<String>,
-	pub parameter: String,
-	pub split_parameters: HashMap<String, Vec<String>>,
 }
 
 impl<'a> Environment<'a> {
@@ -30,8 +28,6 @@ impl<'a> Environment<'a> {
 			discord_context: context,
 			delete_option: None,
 			reactions_to_add: vec![],
-			parameter: parameter,
-			split_parameters: HashMap::new(),
 		};
 	}
 }

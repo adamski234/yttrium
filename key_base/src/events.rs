@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 #[derive(Debug)]
 pub enum EventType {
 	Default,
@@ -23,11 +24,20 @@ pub struct MessageEventInfo {
 	pub message_id: String,
 	pub user_id: String,
 	pub trigger: String,
+	pub parameter: String,
+	pub split_parameters: HashMap<String, Vec<String>>,
 }
 
 impl MessageEventInfo {
-	pub fn new(channel_id: String, message_id: String, user_id: String, trigger: String) -> Self {
-		return Self { channel_id, message_id, user_id, trigger };
+	pub fn new(channel_id: String, message_id: String, user_id: String, parameter: String, trigger: String) -> Self {
+		return Self {
+			channel_id: channel_id,
+			message_id: message_id,
+			user_id: user_id,
+			trigger: trigger,
+			parameter: parameter,
+			split_parameters: HashMap::new(),
+		};
 	}
 }
 

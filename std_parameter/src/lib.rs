@@ -34,28 +34,32 @@ impl key_base::Key for std_parameter {
 }
 
 fn key_function(parameter: &[String], environment: &mut key_base::environment::Environment) -> String {
-	if parameter.is_empty() {
-		return environment.parameter.clone();
-	} else {
-		let index;
-		match parameter[1].parse::<usize>() {
-			Ok(value) => {
-				index = value;
+	if let key_base::environment::events::EventType::Message(event) = &mut environment.event_info {
+		if parameter.is_empty() {
+			return event.parameter.clone();
+		} else {
+			let index;
+			match parameter[1].parse::<usize>() {
+				Ok(value) => {
+					index = value;
+				}
+				Err(_) => {
+					return String::new();
+				}
 			}
-			Err(_) => {
+			if !event.split_parameters.contains_key(&parameter[0]) {
+				//This is hacky and I don't like this
+				let split = event.parameter.split(&parameter[0]).map(String::from).collect();
+				event.split_parameters.insert(parameter[0].clone(), split);
+			}
+			let split = event.split_parameters.get(&parameter[0]).unwrap();
+			if split.len() >= index + 1 {
+				return split[index].clone();
+			} else {
 				return String::new();
 			}
 		}
-		if !environment.split_parameters.contains_key(&parameter[0]) {
-			//This is hacky and I don't like this
-			let split = environment.parameter.split(&parameter[0]).map(String::from).collect();
-			environment.split_parameters.insert(parameter[0].clone(), split);
-		}
-		let split = environment.split_parameters.get(&parameter[0]).unwrap();
-		if split.len() >= index + 1 {
-			return split[index].clone();
-		} else {
-			return String::new();
-		}
+	} else {
+		return String::new();
 	}
 }

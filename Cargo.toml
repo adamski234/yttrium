@@ -41,4 +41,5 @@ members = [
     "std_rand",
     "std_everyone",
     "std_database_exists",
+    "std_text_equals",
 ]

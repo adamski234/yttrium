@@ -1,5 +1,5 @@
 [package]
-name = "std_text_equals"
+name = "std_text"
 version = "0.1.0"
 authors = ["adamski234 <adamski234@protonmail.com>"]
 edition = "2018"
@@ -11,3 +11,5 @@ crate-type = ["cdylib"]
 
 [dependencies]
 key_base = { path = "../key_base" }
+regex = "1.4"
+glob = "0.3"

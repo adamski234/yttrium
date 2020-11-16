@@ -4,7 +4,7 @@
 pub fn key_create() -> *mut dyn key_base::Key {
 	/*
 	Parameters:
-	Required, operation to perform. Possible values: equals, contains, starts_with, ends_with, regex, glob
+	Required, operation to perform. Possible values: equals, contains, starts_with, ends_with, regex, glob, extract
 	Required, text to check
 	Required, text to check against. Regex if parameter 0 is `regex`, glob if `glob`, etc.
 	*/
@@ -60,6 +60,18 @@ fn key_function(parameter: &[String], _environment: &mut key_base::environment::
 				}
 			}
 			result = matcher.is_match(&parameter[1]);
+		}
+		"extract" => {
+			let matcher;
+			match regex::Regex::new(&parameter[2]) {
+				Ok(value) => {
+					matcher = value;
+				}
+				Err(_) => {
+					return String::new();
+				}
+			}
+			return String::from(&matcher.captures(&parameter[1]).unwrap()[1]);
 		}
 		"glob" => {
 			let matcher;

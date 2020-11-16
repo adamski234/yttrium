@@ -71,7 +71,14 @@ fn key_function(parameter: &[String], _environment: &mut key_base::environment::
 					return String::new();
 				}
 			}
-			return String::from(&matcher.captures(&parameter[1]).unwrap()[1]);
+			match matcher.captures(&parameter[1]) {
+				Some(result) => {
+					return String::from(&result[1]);
+				}
+				None => {
+					return String::new();
+				}
+			}
 		}
 		"glob" => {
 			let matcher;

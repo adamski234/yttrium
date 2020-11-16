@@ -1183,6 +1183,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "std_hasrole"
+version = "0.1.0"
+dependencies = [
+ "futures",
+ "key_base",
+ "regex",
+ "serenity",
+]
+
+[[package]]
 name = "std_joined"
 version = "0.1.0"
 dependencies = [

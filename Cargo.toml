@@ -43,4 +43,5 @@ members = [
     "std_database_exists",
     "std_parameter",
     "std_text",
+    "std_hasrole",
 ]

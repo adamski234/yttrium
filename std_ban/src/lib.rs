@@ -3,24 +3,34 @@
 
 use key_base::environment::events;
 use serenity::model::id::UserId;
+#[cfg(feature = "loader")]
 #[no_mangle]
 pub fn key_create() -> *mut dyn key_base::Key {
-	/*
-	Parameters:
-	Optional, reason, defaults to nothing
-	Optional, days to remove messages from, default 0
-	Optional, user id, defaults to the sender
-	*/
-	let key_info = key_base::KeyInfo {
-		name: String::from("ban"),
-		parameters_required: vec![0, 1, 2, 3],
-	};
 	return Box::into_raw(Box::new(std_ban {
-		info: key_info,
+		info: create_key_info(),
 		function: key_function,
 	}));
 }
 
+pub fn safe_create() -> Box<dyn key_base::Key> {
+	return Box::new(std_ban {
+		info: create_key_info(),
+		function: key_function,
+	});
+}
+
+/*
+Parameters:
+Optional, reason, defaults to nothing
+Optional, days to remove messages from, default 0
+Optional, user id, defaults to the sender
+*/
+fn create_key_info() -> key_base::KeyInfo {
+	return key_base::KeyInfo {
+		name: String::from("ban"),
+		parameters_required: vec![0, 1, 2, 3],
+	};
+}
 #[allow(non_camel_case_types)]
 struct std_ban {
 	pub info: key_base::KeyInfo,

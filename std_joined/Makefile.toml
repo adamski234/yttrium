@@ -1,5 +1,5 @@
 [tasks.build]
 command = "cargo"
-args = ["build"]
+args = ["build", "--features=loader"]
 [tasks.default]
 alias = "build"

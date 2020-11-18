@@ -1,20 +1,32 @@
 #![allow(clippy::needless_return)]
 #![deny(clippy::implicit_return)]
+#[cfg(feature = "loader")]
 #[no_mangle]
 pub fn key_create() -> *mut dyn key_base::Key {
-	/*
-	Parameters:
-	Optional, the string to split on. If empty returns the entire parameter string
-	Required, the index of the split string to return
-	*/
-	let key_info = key_base::KeyInfo {
+	return Box::into_raw(Box::new(std_parameter {
+		info: create_key_info(),
+		function: key_function,
+	}));
+}
+
+pub fn safe_create() -> Box<dyn key_base::Key> {
+	return Box::new(std_parameter {
+		info: create_key_info(),
+		function: key_function,
+	});
+}
+
+
+/*
+Parameters:
+Optional, the string to split on. If empty returns the entire parameter string
+Required, the index of the split string to return
+*/
+fn create_key_info() -> key_base::KeyInfo {
+	return key_base::KeyInfo {
 		name: String::from("parameter"),
 		parameters_required: vec![0, 2],
 	};
-	return Box::into_raw(Box::new(std_parameter {
-		info: key_info,
-		function: key_function,
-	}));
 }
 
 #[allow(non_camel_case_types)]

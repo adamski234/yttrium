@@ -2,21 +2,32 @@
 #![deny(clippy::implicit_return)]
 use key_base::environment::events::*;
 use serenity::model::id::UserId;
+#[cfg(feature = "loader")]
 #[no_mangle]
 pub fn key_create() -> *mut dyn key_base::Key {
-	/*
-	Parameters:
-	Optional, chooses information to return, possible values: id, nickname, username, avatar, discriminator
-	Optional, user ID to target
-	*/
-	let key_info = key_base::KeyInfo {
+	return Box::into_raw(Box::new(std_user {
+		info: create_key_info(),
+		function: key_function,
+	}));
+}
+
+pub fn safe_create() -> Box<dyn key_base::Key> {
+	return Box::new(std_user {
+		info: create_key_info(),
+		function: key_function,
+	});
+}
+
+/*
+Parameters:
+Optional, chooses information to return, possible values: id, nickname, username, avatar, discriminator
+Optional, user ID to target
+*/
+fn create_key_info() -> key_base::KeyInfo {
+	return key_base::KeyInfo {
 		name: String::from("user"),
 		parameters_required: vec![2],
 	};
-	return Box::into_raw(Box::new(std_user {
-		info: key_info,
-		function: key_function,
-	}));
 }
 
 #[allow(non_camel_case_types)]

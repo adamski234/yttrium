@@ -1,21 +1,32 @@
 #![allow(clippy::needless_return)]
 #![deny(clippy::implicit_return)]
+#[cfg(feature = "loader")]
 #[no_mangle]
 pub fn key_create() -> *mut dyn key_base::Key {
-	/*
-	Parameters:
-	Required, operation to perform. Possible values: equals, contains, starts_with, ends_with, regex, glob, extract
-	Required, text to check
-	Required, text to check against. Regex if parameter 0 is `regex`, glob if `glob`, etc.
-	*/
-	let key_info = key_base::KeyInfo {
+	return Box::into_raw(Box::new(std_text {
+		info: create_key_info(),
+		function: key_function,
+	}));
+}
+
+pub fn safe_create() -> Box<dyn key_base::Key> {
+	return Box::new(std_text {
+		info: create_key_info(),
+		function: key_function,
+	});
+}
+
+/*
+Parameters:
+Required, operation to perform. Possible values: equals, contains, starts_with, ends_with, regex, glob, extract
+Required, text to check
+Required, text to check against. Regex if parameter 0 is `regex`, glob if `glob`, etc.
+*/
+fn create_key_info() -> key_base::KeyInfo {
+	return key_base::KeyInfo {
 		name: String::from("text"),
 		parameters_required: vec![3],
 	};
-	return Box::into_raw(Box::new(std_text {
-		info: key_info,
-		function: key_function,
-	}));
 }
 
 #[allow(non_camel_case_types)]

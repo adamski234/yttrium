@@ -8,10 +8,38 @@ edition = "2018"
 
 [dependencies]
 key_base = { path = "./key_base" }
-libloading = "0.6"
+libloading = { version = "0.6", optional = true }
 serde_json = "1"
 serenity = "0.9"
 futures = "0.3"
+# All the keys for a one file build
+std_db_read = { path = "./std_db_read", optional = true }
+std_db_write_str = { path = "./std_db_write_str", optional = true }
+std_redirect = { path = "./std_redirect", optional = true }
+std_sleep = { path = "./std_sleep", optional = true }
+std_math = { path = "./std_math", optional = true }
+std_attach = { path = "./std_attach", optional = true }
+std_setnickname = { path = "./std_setnickname", optional = true }
+std_pin = { path = "./std_pin", optional = true }
+std_trigger = { path = "./std_trigger", optional = true }
+std_take = { path = "./std_take", optional = true }
+std_role = { path = "./std_role", optional = true }
+std_ban = { path = "./std_ban", optional = true }
+std_kick = { path = "./std_kick", optional = true }
+std_guild = { path = "./std_guild", optional = true }
+std_delete = { path = "./std_delete", optional = true }
+std_selfdelete = { path = "./std_selfdelete", optional = true }
+std_selfreact = { path = "./std_selfreact", optional = true }
+std_joined = { path = "./std_joined", optional = true }
+std_channel = { path = "./std_channel", optional = true }
+std_mention = { path = "./std_mention", optional = true }
+std_user = { path = "./std_user", optional = true }
+std_rand = { path = "./std_rand", optional = true }
+std_everyone = { path = "./std_everyone", optional = true }
+std_database_exists = { path = "./std_database_exists", optional = true }
+std_parameter = { path = "./std_parameter", optional = true }
+std_text = { path = "./std_text", optional = true }
+std_hasrole = { path = "./std_hasrole", optional = true }
 
 [workspace]
 members = [
@@ -45,3 +73,36 @@ members = [
     "std_text",
     "std_hasrole",
 ]
+
+[features]
+single-file = [
+    "std_db_read",
+    "std_db_write_str",
+    "std_redirect",
+    "std_sleep",
+    "std_math",
+    "std_attach",
+    "std_setnickname",
+    "std_pin",
+    "std_trigger",
+    "std_take",
+    "std_role",
+    "std_ban",
+    "std_kick",
+    "std_guild",
+    "std_delete",
+    "std_selfdelete",
+    "std_selfreact",
+    "std_joined",
+    "std_channel",
+    "std_mention",
+    "std_user",
+    "std_rand",
+    "std_everyone",
+    "std_database_exists",
+    "std_parameter",
+    "std_text",
+    "std_hasrole",
+]
+loader = ["libloading"]
+default = ["single-file"]

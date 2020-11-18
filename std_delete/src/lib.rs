@@ -3,24 +3,34 @@
 use key_base::environment::events::*;
 use serenity::model::id::{ChannelId};
 use futures::executor;
+#[cfg(feature = "loader")]
 #[no_mangle]
 pub fn key_create() -> *mut dyn key_base::Key {
-	/*
-	Parameters:
-	Optional, time after which to delete the messages, default 0
-	Optional, amount of messages to delete, default 1
-	Optional, user ID for filtering messages, default no filtering
-	*/
-	let key_info = key_base::KeyInfo {
-		name: String::from("delete"),
-		parameters_required: vec![0, 1, 2, 3],
-	};
 	return Box::into_raw(Box::new(std_delete {
-		info: key_info,
+		info: create_key_info(),
 		function: key_function,
 	}));
 }
 
+pub fn safe_create() -> Box<dyn key_base::Key> {
+	return Box::new(std_delete {
+		info: create_key_info(),
+		function: key_function,
+	});
+}
+
+/*
+Parameters:
+Optional, time after which to delete the messages, default 0
+Optional, amount of messages to delete, default 1
+Optional, user ID for filtering messages, default no filtering
+*/
+fn create_key_info() -> key_base::KeyInfo {
+	return key_base::KeyInfo {
+		name: String::from("delete"),
+		parameters_required: vec![0, 1, 2, 3],
+	};
+}
 #[allow(non_camel_case_types)]
 struct std_delete {
 	pub info: key_base::KeyInfo,

@@ -6,7 +6,7 @@ end_task = "keycopy" #This should be a dependency of build task, but I couldn't 
 
 [tasks.build]
 command = "cargo"
-args = ["build"]
+args = ["build", "--no-default-features", "--features=loader"]
 
 [tasks.keycopy]
 run_task = [

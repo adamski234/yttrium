@@ -1,21 +1,33 @@
 #![allow(clippy::needless_return)]
 #![deny(clippy::implicit_return)]
 use serenity::model::id::ChannelId;
+#[cfg(feature = "loader")]
 #[no_mangle]
 pub fn key_create() -> *mut dyn key_base::Key {
-	let key_info = key_base::KeyInfo {
-		/*
-		Parameters:
-		Optional, indicates what should be returned. Possible values: id, name, position, type. Defaults to id
-		Optional, channel ID to target 
-		*/
+	return Box::into_raw(Box::new(std_channel {
+		info: create_key_info(),
+		function: key_function,
+	}));
+}
+
+pub fn safe_create() -> Box<dyn key_base::Key> {
+	return Box::new(std_channel {
+		info: create_key_info(),
+		function: key_function,
+	});
+}
+
+
+/*
+Parameters:
+Optional, indicates what should be returned. Possible values: id, name, position, type. Defaults to id
+Optional, channel ID to target 
+*/
+fn create_key_info() -> key_base::KeyInfo {
+	return key_base::KeyInfo {
 		name: String::from("channel"),
 		parameters_required: vec![0, 1, 2],
 	};
-	return Box::into_raw(Box::new(std_channel {
-		info: key_info,
-		function: key_function,
-	}));
 }
 
 #[allow(non_camel_case_types)]

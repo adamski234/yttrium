@@ -3,16 +3,27 @@
 
 use key_base::environment::events;
 use futures::executor;
+#[cfg(feature = "loader")]
 #[no_mangle]
 pub fn key_create() -> *mut dyn key_base::Key {
-	let key_info = key_base::KeyInfo {
+	return Box::into_raw(Box::new(std_kick {
+		info: create_key_info(),
+		function: key_function,
+	}));
+}
+
+pub fn safe_create() -> Box<dyn key_base::Key> {
+	return Box::new(std_kick {
+		info: create_key_info(),
+		function: key_function,
+	});
+}
+
+fn create_key_info() -> key_base::KeyInfo {
+	return key_base::KeyInfo {
 		name: String::from("kick"),
 		parameters_required: vec![0, 1],
 	};
-	return Box::into_raw(Box::new(std_kick {
-		info: key_info,
-		function: key_function,
-	}));
 }
 
 #[allow(non_camel_case_types)]

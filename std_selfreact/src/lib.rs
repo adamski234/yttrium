@@ -1,28 +1,39 @@
 #![allow(clippy::needless_return)]
 #![deny(clippy::implicit_return)]
+#[cfg(feature = "loader")]
 #[no_mangle]
 pub fn key_create() -> *mut dyn key_base::Key {
-	/*
-	Parameters:
-	Required, the reaction to add, either the ID or the Unicode emoji itself (NOT the name)
-	*/
-	let key_info = key_base::KeyInfo {
-		name: String::from("selfreact"),
-		parameters_required: vec![1],
-	};
-	return Box::into_raw(Box::new(std_selfdelete {
-		info: key_info,
+	return Box::into_raw(Box::new(std_selfreact {
+		info: create_key_info(),
 		function: key_function,
 	}));
 }
 
+pub fn safe_create() -> Box<dyn key_base::Key> {
+	return Box::new(std_selfreact {
+		info: create_key_info(),
+		function: key_function,
+	});
+}
+
+/*
+Parameters:
+Required, the reaction to add, either the ID or the Unicode emoji itself (NOT the name)
+*/
+fn create_key_info() -> key_base::KeyInfo {
+	return key_base::KeyInfo {
+		name: String::from("selfreact"),
+		parameters_required: vec![1],
+	};
+}
+
 #[allow(non_camel_case_types)]
-struct std_selfdelete {
+struct std_selfreact {
 	pub info: key_base::KeyInfo,
 	pub function: fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> String,
 }
 
-impl key_base::Key for std_selfdelete {
+impl key_base::Key for std_selfreact {
 	fn get_key_info(&self) -> &key_base::KeyInfo {
 		return &self.info;
 	}

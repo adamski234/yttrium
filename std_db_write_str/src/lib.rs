@@ -1,17 +1,28 @@
 #![allow(clippy::needless_return)]
 #![deny(clippy::implicit_return)]
+#[cfg(feature = "loader")]
 #[no_mangle]
 pub fn key_create() -> *mut dyn key_base::Key {
-	let key_info = key_base::KeyInfo {
-		name: String::from("db_write_str"),
-		parameters_required: vec![3],
-	};
 	return Box::into_raw(Box::new(std_db_write_str {
-		info: key_info,
+		info: create_key_info(),
 		function: key_function,
 	}));
 }
 
+pub fn safe_create() -> Box<dyn key_base::Key> {
+	return Box::new(std_db_write_str {
+		info: create_key_info(),
+		function: key_function,
+	});
+}
+
+
+fn create_key_info() -> key_base::KeyInfo {
+	return key_base::KeyInfo {
+		name: String::from("db_write_str"),
+		parameters_required: vec![3],
+	};
+}
 #[allow(non_camel_case_types)]
 struct std_db_write_str {
 	pub info: key_base::KeyInfo,

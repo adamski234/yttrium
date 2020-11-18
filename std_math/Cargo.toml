@@ -5,13 +5,16 @@ authors = ["adamski234 <adamski234@protonmail.com>"]
 edition = "2018"
 
 [lib]
-crate-type = ["cdylib"]
+crate-type = ["cdylib", "rlib"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 key_base = { path = "../key_base" }
-cxx = "0.5"
+cxx = "1"
 
 [build-dependencies]
-cxx-build = "0.5"
+cxx-build = "1"
+
+[features]
+loader = []

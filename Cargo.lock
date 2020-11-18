@@ -24,6 +24,33 @@ dependencies = [
  "libloading",
  "serde_json",
  "serenity",
+ "std_attach",
+ "std_ban",
+ "std_channel",
+ "std_database_exists",
+ "std_db_read",
+ "std_db_write_str",
+ "std_delete",
+ "std_everyone",
+ "std_guild",
+ "std_hasrole",
+ "std_joined",
+ "std_kick",
+ "std_math",
+ "std_mention",
+ "std_parameter",
+ "std_pin",
+ "std_rand",
+ "std_redirect",
+ "std_role",
+ "std_selfdelete",
+ "std_selfreact",
+ "std_setnickname",
+ "std_sleep",
+ "std_take",
+ "std_text",
+ "std_trigger",
+ "std_user",
 ]
 
 [[package]]
@@ -181,9 +208,9 @@ dependencies = [
 
 [[package]]
 name = "cxx"
-version = "0.5.10"
+version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ebdd48b6a265557715bbbd72e891c6d26fe0cc58d87a881892a54ae47e0a92aa"
+checksum = "ebb9cd4f5178b2da7c930d4b80b513bdb3f40db95d17c76de75e8ebb8ade7789"
 dependencies = [
  "cc",
  "cxxbridge-flags",
@@ -193,9 +220,9 @@ dependencies = [
 
 [[package]]
 name = "cxx-build"
-version = "0.5.10"
+version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "42dca43e7e9d853737dc10c2fd8f9d2daaa2ccd1c37b96056e1c492ab34a2004"
+checksum = "2a5bb4767800cae7577cf498a3bbf78546c84d6fa9870ee0123cfba2231ddf2a"
 dependencies = [
  "cc",
  "codespan-reporting",
@@ -208,15 +235,15 @@ dependencies = [
 
 [[package]]
 name = "cxxbridge-flags"
-version = "0.5.10"
+version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1348c4c636b17ce60fc700963326ff65b19f0e9ee151bcf0a36a165d50d5dc49"
+checksum = "7adaa1fe538e2c40b057402b26a541cbc95a5ffbe3643c4f49238f64ac642af4"
 
 [[package]]
 name = "cxxbridge-macro"
-version = "0.5.10"
+version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "59f75aad3925fade3d141007be05e9e272cf7cf7bbd089d9bb0d2d5621dbb016"
+checksum = "6f28792a7589c1d6c5623c19b43648ddb4a2ae9e8b893fbac34c678ec7cca585"
 dependencies = [
  "proc-macro2",
  "quote",

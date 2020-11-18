@@ -1,23 +1,33 @@
 #![allow(clippy::needless_return)]
 #![deny(clippy::implicit_return)]
+#[cfg(feature = "loader")]
 #[no_mangle]
 pub fn key_create() -> *mut dyn key_base::Key {
-	/*
-	Parameters:
-	Required, what to check for, valid parameter: db, key
-	Required, database name
-	Required if the first parameter is `key`, the key to check for in database
-	*/
-	let key_info = key_base::KeyInfo {
-		name: String::from("database_exists"),
-		parameters_required: vec![2, 3],
-	};
 	return Box::into_raw(Box::new(std_database_exists {
-		info: key_info,
+		info: create_key_info(),
 		function: key_function,
 	}));
 }
 
+pub fn safe_create() -> Box<dyn key_base::Key> {
+	return Box::new(std_database_exists {
+		info: create_key_info(),
+		function: key_function,
+	});
+}
+
+/*
+Parameters:
+Required, what to check for, valid parameter: db, key
+Required, database name
+Required if the first parameter is `key`, the key to check for in database
+*/
+fn create_key_info() -> key_base::KeyInfo {
+	return key_base::KeyInfo {
+		name: String::from("database_exists"),
+		parameters_required: vec![2, 3],
+	};
+}
 #[allow(non_camel_case_types)]
 struct std_database_exists {
 	pub info: key_base::KeyInfo,

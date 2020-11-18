@@ -1,7 +1,7 @@
 #![allow(clippy::needless_return)]
 #![deny(clippy::implicit_return)]
 
-use serenity::model::id::{UserId, RoleId, GuildId};
+use serenity::model::id::{UserId, RoleId};
 #[no_mangle]
 pub fn key_create() -> *mut dyn key_base::Key {
 	/*
@@ -38,7 +38,7 @@ impl key_base::Key for std_hasrole {
 fn key_function(parameter: &[String], environment: &mut key_base::environment::Environment) -> String {
 	let matcher = regex::Regex::new(key_base::regexes::DISCORD_ID).unwrap();
 	if matcher.is_match(&parameter[0]) {
-		let guild_id = GuildId::from(environment.guild_id.parse::<u64>().unwrap());
+		let guild_id = environment.guild_id.clone();
 		let user_id = UserId::from(parameter[0].parse::<u64>().unwrap());
 		let role_id;
 		if matcher.is_match(&parameter[1]) {

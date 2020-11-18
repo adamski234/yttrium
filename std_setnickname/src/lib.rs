@@ -30,31 +30,31 @@ impl key_base::Key for std_setnickname {
 }
 
 fn key_function(parameter: &[String], environment: &mut key_base::environment::Environment) -> String {
-	let guild = executor::block_on(environment.discord_context.cache.guild(environment.guild_id.parse::<u64>().unwrap())).unwrap();
+	let guild = executor::block_on(environment.discord_context.cache.guild(environment.guild_id.clone())).unwrap();
 	let member_id;
 	if parameter.len() == 1 {
 		match &environment.event_info {
 			key_base::environment::events::EventType::MemberJoin(event) => {
-				member_id = event.user_id.parse::<u64>().unwrap();
+				member_id = event.user_id.clone();
 			}
 			key_base::environment::events::EventType::Message(event) => {
-				member_id = event.user_id.parse::<u64>().unwrap();
+				member_id = event.user_id.clone();
 			}
 			key_base::environment::events::EventType::MemberUpdate(event) => {
-				member_id = event.user_id.parse::<u64>().unwrap();
+				member_id = event.user_id.clone();
 			}
 			key_base::environment::events::EventType::ReactionAdd(event) => {
-				member_id = event.user_id.parse::<u64>().unwrap();
+				member_id = event.user_id.clone();
 			}
 			key_base::environment::events::EventType::ReactionRemove(event) => {
-				member_id = event.user_id.parse::<u64>().unwrap();
+				member_id = event.user_id.clone();
 			}
 			_ => {
 				return String::new();
 			}
 		}
 	} else {
-		member_id = parameter[1].parse::<u64>().unwrap();
+		member_id = serenity::model::id::UserId::from(parameter[1].parse::<u64>().unwrap());
 	}
 	executor::block_on(guild.edit_member(&environment.discord_context.http, member_id, |member| {
 		member.nickname(parameter[0].clone());

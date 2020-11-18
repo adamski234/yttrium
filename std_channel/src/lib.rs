@@ -43,22 +43,22 @@ fn key_function(parameter: &[String], environment: &mut key_base::environment::E
 		use key_base::environment::events::EventType;
 		match &environment.event_info {
 			EventType::Message(event) => {
-				channel_id = ChannelId::from(event.channel_id.parse::<u64>().unwrap());
+				channel_id = event.channel_id.clone();
 			}
 			EventType::ChannelCreate(event) => {
-				channel_id = ChannelId::from(event.channel_id.parse::<u64>().unwrap());
+				channel_id = event.channel_id.clone();
 			}
 			EventType::ChannelUpdate(event) => {
-				channel_id = ChannelId::from(event.channel_id.parse::<u64>().unwrap());
+				channel_id = event.channel_id.clone();
 			}
 			EventType::VoiceUpdate(event) => {
-				channel_id = ChannelId::from(event.channel_id.parse::<u64>().unwrap());
+				channel_id = event.channel_id.clone();
 			}
 			EventType::ReactionAdd(event) => {
-				channel_id = ChannelId::from(event.channel_id.parse::<u64>().unwrap());
+				channel_id = event.channel_id.clone();
 			}
 			EventType::ReactionRemove(event) => {
-				channel_id = ChannelId::from(event.channel_id.parse::<u64>().unwrap());
+				channel_id = event.channel_id.clone();
 			}
 			_ => {
 				return String::new();

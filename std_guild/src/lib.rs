@@ -1,6 +1,5 @@
 #![allow(clippy::needless_return)]
 #![deny(clippy::implicit_return)]
-use serenity::model::id::GuildId;
 use futures::executor;
 #[no_mangle]
 pub fn key_create() -> *mut dyn key_base::Key {
@@ -33,7 +32,7 @@ fn key_function(parameter: &[String], environment: &mut key_base::environment::E
 	if parameter.is_empty() {
 		return String::new();
 	}
-	let guild_id = GuildId::from(environment.guild_id.parse::<u64>().unwrap());
+	let guild_id = environment.guild_id.clone();
 	let guild = executor::block_on(environment.discord_context.cache.guild(&guild_id)).unwrap();
 	match parameter[0].as_str() {
 		"id" => {

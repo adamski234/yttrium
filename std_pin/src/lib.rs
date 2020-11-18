@@ -33,8 +33,8 @@ impl key_base::Key for std_pin {
 
 fn key_function(_parameter: &[String], environment: &mut key_base::environment::Environment) -> String {
 	if let events::EventType::Message(event) = &environment.event_info {
-		let message_id = serenity::model::id::MessageId::from(event.message_id.parse::<u64>().unwrap());
-		let channel_id = serenity::model::id::ChannelId::from(event.channel_id.parse::<u64>().unwrap());
+		let message_id = event.message_id.clone();
+		let channel_id = event.channel_id.clone();
 		let message = executor::block_on(environment.discord_context.cache.message(channel_id, message_id)).unwrap();
 		executor::block_on(message.pin(&environment.discord_context.http)).unwrap();
 	}

@@ -4,7 +4,8 @@
 use ars::key_loader;
 use serenity::{
     client::{bridge::gateway::ShardMessenger, Context},
-    prelude::{RwLock, TypeMap},
+	prelude::{RwLock, TypeMap},
+	model::id::GuildId,
 };
 
 use std::io::stdin;
@@ -21,7 +22,7 @@ fn main() {
 		};
 		use key_base::environment::events::EventType;
 		let manager = Box::new(key_base::databases::JSONDatabaseManager::new("guild"));
-		let env = key_base::environment::Environment::new(EventType::Default, String::from("guild"), &mut c, manager);
+		let env = key_base::environment::Environment::new(EventType::Default, GuildId::from(1), &mut c, manager);
 		let mut input = String::new();
 		stdin()
 			.read_line(&mut input)

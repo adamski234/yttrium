@@ -1,7 +1,7 @@
 #![allow(clippy::needless_return)]
 #![deny(clippy::implicit_return)]
 use key_base::environment::events::*;
-use serenity::model::id::{ChannelId, MessageId};
+use serenity::model::id::{ChannelId};
 use futures::executor;
 #[no_mangle]
 pub fn key_create() -> *mut dyn key_base::Key {
@@ -47,16 +47,16 @@ fn key_function(parameter: &[String], environment: &mut key_base::environment::E
 		let channel_id;
 		match &environment.event_info {
 			EventType::Message(event) => {
-				message_id = MessageId::from(event.message_id.parse::<u64>().unwrap());
-				channel_id = ChannelId::from(event.channel_id.parse::<u64>().unwrap());
+				message_id = event.message_id.clone();
+				channel_id = event.channel_id.clone();
 			}
 			EventType::ReactionAdd(event) => {
-				message_id = MessageId::from(event.message_id.parse::<u64>().unwrap());
-				channel_id = ChannelId::from(event.channel_id.parse::<u64>().unwrap());
+				message_id = event.message_id.clone();
+				channel_id = event.channel_id.clone();
 			}
 			EventType::ReactionRemove(event) => {
-				message_id = MessageId::from(event.message_id.parse::<u64>().unwrap());
-				channel_id = ChannelId::from(event.channel_id.parse::<u64>().unwrap());
+				message_id = event.message_id.clone();
+				channel_id = event.channel_id.clone();
 			}
 			_ => {
 				return String::new();
@@ -70,16 +70,16 @@ fn key_function(parameter: &[String], environment: &mut key_base::environment::E
 			let channel_id;
 			match &environment.event_info {
 				EventType::Message(event) => {
-					channel_id = ChannelId::from(event.channel_id.parse::<u64>().unwrap());
+					channel_id = event.channel_id.clone();
 				}
 				EventType::ReactionAdd(event) => {
-					channel_id = ChannelId::from(event.channel_id.parse::<u64>().unwrap());
+					channel_id = event.channel_id.clone();
 				}
 				EventType::ReactionRemove(event) => {
-					channel_id = ChannelId::from(event.channel_id.parse::<u64>().unwrap());
+					channel_id = event.channel_id.clone();
 				}
 				EventType::ChannelUpdate(event) => {
-					channel_id = ChannelId::from(event.channel_id.parse::<u64>().unwrap());
+					channel_id = event.channel_id.clone();
 				}
 				_ => {
 					return String::new();

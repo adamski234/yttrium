@@ -2,7 +2,6 @@
 #![deny(clippy::implicit_return)]
 
 use key_base::environment::events;
-use serenity::model::id::{UserId, GuildId};
 use futures::executor;
 #[no_mangle]
 pub fn key_create() -> *mut dyn key_base::Key {
@@ -32,26 +31,26 @@ impl key_base::Key for std_kick {
 	}
 }
 fn key_function(parameter: &[String], environment: &mut key_base::environment::Environment) -> String {
-	let guild_id = GuildId::from(environment.guild_id.parse::<u64>().unwrap());
+	let guild_id = environment.guild_id.clone();
 	let user_id;
 	match &environment.event_info {
 		events::EventType::Message(event) => {
-			user_id = UserId::from(event.user_id.parse::<u64>().unwrap());
+			user_id = event.user_id.clone();
 		}
 		events::EventType::MemberJoin(event) => {
-			user_id = UserId::from(event.user_id.parse::<u64>().unwrap());
+			user_id = event.user_id.clone();
 		}
 		events::EventType::MemberUpdate(event) => {
-			user_id = UserId::from(event.user_id.parse::<u64>().unwrap());
+			user_id = event.user_id.clone();
 		}
 		events::EventType::VoiceUpdate(event) => {
-			user_id = UserId::from(event.user_id.parse::<u64>().unwrap());
+			user_id = event.user_id.clone();
 		}
 		events::EventType::ReactionAdd(event) => {
-			user_id = UserId::from(event.user_id.parse::<u64>().unwrap());
+			user_id = event.user_id.clone();
 		}
 		events::EventType::ReactionRemove(event) => {
-			user_id = UserId::from(event.user_id.parse::<u64>().unwrap());
+			user_id = event.user_id.clone();
 		}
 		_ => {
 			return String::new();

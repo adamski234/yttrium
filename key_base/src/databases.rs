@@ -3,15 +3,22 @@ use std::io::Write;
 use std::collections::HashMap;
 
 const DATABASE_DIR: &str = "./databases/";
+pub trait DatabaseManager {
+	fn get_database(&mut self, name: &str) -> Option<&mut Database>;
+	fn create_database(&mut self, name: &str) -> &mut Database;
+	fn remove_database(&mut self, name: &str);
+	fn clear_database(&mut self, name: &str);
+}
 
 #[derive(Debug)]
-pub struct DatabaseManager {
+pub struct JSONDatabaseManager {
 	pub guild_id: String,
 	databases: HashMap<String, Database>,
 }
 
 //This will be an issue with multiple people trying to write to a single database at the same time
-impl DatabaseManager {
+///This is a simple JSON based database manager that is good enough for testing but I wouldn't rely on it too much
+impl JSONDatabaseManager {
 	pub fn new(guild_id: &str) -> Self {
 		//Converts a json file to a HashMap<String, Database>
 		match fs::read(format!("{}{}.json", DATABASE_DIR, guild_id)) {
@@ -62,21 +69,6 @@ impl DatabaseManager {
 		}
 		return result;
 	}
-	pub fn get_database(&mut self, name: &str) -> Option<&mut Database> {
-		return self.databases.get_mut(name);
-	}
-	///Creates a database if it doesn't exist and returns it, otherwise returns a pre-existing database
-	pub fn create_database(&mut self, name: &str) -> &mut Database {
-		if self.databases.contains_key(name) {
-			return self.databases.get_mut(name).unwrap();
-		} else {
-			self.databases.insert(name.to_owned(), Database::new_empty());
-			return self.databases.get_mut(name).unwrap();
-		}
-	}
-	pub fn remove_database(&mut self, name: &str) {
-		self.databases.remove_entry(name);
-	}
 	///This serializes the databases and saves them into the file
 	pub fn write(self) {
 		let mut result = HashMap::new();
@@ -103,7 +95,29 @@ impl DatabaseManager {
 	}
 }
 
-impl PartialEq for DatabaseManager {
+impl DatabaseManager for JSONDatabaseManager {
+	fn get_database(&mut self, name: &str) -> Option<&mut Database> {
+		return self.databases.get_mut(name);
+	}
+	fn create_database(&mut self, name: &str) -> &mut Database {
+		if self.databases.contains_key(name) {
+			return self.databases.get_mut(name).unwrap();
+		} else {
+			self.databases.insert(name.to_owned(), Database::new_empty());
+			return self.databases.get_mut(name).unwrap();
+		}
+	}
+	fn remove_database(&mut self, name: &str) {
+		self.databases.remove_entry(name);
+	}
+	fn clear_database(&mut self, name: &str) {
+		if self.databases.contains_key(name) {
+			self.databases.insert(String::from(name), Database::new_empty());
+		}
+	}
+}
+
+impl PartialEq for JSONDatabaseManager {
 	fn eq(&self, other: &Self) -> bool {
 		return self.databases == other.databases;
 	}
@@ -222,8 +236,8 @@ mod tests {
 		let mut correct_hashmap = HashMap::new();
 		//This bases on `simple_database` succeeding
 		correct_hashmap.insert(String::from("db1"), Database::new_from_value(serde_json::from_str(r#"{"string_value": "string", "array_value": ["entry1", "entry2"]}"#).unwrap()));
-		let output = DatabaseManager::new_from_json(&input, &guild_id);
-		let correct_output = DatabaseManager {
+		let output = JSONDatabaseManager::new_from_json(&input, &guild_id);
+		let correct_output = JSONDatabaseManager {
 			guild_id: guild_id,
 			databases: correct_hashmap,
 		};

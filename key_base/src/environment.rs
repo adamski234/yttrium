@@ -5,7 +5,7 @@ use crate::databases;
 //#[derive(Debug)]
 pub struct Environment<'a> {
 	pub embed: Option<embed::Embed>,
-	pub database_manager: databases::DatabaseManager,
+	pub database_manager: Box<dyn databases::DatabaseManager>,
 	pub guild_id: String,
 	pub target: String, //Default is the channel in which the bot was triggered
 	pub attachments: Vec<String>, //For the attachments to send in url form
@@ -16,11 +16,11 @@ pub struct Environment<'a> {
 }
 
 impl<'a> Environment<'a> {
-	pub fn new(event_info: events::EventType, guild_id: String, context: &'a mut serenity::client::Context) -> Self {
+	pub fn new(event_info: events::EventType, guild_id: String, context: &'a mut serenity::client::Context, db_manager: Box<dyn databases::DatabaseManager>) -> Self {
 		return Self {
 			embed: None,
 			target: String::new(),
-			database_manager: databases::DatabaseManager::new(&guild_id),
+			database_manager: db_manager,
 			guild_id: guild_id,
 			attachments: Vec::new(),
 			event_info: event_info,

@@ -1,10 +1,11 @@
 use key_base::databases;
 use std::io::stdin;
 use std::io::Write;
+use databases::DatabaseManager;
 
 //This is a very simple binary for manually testing and editing various modules
 fn main() {
-	let mut manager = databases::DatabaseManager::new(&String::from("test_db"));
+	let mut manager = databases::JSONDatabaseManager::new(&String::from("test_db"));
 	loop {
 		println!("Choose your subsystem");
 		let mut input = String::new();
@@ -35,7 +36,7 @@ fn main() {
 						}
 						"flush" => {
 							manager.write();
-							manager = databases::DatabaseManager::new(&String::from("test_db"));
+							manager = databases::JSONDatabaseManager::new(&String::from("test_db"));
 						}
 						"make" => {
 							if input.len() >= 2 {

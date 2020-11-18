@@ -20,7 +20,8 @@ fn main() {
 			cache: Default::default(),
 		};
 		use key_base::environment::events::EventType;
-		let env = key_base::environment::Environment::new(EventType::Default, String::from("guild"), &mut c);
+		let manager = Box::new(key_base::databases::JSONDatabaseManager::new("guild"));
+		let env = key_base::environment::Environment::new(EventType::Default, String::from("guild"), &mut c, manager);
 		let mut input = String::new();
 		stdin()
 			.read_line(&mut input)

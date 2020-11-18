@@ -5,9 +5,9 @@ use crate::tree_creator;
 #[derive(Debug, PartialEq)]
 pub enum Error {
 	WrongAmountOfParameters,
-	BracketsInCond,
 	ParameterDelimAfterCondFalse,
 	EmptyParameter,
+	NonexistentKey,
 }
 
 #[allow(dead_code)]
@@ -19,28 +19,44 @@ pub enum Warning {
 pub fn check_for_errors(nodes: &[tree_creator::TreeNode], keys: &HashMap<String, Box<dyn key_base::Key>>) -> Option<Error> {
 	for node in nodes {
 		//TODO implement the rest of errors and add tests
-		if node.is_editing_parameter {
-			for key in keys.values() {
-				let key_info = key.get_key_info();
-				if key_info.name == node.key {
-					//We have the correct key. Now check the parameter count
-					if !key_info.parameters_required.contains(&(node.edited_parameter + 1)) {
-						return Some(Error::WrongAmountOfParameters);
-					}
-				}
+		let param_count = node.parameters.len();
+		match node.key.as_str() {
+			"top" => {
+				continue;
 			}
-			for param in &node.parameters {
-				if let tree_creator::Parameter::String(string) = param {
-					if string.is_empty() {
-						return Some(Error::EmptyParameter);
-					}
-				}
-			}
-		} else {
-			for key in keys.values() {
-				let key_info = key.get_key_info();
-				if key_info.name == node.key && key_info.parameters_required[0] != 0 {
+			"literal" => {
+				if param_count != 1 {
 					return Some(Error::WrongAmountOfParameters);
+				};
+			}
+			"cond" => {
+				if !(2..=3).contains(&param_count) {
+					return Some(Error::WrongAmountOfParameters);
+				}
+			}
+			"exit" => {
+				if param_count != 0 {
+					return Some(Error::WrongAmountOfParameters);
+				}
+			}
+			_ => {
+				match keys.get(&node.key) {
+					Some(key) => {
+						let key_info = key.get_key_info();
+						if !key_info.parameters_required.contains(&param_count) {
+							return Some(Error::WrongAmountOfParameters);
+						}
+					}
+					None => {
+						return Some(Error::NonexistentKey);
+					}
+				}
+			}
+		}
+		for param in &node.parameters {
+			if let tree_creator::Parameter::String(string) = param {
+				if string.is_empty() {
+					return Some(Error::EmptyParameter);
 				}
 			}
 		}

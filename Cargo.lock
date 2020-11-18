@@ -181,9 +181,9 @@ dependencies = [
 
 [[package]]
 name = "cxx"
-version = "0.5.9"
+version = "0.5.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "645647e76920443ca0f872b0cbe971f690c199e8d3f3bd57134a9b89398c51e3"
+checksum = "ebdd48b6a265557715bbbd72e891c6d26fe0cc58d87a881892a54ae47e0a92aa"
 dependencies = [
  "cc",
  "cxxbridge-flags",
@@ -193,9 +193,9 @@ dependencies = [
 
 [[package]]
 name = "cxx-build"
-version = "0.5.9"
+version = "0.5.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "dffd04849b3bf7c4200dc4e4e3bfae084b968e6fae7f2020871dc2f62ecd1782"
+checksum = "42dca43e7e9d853737dc10c2fd8f9d2daaa2ccd1c37b96056e1c492ab34a2004"
 dependencies = [
  "cc",
  "codespan-reporting",
@@ -208,15 +208,15 @@ dependencies = [
 
 [[package]]
 name = "cxxbridge-flags"
-version = "0.5.9"
+version = "0.5.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8f6fd8dfdfc00a160c392ec0be482a62b9d9c4cb8a40c80d52baeb79a51a31c5"
+checksum = "1348c4c636b17ce60fc700963326ff65b19f0e9ee151bcf0a36a165d50d5dc49"
 
 [[package]]
 name = "cxxbridge-macro"
-version = "0.5.9"
+version = "0.5.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9ff40bada5d2e58210ba0ece1c08a716d9dc18cc358f1fb476271a03177513c1"
+checksum = "59f75aad3925fade3d141007be05e9e272cf7cf7bbd089d9bb0d2d5621dbb016"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -946,9 +946,9 @@ dependencies = [
 
 [[package]]
 name = "ring"
-version = "0.16.15"
+version = "0.16.16"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "952cd6b98c85bbc30efa1ba5783b8abf12fec8b3287ffa52605b9432313e34e4"
+checksum = "b72b84d47e8ec5a4f2872e8262b8f8256c5be1c938a7d6d3a867a3ba8f722f74"
 dependencies = [
  "cc",
  "libc",
@@ -1556,9 +1556,9 @@ dependencies = [
 
 [[package]]
 name = "unicode-normalization"
-version = "0.1.14"
+version = "0.1.15"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b7f98e67a4d84f730d343392f9bfff7d21e3fca562b9cb7a43b768350beeddc6"
+checksum = "f1e9a0b71dba18b6fa17c7b3dcf1440bb3522552deb2f84bf47dabd9fb7e5570"
 dependencies = [
  "tinyvec",
 ]

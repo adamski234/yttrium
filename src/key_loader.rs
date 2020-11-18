@@ -1,9 +1,12 @@
 use std::collections::HashMap;
 
 //TODO: document this being a raw pointer. VERY IMPORTANT
+#[cfg(feature = "loader")]
 type KeyCreateFunction = fn() -> *mut dyn key_base::Key;
+#[cfg(feature = "loader")]
 const KEY_CREATE_FUNCTION_NAME: &[u8] = b"key_create";
 
+#[allow(unused_variables)]
 pub fn load_keys(directory: &str) -> Keys {
 	let mut keys = Keys {
 		keys: HashMap::new(), //HashMap ordered by the key name

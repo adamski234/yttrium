@@ -47,10 +47,19 @@ impl key_base::Key for std_delete {
 	}
 }
 
+//TODO: rework this and move some variables
 fn key_function(parameter: &[String], environment: &mut key_base::environment::Environment) -> String {
 	if !parameter.is_empty() {
-		let time = humantime::parse_duration(&parameter[0]).unwrap();
-		std::thread::sleep(time);
+		match humantime::parse_duration(&parameter[0]) {
+			Ok(time) => {
+				std::thread::sleep(time);
+			}
+			Err(error) => {
+				environment.runtime_error = Some(format!("Invalid time value in `delete`: `{}`", error));
+				return String::new();
+			}
+		}
+		
 	}
 	if parameter.len() <= 1 {
 		let message_id;
@@ -72,10 +81,30 @@ fn key_function(parameter: &[String], environment: &mut key_base::environment::E
 				return String::new();
 			}
 		}
-		let message = executor::block_on(environment.discord_context.cache.message(channel_id, message_id)).unwrap();
-		executor::block_on(message.delete(&environment.discord_context.http)).unwrap();
+		let message;
+		match executor::block_on(environment.discord_context.cache.message(channel_id, message_id)) {
+			Some(msg) => {
+				message = msg;
+			}
+			None => {
+				environment.runtime_error = Some(String::from("Message couldn't be found"));
+				return String::new();
+			}
+		}
+		if let Err(error) = executor::block_on(message.delete(&environment.discord_context.http)) {
+			environment.runtime_error = Some(format!("Couldn't delete the message: `{}`", error));
+		}
 	} else {
-		let delete_count = parameter[1].parse().unwrap();
+		let delete_count;
+		match parameter[1].parse::<u64>() {
+			Ok(result) => {
+				delete_count = result;
+			}
+			Err(error) => {
+				environment.runtime_error = Some(format!("Invalid delete count in `delete`: `{}`", error));
+				return String::new();
+			}
+		};
 		if parameter.len() == 2 {
 			let channel_id;
 			match &environment.event_info {
@@ -95,12 +124,34 @@ fn key_function(parameter: &[String], environment: &mut key_base::environment::E
 					return String::new();
 				}
 			}
-			let channel = executor::block_on(environment.discord_context.cache.channel(&channel_id)).unwrap();
+			let channel;
+			match executor::block_on(environment.discord_context.cache.channel(&channel_id)) {
+				Some(chan) => {
+					channel = chan;
+				}
+				None => {
+					environment.runtime_error = Some(String::from("Couldn't get channel"));
+					return String::new();
+				}
+			}
 			if let serenity::model::channel::Channel::Guild(chan) = channel {
-				let messages = executor::block_on(chan.messages(&environment.discord_context.http, |retriever| {
+				let messages_attempt = executor::block_on(chan.messages(&environment.discord_context.http, |retriever| {
 					return retriever.limit(delete_count);
-				})).unwrap();
-				executor::block_on(chan.delete_messages(&environment.discord_context.http, &messages)).unwrap();
+				}));
+				let messages;
+				match messages_attempt {
+					Ok(message_list) => {
+						messages = message_list;
+					}
+					Err(error) => {
+						environment.runtime_error = Some(format!("Couldn't get messages: `{}`", error));
+						return String::new();
+					}
+				}
+				if let Err(error) = executor::block_on(chan.delete_messages(&environment.discord_context.http, &messages)) {
+					environment.runtime_error = Some(format!("Couldn't delete messages: `{}`", error));
+					return String::new();
+				}
 			} else {
 				return String::new();
 			}
@@ -108,15 +159,36 @@ fn key_function(parameter: &[String], environment: &mut key_base::environment::E
 			let matcher = regex::Regex::new(key_base::regexes::DISCORD_ID).unwrap();
 			if matcher.is_match(&parameter[2]) {
 				let channel_id = ChannelId::from(parameter[2].parse::<u64>().unwrap());
-				let channel = executor::block_on(environment.discord_context.cache.channel(&channel_id)).unwrap();
+				let channel;
+				match executor::block_on(environment.discord_context.cache.channel(&channel_id)) {
+					Some(chan) => {
+						channel = chan;
+					}
+					None => {
+						environment.runtime_error = Some(format!("Couldn't get channel in `delete`"));
+						return String::new();
+					}
+				}
 				if let serenity::model::channel::Channel::Guild(chan) = channel {
-					let mut messages = executor::block_on(chan.messages(&environment.discord_context.http, |retriever| {
+					let messages_attempt = executor::block_on(chan.messages(&environment.discord_context.http, |retriever| {
 						return retriever.limit(100);
-					})).unwrap();
-					messages = messages.into_iter().filter(|message| {
-						return message.author.id.to_string() == parameter[2];
-					}).take(delete_count as usize).collect();
-					executor::block_on(chan.delete_messages(&environment.discord_context.http, &messages)).unwrap();
+					}));
+					let messages: Vec<serenity::model::channel::Message>;
+					match messages_attempt {
+						Ok(message_list) => {
+							messages = message_list.into_iter().filter(|message| {
+								return message.author.id.to_string() == parameter[2];
+							}).take(delete_count as usize).collect();
+						}
+						Err(error) => {
+							environment.runtime_error = Some(format!("Couldn't get messages: `{}`", error));
+							return String::new();
+						}
+					}
+					if let Err(error) = executor::block_on(chan.delete_messages(&environment.discord_context.http, &messages)) {
+						environment.runtime_error = Some(format!("Couldn't delete messages: `{}`", error));
+						return String::new();
+					}
 				}
 			}
 		}

@@ -3,7 +3,6 @@ use crate::databases;
 use serenity::model::id::GuildId;
 #[path = "./events.rs"] pub mod events;
 
-//#[derive(Debug)]
 pub struct Environment<'a> {
 	pub embed: Option<embed::Embed>,
 	pub database_manager: Box<dyn databases::DatabaseManager>,
@@ -14,6 +13,7 @@ pub struct Environment<'a> {
 	pub discord_context: &'a mut serenity::client::Context,
 	pub delete_option: Option<std::time::Duration>,
 	pub reactions_to_add: Vec<String>,
+	pub runtime_error: Option<String>,
 }
 
 impl<'a> Environment<'a> {
@@ -28,6 +28,7 @@ impl<'a> Environment<'a> {
 			discord_context: context,
 			delete_option: None,
 			reactions_to_add: vec![],
+			runtime_error: None,
 		};
 	}
 }

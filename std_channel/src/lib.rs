@@ -73,6 +73,7 @@ fn key_function(parameter: &[String], environment: &mut key_base::environment::E
 				channel_id = event.channel_id.clone();
 			}
 			_ => {
+				environment.runtime_error = Some(String::from("Invalid return value type in `channel`"));
 				return String::new();
 			}
 		}
@@ -80,7 +81,16 @@ fn key_function(parameter: &[String], environment: &mut key_base::environment::E
 	if parameter.is_empty() || parameter[0] == "id" {
 		return channel_id.to_string();
 	}
-	let channel = futures::executor::block_on(environment.discord_context.cache.guild_channel(channel_id)).unwrap();
+	let channel;
+	match futures::executor::block_on(environment.discord_context.cache.guild_channel(channel_id)) {
+		Some(chan) => {
+			channel = chan;
+		}
+		None => {
+			environment.runtime_error = Some(String::from("Channel does not exist"));
+			return String::new();
+		}
+	}
 	match parameter[0].as_str() {
 		"name" => {
 			return channel.name;

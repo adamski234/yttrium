@@ -39,7 +39,6 @@ pub fn load_keys(directory: &str) -> Keys {
 		keys.keys.insert(key.get_key_info().name.clone(), key);
 		let key = std_kick::safe_create();
 		keys.keys.insert(key.get_key_info().name.clone(), key);
-		//TODO: this
 		let key = std_math::safe_create();
 		keys.keys.insert(key.get_key_info().name.clone(), key);
 		let key = std_mention::safe_create();

@@ -2,7 +2,7 @@ use std::collections::HashMap;
 use key_base::environment::Environment;
 use crate::tree_creator;
 
-pub fn interpret_tree(tree: Vec<tree_creator::TreeNode>, key_list: &HashMap<String, Box<dyn key_base::Key>>, mut environment: Environment) -> InterpretationResult {
+pub fn interpret_tree(tree: Vec<tree_creator::TreeNode>, key_list: &HashMap<String, Box<dyn key_base::Key>>, mut environment: Environment) -> Result<InterpretationResult, String> {
 	let mut current_index = 0; //Pointer to the currently interpreted node
 	let mut interpretable_tree = Vec::with_capacity(tree.len());
 	let mut next_rule = None;
@@ -121,16 +121,17 @@ pub fn interpret_tree(tree: Vec<tree_creator::TreeNode>, key_list: &HashMap<Stri
 						returned = current_node.returned_values[0].clone();
 					} else if current_node.inner_node.key == "exit" {
 						//Stop the interepreter
-						return InterpretationResult {
+						return Ok(InterpretationResult {
 							message: current_node.returned_values.join(""),
 							embed: environment.embed,
 							next_rule: next_rule,
 							attachments: environment.attachments,
 							reactions: environment.reactions_to_add,
 							self_delete: environment.delete_option,
-						};
+						});
 					} else {
-						returned = key_list.get(&current_node.inner_node.key).unwrap().get_key_function()(&current_node.returned_values, &mut environment);
+						let key = key_list.get(&current_node.inner_node.key).unwrap().get_key_function();
+						returned = key(&current_node.returned_values, &mut environment);
 					}
 					current_index = parent;
 					current_node = &mut interpretable_tree[current_index];
@@ -138,14 +139,14 @@ pub fn interpret_tree(tree: Vec<tree_creator::TreeNode>, key_list: &HashMap<Stri
 				}
 				None => {
 					//No more keys to interpret, return the result
-					return InterpretationResult {
+					return Ok(InterpretationResult {
 						message: current_node.returned_values.join(""),
 						embed: environment.embed,
 						next_rule: next_rule,
 						attachments: environment.attachments,
 						reactions: environment.reactions_to_add,
 						self_delete: environment.delete_option,
-					};
+					});
 				}
 			}
 		} else {
@@ -172,6 +173,9 @@ pub fn interpret_tree(tree: Vec<tree_creator::TreeNode>, key_list: &HashMap<Stri
 					current_node.interpreted_subparam = 0;
 				}
 			}
+		}
+		if let Some(error) = environment.runtime_error {
+			return Err(error);
 		}
 	}
 }

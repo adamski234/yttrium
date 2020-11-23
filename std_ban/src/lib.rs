@@ -47,20 +47,17 @@ impl key_base::Key for std_ban {
 	}
 }
 fn key_function(parameter: &[String], environment: &mut key_base::environment::Environment) -> String {
+	let matcher = regex::Regex::new(key_base::regexes::DISCORD_ID).unwrap();
 	let guild_id = environment.guild_id.clone();
 	let user_id;
-	let mut reason = &String::new();
 	let mut days_to_remove = 0;
-	if !parameter.is_empty() {
-		reason = &parameter[0];
-	}
 	if parameter.len() >= 2 {
 		if let Ok(value) = parameter[1].parse() {
 			days_to_remove = value;
 		}
 	}
-	if parameter.len() == 3 {
-		user_id = UserId::from(parameter[3].parse::<u64>().unwrap());
+	if parameter.len() == 3 && matcher.is_match(&parameter[2]) {
+		user_id = UserId::from(parameter[2].parse::<u64>().unwrap());
 	} else {
 		match &environment.event_info {
 			events::EventType::Message(event) => {
@@ -82,15 +79,30 @@ fn key_function(parameter: &[String], environment: &mut key_base::environment::E
 				user_id = event.user_id.clone();
 			}
 			_ => {
+				environment.runtime_error = Some(String::from("`ban` called without user ID on invalid event"));
 				return String::new();
 			}
 		}
 	}
-	let member = futures::executor::block_on(environment.discord_context.cache.member(guild_id, user_id)).unwrap();
+	let member;
+	match futures::executor::block_on(environment.discord_context.cache.member(guild_id, user_id)) {
+		Some(memb) => {
+			member = memb;
+		}
+		None => {
+			environment.runtime_error = Some(String::from("User does not exist"));
+			return String::new();
+		}
+	}
+	let result;
 	if parameter.len() >= 2 {
-		futures::executor::block_on(member.ban_with_reason(&environment.discord_context.http, days_to_remove, reason)).unwrap();
+		let reason = &parameter[0];
+		result = futures::executor::block_on(member.ban_with_reason(&environment.discord_context.http, days_to_remove, reason));
 	} else {
-		futures::executor::block_on(member.ban(&environment.discord_context.http, days_to_remove)).unwrap();
+		result = futures::executor::block_on(member.ban(&environment.discord_context.http, days_to_remove));
+	}
+	if let Err(error) = result {
+		environment.runtime_error = Some(error.to_string());
 	}
 	return String::new();
 }

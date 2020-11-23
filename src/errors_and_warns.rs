@@ -8,6 +8,7 @@ pub enum Error {
 	ParameterDelimAfterCondFalse,
 	EmptyParameter,
 	NonexistentKey,
+	InterpretationError(String),
 }
 
 #[allow(dead_code)]

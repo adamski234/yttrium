@@ -26,7 +26,7 @@ fn create_key_info() -> key_base::KeyInfo {
 #[allow(non_camel_case_types)]
 struct std_guild {
 	pub info: key_base::KeyInfo,
-	pub function: fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> String,
+	pub function: fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> Result<String, String>,
 }
 
 impl key_base::Key for std_guild {
@@ -34,47 +34,55 @@ impl key_base::Key for std_guild {
 		return &self.info;
 	}
 
-	fn get_key_function(&self) -> fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> String {
+	fn get_key_function(&self) -> fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> Result<String, String> {
 		return self.function;
 	}
 }
-fn key_function(parameter: &[String], environment: &mut key_base::environment::Environment) -> String {
+fn key_function(parameter: &[String], environment: &mut key_base::environment::Environment) -> Result<String, String> {
 	if parameter.is_empty() {
-		return String::new();
+		return Ok(String::new());
 	}
 	let guild_id = environment.guild_id.clone();
-	let guild = executor::block_on(environment.discord_context.cache.guild(&guild_id)).unwrap();
+	let guild;
+	match executor::block_on(environment.discord_context.cache.guild(&guild_id)) {
+		Some(result) => {
+			guild = result;
+		}
+		None => {
+			//
+		}
+	}
 	match parameter[0].as_str() {
 		"id" => {
-			return guild.id.to_string();
+			return Ok(guild.id.to_string());
 		}
 		"owner" => {
-			return guild.owner_id.to_string();
+			return Ok(guild.owner_id.to_string());
 		}
 		"membercount" => {
-			return guild.members.len().to_string();
+			return Ok(guild.members.len().to_string());
 		}
 		"rolecount" => {
-			return guild.roles.len().to_string();
+			return Ok(guild.roles.len().to_string());
 		}
 		"channelcount" => {
-			return guild.channels.len().to_string();
+			return Ok(guild.channels.len().to_string());
 		}
 		"icon" => {
 			match guild.icon_url() {
 				Some(url) => {
-					return url;
+					return Ok(url);
 				}
 				None => {
-					return String::new();
+					return Ok(String::new());
 				}
 			}
 		}
 		"region" => {
-			return guild.region.clone();
+			return Ok(guild.region.clone());
 		}
 		_ => {
-			return String::new();
+			return Ok(String::new());
 		}
 	}
 }

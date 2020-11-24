@@ -131,7 +131,14 @@ pub fn interpret_tree(tree: Vec<tree_creator::TreeNode>, key_list: &HashMap<Stri
 						});
 					} else {
 						let key = key_list.get(&current_node.inner_node.key).unwrap().get_key_function();
-						returned = key(&current_node.returned_values, &mut environment);
+						match key(&current_node.returned_values, &mut environment) {
+							Ok(result) => {
+								returned = result;
+							}
+							Err(error) => {
+								return Err(error);
+							}
+						}
 					}
 					current_index = parent;
 					current_node = &mut interpretable_tree[current_index];
@@ -173,9 +180,6 @@ pub fn interpret_tree(tree: Vec<tree_creator::TreeNode>, key_list: &HashMap<Stri
 					current_node.interpreted_subparam = 0;
 				}
 			}
-		}
-		if let Some(error) = environment.runtime_error {
-			return Err(error);
 		}
 	}
 }

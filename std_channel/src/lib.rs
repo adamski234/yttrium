@@ -33,7 +33,7 @@ fn create_key_info() -> key_base::KeyInfo {
 #[allow(non_camel_case_types)]
 struct std_channel {
 	pub info: key_base::KeyInfo,
-	pub function: fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> String,
+	pub function: fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> Result<String, String>,
 }
 
 impl key_base::Key for std_channel {
@@ -41,12 +41,12 @@ impl key_base::Key for std_channel {
 		return &self.info;
 	}
 
-	fn get_key_function(&self) -> fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> String {
+	fn get_key_function(&self) -> fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> Result<String, String> {
 		return self.function;
 	}
 }
 
-fn key_function(parameter: &[String], environment: &mut key_base::environment::Environment) -> String {
+fn key_function(parameter: &[String], environment: &mut key_base::environment::Environment) -> Result<String, String> {
 	let matcher = regex::Regex::new(key_base::regexes::DISCORD_ID).unwrap();
 	let channel_id;
 	if parameter.len() == 2 && matcher.is_match(&parameter[1]) {
@@ -73,13 +73,12 @@ fn key_function(parameter: &[String], environment: &mut key_base::environment::E
 				channel_id = event.channel_id.clone();
 			}
 			_ => {
-				environment.runtime_error = Some(String::from("Invalid return value type in `channel`"));
-				return String::new();
+				return Err(String::from("Invalid return value type in `channel`"));
 			}
 		}
 	}
 	if parameter.is_empty() || parameter[0] == "id" {
-		return channel_id.to_string();
+		return Ok(channel_id.to_string());
 	}
 	let channel;
 	match futures::executor::block_on(environment.discord_context.cache.guild_channel(channel_id)) {
@@ -87,22 +86,21 @@ fn key_function(parameter: &[String], environment: &mut key_base::environment::E
 			channel = chan;
 		}
 		None => {
-			environment.runtime_error = Some(String::from("Channel does not exist"));
-			return String::new();
+			return Err(String::from("Channel does not exist"));
 		}
 	}
 	match parameter[0].as_str() {
 		"name" => {
-			return channel.name;
+			return Ok(channel.name);
 		}
 		"position" => {
-			return channel.position.to_string();
+			return Ok(channel.position.to_string());
 		}
 		"type" => {
-			return String::from(channel.kind.name());
+			return Ok(String::from(channel.kind.name()));
 		}
 		_ => {
-			return String::new();
+			return Err(format!("Invalid property parameter given to `channel`: `{}`", parameter[0]));
 		}
 	}
 }

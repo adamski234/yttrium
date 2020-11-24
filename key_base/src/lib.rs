@@ -7,7 +7,7 @@ pub mod regexes;
 
 pub trait Key {
 	fn get_key_info(&self) -> &KeyInfo;
-	fn get_key_function(&self) -> fn(parameter: &[String], environment: &mut environment::Environment) -> String;
+	fn get_key_function(&self) -> fn(parameter: &[String], environment: &mut environment::Environment) -> Result<String, String>;
 }
 
 #[derive(Clone, Debug)]

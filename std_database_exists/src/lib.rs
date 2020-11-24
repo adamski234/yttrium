@@ -31,7 +31,7 @@ fn create_key_info() -> key_base::KeyInfo {
 #[allow(non_camel_case_types)]
 struct std_database_exists {
 	pub info: key_base::KeyInfo,
-	pub function: fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> String,
+	pub function: fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> Result<String, String>,
 }
 
 impl key_base::Key for std_database_exists {
@@ -39,29 +39,29 @@ impl key_base::Key for std_database_exists {
 		return &self.info;
 	}
 
-	fn get_key_function(&self) -> fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> String {
+	fn get_key_function(&self) -> fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> Result<String, String> {
 		return self.function;
 	}
 }
 
-fn key_function(parameter: &[String], environment: &mut key_base::environment::Environment) -> String {
+fn key_function(parameter: &[String], environment: &mut key_base::environment::Environment) -> Result<String, String> {
 	let db = environment.database_manager.get_database(&parameter[1]);
 	match db {
 		Some(db) => {
 			match parameter[0].as_str() {
 				"db" => {
-					return String::from("1");
+					return Ok(String::from("1"));
 				}
 				"key" => {
-					return String::from(if db.key_exists(&parameter[2]) { "1" } else { "0" });
+					return Ok(String::from(if db.key_exists(&parameter[2]) { "1" } else { "0" }));
 				}
 				_ => {
-					return String::from("0");
+					return Ok(String::from("0"));
 				}
 			}
 		}
 		None => {
-			return String::from("0");
+			return Ok(String::from("0"));
 		}
 	}
 }

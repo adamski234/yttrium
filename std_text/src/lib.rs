@@ -32,7 +32,7 @@ fn create_key_info() -> key_base::KeyInfo {
 #[allow(non_camel_case_types)]
 struct std_text {
 	pub info: key_base::KeyInfo,
-	pub function: fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> String,
+	pub function: fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> Result<String, String>,
 }
 
 impl key_base::Key for std_text {
@@ -40,12 +40,12 @@ impl key_base::Key for std_text {
 		return &self.info;
 	}
 
-	fn get_key_function(&self) -> fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> String {
+	fn get_key_function(&self) -> fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> Result<String, String> {
 		return self.function;
 	}
 }
 
-fn key_function(parameter: &[String], _environment: &mut key_base::environment::Environment) -> String {
+fn key_function(parameter: &[String], _environment: &mut key_base::environment::Environment) -> Result<String, String> {
 	let result;
 	match parameter[0].as_str() {
 		"equals" => {
@@ -66,8 +66,8 @@ fn key_function(parameter: &[String], _environment: &mut key_base::environment::
 				Ok(value) => {
 					matcher = value;
 				}
-				Err(_) => {
-					return String::from("0");
+				Err(error) => {
+					return Err(format!("Invalid regex in `text`: `{}`", error));
 				}
 			}
 			result = matcher.is_match(&parameter[1]);
@@ -78,16 +78,16 @@ fn key_function(parameter: &[String], _environment: &mut key_base::environment::
 				Ok(value) => {
 					matcher = value;
 				}
-				Err(_) => {
-					return String::new();
+				Err(error) => {
+					return Err(format!("Invalid regex in `text`: `{}`", error));
 				}
 			}
 			match matcher.captures(&parameter[1]) {
 				Some(result) => {
-					return String::from(&result[1]);
+					return Ok(String::from(&result[1]));
 				}
 				None => {
-					return String::new();
+					return Ok(String::new());
 				}
 			}
 		}
@@ -97,8 +97,8 @@ fn key_function(parameter: &[String], _environment: &mut key_base::environment::
 				Ok(value) => {
 					matcher = value;
 				}
-				Err(_) => {
-					return String::from("0");
+				Err(error) => {
+					return Err(format!("Invalid glob in `text`: `{}`", error));
 				}
 			}
 			result = matcher.matches(&parameter[1]);
@@ -107,5 +107,5 @@ fn key_function(parameter: &[String], _environment: &mut key_base::environment::
 			result = false;
 		}
 	}
-	return String::from(if result { "1" } else { "0" });
+	return Ok(String::from(if result { "1" } else { "0" }));
 }

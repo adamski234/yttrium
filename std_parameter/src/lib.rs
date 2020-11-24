@@ -32,7 +32,7 @@ fn create_key_info() -> key_base::KeyInfo {
 #[allow(non_camel_case_types)]
 struct std_parameter {
 	pub info: key_base::KeyInfo,
-	pub function: fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> String,
+	pub function: fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> Result<String, String>,
 }
 
 impl key_base::Key for std_parameter {
@@ -40,38 +40,36 @@ impl key_base::Key for std_parameter {
 		return &self.info;
 	}
 
-	fn get_key_function(&self) -> fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> String {
+	fn get_key_function(&self) -> fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> Result<String, String> {
 		return self.function;
 	}
 }
 
-fn key_function(parameter: &[String], environment: &mut key_base::environment::Environment) -> String {
+fn key_function(parameter: &[String], environment: &mut key_base::environment::Environment) -> Result<String, String> {
 	if let key_base::environment::events::EventType::Message(event) = &mut environment.event_info {
 		if parameter.is_empty() {
-			return event.parameter.clone();
+			return Ok(event.parameter.clone());
 		} else {
-			let index;
 			match parameter[1].parse::<usize>() {
-				Ok(value) => {
-					index = value;
+				Ok(index) => {
+					if !event.split_parameters.contains_key(&parameter[0]) {
+						//This is hacky and I don't like this
+						let split = event.parameter.split(&parameter[0]).map(String::from).collect();
+						event.split_parameters.insert(parameter[0].clone(), split);
+					}
+					let split = event.split_parameters.get(&parameter[0]).unwrap();
+					if split.len() >= index + 1 {
+						return Ok(split[index].clone());
+					} else {
+						return Err(format!("`parameter` split by `{}` didn't have `{}` elements", parameter[0], index + 1));
+					}
 				}
-				Err(_) => {
-					return String::new();
+				Err(error) => {
+					return Err(format!("Invalid number passed to `parameter`: `{}`", error.to_string()));
 				}
-			}
-			if !event.split_parameters.contains_key(&parameter[0]) {
-				//This is hacky and I don't like this
-				let split = event.parameter.split(&parameter[0]).map(String::from).collect();
-				event.split_parameters.insert(parameter[0].clone(), split);
-			}
-			let split = event.split_parameters.get(&parameter[0]).unwrap();
-			if split.len() >= index + 1 {
-				return split[index].clone();
-			} else {
-				return String::new();
 			}
 		}
 	} else {
-		return String::new();
+		return Err(String::from("`parameter` called on invalid event type"));
 	}
 }

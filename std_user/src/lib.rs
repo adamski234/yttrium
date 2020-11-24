@@ -33,7 +33,7 @@ fn create_key_info() -> key_base::KeyInfo {
 #[allow(non_camel_case_types)]
 struct std_user {
 	pub info: key_base::KeyInfo,
-	pub function: fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> String,
+	pub function: fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> Result<String, String>,
 }
 
 impl key_base::Key for std_user {
@@ -41,16 +41,21 @@ impl key_base::Key for std_user {
 		return &self.info;
 	}
 
-	fn get_key_function(&self) -> fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> String {
+	fn get_key_function(&self) -> fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> Result<String, String> {
 		return self.function;
 	}
 }
 
-fn key_function(parameter: &[String], environment: &mut key_base::environment::Environment) -> String {
+fn key_function(parameter: &[String], environment: &mut key_base::environment::Environment) -> Result<String, String> {
 	let guild_id = environment.guild_id.clone();
 	let user_id;
 	if parameter.len() == 2 {
-		user_id = UserId::from(parameter[1].parse::<u64>().unwrap());
+		let matcher = regex::Regex::new(key_base::regexes::DISCORD_ID).unwrap();
+		if matcher.is_match(&parameter[1]) {
+			user_id = UserId::from(parameter[1].parse::<u64>().unwrap());
+		} else {
+			return Err(String::from("Invalid user ID passed to `user`"));
+		}
 	} else {
 		match &environment.event_info {
 			EventType::MemberJoin(event) => {
@@ -75,43 +80,49 @@ fn key_function(parameter: &[String], environment: &mut key_base::environment::E
 				user_id = event.user_id.clone();
 			}
 			_ => {
-				return String::new();
+				return Err(String::from("`user` was called on an invalid event with no ID"));
 			}
 		}
 	}
-	let user = futures::executor::block_on(environment.discord_context.cache.member(guild_id, user_id)).unwrap();
-	match parameter[0].as_str() {
-		"id" => {
-			return user.user.id.to_string();
-		}
-		"nickname" => {
-			match user.nick {
-				Some(nick) => {
-					return nick;
+	match futures::executor::block_on(environment.discord_context.cache.member(guild_id, user_id)) {
+		Some(user) => {
+			match parameter[0].as_str() {
+				"id" => {
+					return Ok(user.user.id.to_string());
 				}
-				None => {
-					return user.user.name;
+				"nickname" => {
+					match user.nick {
+						Some(nick) => {
+							return Ok(nick);
+						}
+						None => {
+							return Ok(user.user.name);
+						}
+					}
+				}
+				"username" => {
+					return Ok(user.user.name);
+				}
+				"avatar" => {
+					match user.user.avatar_url() {
+						Some(url) => {
+							return Ok(url);
+						}
+						None => {
+							return Ok(String::new());
+						}
+					}
+				}
+				"discriminator" => {
+					return Ok(user.user.discriminator.to_string());
+				}
+				_ => {
+					return Err(String::from("Invalid property passed to `user`"));
 				}
 			}
 		}
-		"username" => {
-			return user.user.name;
-		}
-		"avatar" => {
-			match user.user.avatar_url() {
-				Some(url) => {
-					return url;
-				}
-				None => {
-					return String::new();
-				}
-			}
-		}
-		"discriminator" => {
-			return user.user.discriminator.to_string();
-		}
-		_ => {
-			return String::new();
+		None => {
+			return Err(String::from("Could not find the member in `user"));
 		}
 	}
 }

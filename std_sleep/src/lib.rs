@@ -26,7 +26,7 @@ fn create_key_info() -> key_base::KeyInfo {
 #[allow(non_camel_case_types)]
 struct std_sleep {
 	pub info: key_base::KeyInfo,
-	pub function: fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> String,
+	pub function: fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> Result<String, String>,
 }
 
 impl key_base::Key for std_sleep {
@@ -34,14 +34,19 @@ impl key_base::Key for std_sleep {
 		return &self.info;
 	}
 
-	fn get_key_function(&self) -> fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> String {
+	fn get_key_function(&self) -> fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> Result<String, String> {
 		return self.function;
 	}
 }
 
-fn key_function(parameter: &[String], _environment: &mut key_base::environment::Environment) -> String {
-	if let Ok(result) = humantime::parse_duration(&parameter[0]) {
-		std::thread::sleep(result);
+fn key_function(parameter: &[String], _environment: &mut key_base::environment::Environment) -> Result<String, String> {
+	match humantime::parse_duration(&parameter[0]) {
+		Ok(result) => {
+			std::thread::sleep(result);
+			return Ok(String::new());
+		}
+		Err(error) => {
+			return Err(format!("Invalid time passed to `sleep`: `{}`", error));
+		}
 	}
-	return String::new();
 }

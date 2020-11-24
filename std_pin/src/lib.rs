@@ -29,7 +29,7 @@ fn create_key_info() -> key_base::KeyInfo {
 #[allow(non_camel_case_types)]
 struct std_pin {
 	pub info: key_base::KeyInfo,
-	pub function: fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> String,
+	pub function: fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> Result<String, String>,
 }
 
 impl key_base::Key for std_pin {
@@ -37,17 +37,25 @@ impl key_base::Key for std_pin {
 		return &self.info;
 	}
 
-	fn get_key_function(&self) -> fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> String {
+	fn get_key_function(&self) -> fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> Result<String, String> {
 		return self.function;
 	}
 }
 
-fn key_function(_parameter: &[String], environment: &mut key_base::environment::Environment) -> String {
+fn key_function(_parameter: &[String], environment: &mut key_base::environment::Environment) -> Result<String, String> {
 	if let events::EventType::Message(event) = &environment.event_info {
 		let message_id = event.message_id.clone();
 		let channel_id = event.channel_id.clone();
-		let message = executor::block_on(environment.discord_context.cache.message(channel_id, message_id)).unwrap();
-		executor::block_on(message.pin(&environment.discord_context.http)).unwrap();
+		match executor::block_on(environment.discord_context.cache.message(channel_id, message_id)) {
+			Some(message) => {
+				if let Err(error) = executor::block_on(message.pin(&environment.discord_context.http)) {
+					return Err(format!("Could not pin message: `{}`", error));
+				}
+			}
+			None => {
+				return Err(String::from("Message could not be found"));
+			}
+		}
 	}
-	return String::new();
+	return Ok(String::new());
 }

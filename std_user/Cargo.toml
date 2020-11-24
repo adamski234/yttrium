@@ -13,6 +13,7 @@ crate-type = ["cdylib", "rlib"]
 key_base = { path = "../key_base" }
 serenity = "0.9"
 futures = "0.3"
+regex = "1.4"
 
 [features]
 loader = []

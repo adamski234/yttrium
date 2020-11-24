@@ -30,7 +30,7 @@ fn create_key_info() -> key_base::KeyInfo {
 #[allow(non_camel_case_types)]
 struct std_selfreact {
 	pub info: key_base::KeyInfo,
-	pub function: fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> String,
+	pub function: fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> Result<String, String>,
 }
 
 impl key_base::Key for std_selfreact {
@@ -38,12 +38,13 @@ impl key_base::Key for std_selfreact {
 		return &self.info;
 	}
 
-	fn get_key_function(&self) -> fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> String {
+	fn get_key_function(&self) -> fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> Result<String, String> {
 		return self.function;
 	}
 }
 
-fn key_function(parameter: &[String], environment: &mut key_base::environment::Environment) -> String {
+fn key_function(parameter: &[String], environment: &mut key_base::environment::Environment) -> Result<String, String> {
+	//I'm not sure how reactions work, this might fail
 	let matcher = regex::Regex::new(key_base::regexes::DISCORD_ID).unwrap();
 	let reaction;
 	if matcher.is_match(&parameter[0]) {
@@ -55,9 +56,9 @@ fn key_function(parameter: &[String], environment: &mut key_base::environment::E
 		if grapheme_count == 1 {
 			reaction = parameter[0].clone();
 		} else {
-			return String::new();
+			return Err(String::from("Too many characters passed to `selfreact`"));
 		}
 	}
 	environment.reactions_to_add.push(reaction);
-	return String::new();
+	return Ok(String::new());
 }

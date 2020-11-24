@@ -26,7 +26,7 @@ fn create_key_info() -> key_base::KeyInfo {
 #[allow(non_camel_case_types)]
 struct std_redirect {
 	pub info: key_base::KeyInfo,
-	pub function: fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> String,
+	pub function: fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> Result<String, String>,
 }
 
 impl key_base::Key for std_redirect {
@@ -34,16 +34,18 @@ impl key_base::Key for std_redirect {
 		return &self.info;
 	}
 
-	fn get_key_function(&self) -> fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> String {
+	fn get_key_function(&self) -> fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> Result<String, String> {
 		return self.function;
 	}
 }
 
-fn key_function(parameter: &[String], environment: &mut key_base::environment::Environment) -> String {
+fn key_function(parameter: &[String], environment: &mut key_base::environment::Environment) -> Result<String, String> {
 	let possibly_id = &parameter[0];
 	let matcher = regex::Regex::new(key_base::regexes::DISCORD_ID).unwrap();
 	if matcher.is_match(possibly_id) {
 		environment.target = possibly_id.clone();
+		return Ok(String::new());
+	} else {
+		return Err(String::from("Invalid ID passed to `target`"));
 	};
-	return String::new();
 }

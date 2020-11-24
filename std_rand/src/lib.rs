@@ -32,7 +32,7 @@ fn create_key_info() -> key_base::KeyInfo {
 #[allow(non_camel_case_types)]
 struct std_rand {
 	pub info: key_base::KeyInfo,
-	pub function: fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> String,
+	pub function: fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> Result<String, String>,
 }
 
 impl key_base::Key for std_rand {
@@ -40,17 +40,17 @@ impl key_base::Key for std_rand {
 		return &self.info;
 	}
 
-	fn get_key_function(&self) -> fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> String {
+	fn get_key_function(&self) -> fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> Result<String, String> {
 		return self.function;
 	}
 }
 
-fn key_function(parameter: &[String], _environment: &mut key_base::environment::Environment) -> String {
+fn key_function(parameter: &[String], _environment: &mut key_base::environment::Environment) -> Result<String, String> {
 	let lower = if !parameter.is_empty() { parameter[0].parse().unwrap() } else { 0 };
 	let upper = if parameter.len() == 2 { parameter[1].parse().unwrap() } else { 10 };
 	if lower > upper {
-		return String::new();
+		return Err(String::from("Lower bound was higher than upper bound in `rand`"));
 	}
 	let result = rand::thread_rng().gen_range(lower, upper);
-	return result.to_string();
+	return Ok(result.to_string());
 }

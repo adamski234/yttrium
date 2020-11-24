@@ -33,7 +33,7 @@ fn create_key_info() -> key_base::KeyInfo {
 #[allow(non_camel_case_types)]
 struct std_hasrole {
 	pub info: key_base::KeyInfo,
-	pub function: fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> String,
+	pub function: fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> Result<String, String>,
 }
 
 impl key_base::Key for std_hasrole {
@@ -41,12 +41,12 @@ impl key_base::Key for std_hasrole {
 		return &self.info;
 	}
 
-	fn get_key_function(&self) -> fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> String {
+	fn get_key_function(&self) -> fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> Result<String, String> {
 		return self.function;
 	}
 }
 
-fn key_function(parameter: &[String], environment: &mut key_base::environment::Environment) -> String {
+fn key_function(parameter: &[String], environment: &mut key_base::environment::Environment) -> Result<String, String> {
 	let matcher = regex::Regex::new(key_base::regexes::DISCORD_ID).unwrap();
 	if matcher.is_match(&parameter[0]) {
 		let guild_id = environment.guild_id.clone();
@@ -61,14 +61,22 @@ fn key_function(parameter: &[String], environment: &mut key_base::environment::E
 					role_id = role.id;
 				}
 				None => {
-					return String::from("0");
+					return Ok(String::from("0"));
 				}
 			}
 		}
-		let member = futures::executor::block_on(environment.discord_context.cache.member(guild_id, user_id)).unwrap();
+		let member;
+		match futures::executor::block_on(environment.discord_context.cache.member(guild_id, user_id)) {
+			Some(result) => {
+				member = result;
+			}
+			None => {
+				return Err(String::from("Member couldn't be found"));
+			}
+		}
 		let has_role = member.roles.contains(&role_id);
-		return String::from(if has_role { "1" } else { "0" });
+		return Ok(String::from(if has_role { "1" } else { "0" }));
 	} else {
-		return String::from("0");
+		return Ok(String::from("0"));
 	}
 }

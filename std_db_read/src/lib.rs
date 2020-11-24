@@ -27,7 +27,7 @@ fn create_key_info() -> key_base::KeyInfo {
 #[allow(non_camel_case_types)]
 struct std_db_read {
 	pub info: key_base::KeyInfo,
-	pub function: fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> String,
+	pub function: fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> Result<String, String>,
 }
 
 impl key_base::Key for std_db_read {
@@ -35,32 +35,32 @@ impl key_base::Key for std_db_read {
 		return &self.info;
 	}
 
-	fn get_key_function(&self) -> fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> String {
+	fn get_key_function(&self) -> fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> Result<String, String> {
 		return self.function;
 	}
 }
 
-fn key_function(parameter: &[String], environment: &mut key_base::environment::Environment) -> String {
+fn key_function(parameter: &[String], environment: &mut key_base::environment::Environment) -> Result<String, String> {
 	match environment.database_manager.get_database(&parameter[0]) {
 		Some(result) => {
 			match result.get_key(&parameter[1]) {
 				Some(value) => {
 					match value {
 						key_base::databases::StringOrArray::String(string) => {
-							return string;
+							return Ok(string);
 						}
 						key_base::databases::StringOrArray::Array(array) => {
-							return array.join("");
+							return Ok(array.join(""));
 						}
 					}
 				}
 				None => {
-					return String::new();
+					return Ok(String::new());
 				}
 			}
 		}
 		None => {
-			return String::new();
+			return Ok(String::new());
 		}
 	}
 }

@@ -26,7 +26,7 @@ fn create_key_info() -> key_base::KeyInfo {
 #[allow(non_camel_case_types)]
 struct std_db_write_str {
 	pub info: key_base::KeyInfo,
-	pub function: fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> String,
+	pub function: fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> Result<String, String>,
 }
 
 impl key_base::Key for std_db_write_str {
@@ -34,14 +34,14 @@ impl key_base::Key for std_db_write_str {
 		return &self.info;
 	}
 
-	fn get_key_function(&self) -> fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> String {
+	fn get_key_function(&self) -> fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> Result<String, String> {
 		return self.function;
 	}
 }
 
-fn key_function(parameter: &[String], environment: &mut key_base::environment::Environment) -> String {
+fn key_function(parameter: &[String], environment: &mut key_base::environment::Environment) -> Result<String, String> {
 	if let Some(result) = environment.database_manager.get_database(&parameter[0]) {
         result.write_key(parameter[1].clone(), key_base::databases::StringOrArray::String(parameter[2].clone()));
 	}
-	return String::new();
+	return Ok(String::new());
 }

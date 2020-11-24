@@ -49,7 +49,7 @@ fn key_function(parameter: &[String], environment: &mut key_base::environment::E
 			guild = result;
 		}
 		None => {
-			//
+			return Err(String::from("Guild couldn't be found"))
 		}
 	}
 	match parameter[0].as_str() {

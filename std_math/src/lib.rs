@@ -30,7 +30,7 @@ fn create_key_info() -> key_base::KeyInfo {
 #[allow(non_camel_case_types)]
 struct std_math {
 	pub info: key_base::KeyInfo,
-	pub function: fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> String,
+	pub function: fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> Result<String, String>,
 }
 
 impl key_base::Key for std_math {
@@ -38,14 +38,14 @@ impl key_base::Key for std_math {
 		return &self.info;
 	}
 
-	fn get_key_function(&self) -> fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> String {
+	fn get_key_function(&self) -> fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> Result<String, String> {
 		return self.function;
 	}
 }
 
-fn key_function(parameter: &[String], _environment: &mut key_base::environment::Environment) -> String {
+fn key_function(parameter: &[String], _environment: &mut key_base::environment::Environment) -> Result<String, String> {
 	#[allow(unused_unsafe)]
-	return unsafe { ffi::calculate(&parameter[0]).to_str().unwrap().to_string() };
+	return Ok(unsafe { ffi::calculate(&parameter[0]).to_str().unwrap().to_string() });
 }
 
 #[cxx::bridge]

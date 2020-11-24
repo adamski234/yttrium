@@ -34,7 +34,7 @@ fn create_key_info() -> key_base::KeyInfo {
 #[allow(non_camel_case_types)]
 struct std_delete {
 	pub info: key_base::KeyInfo,
-	pub function: fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> String,
+	pub function: fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> Result<String, String>,
 }
 
 impl key_base::Key for std_delete {
@@ -42,21 +42,20 @@ impl key_base::Key for std_delete {
 		return &self.info;
 	}
 
-	fn get_key_function(&self) -> fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> String {
+	fn get_key_function(&self) -> fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> Result<String, String> {
 		return self.function;
 	}
 }
 
 //TODO: rework this and move some variables
-fn key_function(parameter: &[String], environment: &mut key_base::environment::Environment) -> String {
+fn key_function(parameter: &[String], environment: &mut key_base::environment::Environment) -> Result<String, String> {
 	if !parameter.is_empty() {
 		match humantime::parse_duration(&parameter[0]) {
 			Ok(time) => {
 				std::thread::sleep(time);
 			}
 			Err(error) => {
-				environment.runtime_error = Some(format!("Invalid time value in `delete`: `{}`", error));
-				return String::new();
+				return Err(format!("Invalid time value in `delete`: `{}`", error));
 			}
 		}
 		
@@ -78,7 +77,7 @@ fn key_function(parameter: &[String], environment: &mut key_base::environment::E
 				channel_id = event.channel_id.clone();
 			}
 			_ => {
-				return String::new();
+				return Err(String::from("`delete` called on an invalid event"))
 			}
 		}
 		let message;
@@ -87,12 +86,11 @@ fn key_function(parameter: &[String], environment: &mut key_base::environment::E
 				message = msg;
 			}
 			None => {
-				environment.runtime_error = Some(String::from("Message couldn't be found"));
-				return String::new();
+				return Err(String::from("Message couldn't be found"));
 			}
 		}
 		if let Err(error) = executor::block_on(message.delete(&environment.discord_context.http)) {
-			environment.runtime_error = Some(format!("Couldn't delete the message: `{}`", error));
+			return Err(format!("Couldn't delete the message: `{}`", error));
 		}
 	} else {
 		let delete_count;
@@ -101,8 +99,7 @@ fn key_function(parameter: &[String], environment: &mut key_base::environment::E
 				delete_count = result;
 			}
 			Err(error) => {
-				environment.runtime_error = Some(format!("Invalid delete count in `delete`: `{}`", error));
-				return String::new();
+				return Err(format!("Invalid delete count in `delete`: `{}`", error));
 			}
 		};
 		if parameter.len() == 2 {
@@ -121,7 +118,7 @@ fn key_function(parameter: &[String], environment: &mut key_base::environment::E
 					channel_id = event.channel_id.clone();
 				}
 				_ => {
-					return String::new();
+					return Err(String::from("`delete` called on an invalid event"));
 				}
 			}
 			let channel;
@@ -130,8 +127,7 @@ fn key_function(parameter: &[String], environment: &mut key_base::environment::E
 					channel = chan;
 				}
 				None => {
-					environment.runtime_error = Some(String::from("Couldn't get channel"));
-					return String::new();
+					return Err(String::from("Couldn't get channel"));
 				}
 			}
 			if let serenity::model::channel::Channel::Guild(chan) = channel {
@@ -144,16 +140,14 @@ fn key_function(parameter: &[String], environment: &mut key_base::environment::E
 						messages = message_list;
 					}
 					Err(error) => {
-						environment.runtime_error = Some(format!("Couldn't get messages: `{}`", error));
-						return String::new();
+						return Err(format!("Couldn't get messages: `{}`", error));
 					}
 				}
 				if let Err(error) = executor::block_on(chan.delete_messages(&environment.discord_context.http, &messages)) {
-					environment.runtime_error = Some(format!("Couldn't delete messages: `{}`", error));
-					return String::new();
+					return Err(format!("Couldn't delete messages: `{}`", error));
 				}
 			} else {
-				return String::new();
+				return Err(String::from("`delete` called on an invalid channel type"));
 			}
 		} else {
 			let matcher = regex::Regex::new(key_base::regexes::DISCORD_ID).unwrap();
@@ -165,8 +159,7 @@ fn key_function(parameter: &[String], environment: &mut key_base::environment::E
 						channel = chan;
 					}
 					None => {
-						environment.runtime_error = Some(format!("Couldn't get channel in `delete`"));
-						return String::new();
+						return Err(format!("Couldn't get channel in `delete`"));
 					}
 				}
 				if let serenity::model::channel::Channel::Guild(chan) = channel {
@@ -181,17 +174,15 @@ fn key_function(parameter: &[String], environment: &mut key_base::environment::E
 							}).take(delete_count as usize).collect();
 						}
 						Err(error) => {
-							environment.runtime_error = Some(format!("Couldn't get messages: `{}`", error));
-							return String::new();
+							return Err(format!("Couldn't get messages: `{}`", error));
 						}
 					}
 					if let Err(error) = executor::block_on(chan.delete_messages(&environment.discord_context.http, &messages)) {
-						environment.runtime_error = Some(format!("Couldn't delete messages: `{}`", error));
-						return String::new();
+						return Err(format!("Couldn't delete messages: `{}`", error));
 					}
 				}
 			}
 		}
 	}
-	return String::new();
+	return Ok(String::new());
 }

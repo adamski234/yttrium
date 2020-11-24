@@ -29,7 +29,7 @@ fn create_key_info() -> key_base::KeyInfo {
 #[allow(non_camel_case_types)]
 struct std_kick {
 	pub info: key_base::KeyInfo,
-	pub function: fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> String,
+	pub function: fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> Result<String, String>,
 }
 
 impl key_base::Key for std_kick {
@@ -37,11 +37,11 @@ impl key_base::Key for std_kick {
 		return &self.info;
 	}
 
-	fn get_key_function(&self) -> fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> String {
+	fn get_key_function(&self) -> fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> Result<String, String> {
 		return self.function;
 	}
 }
-fn key_function(parameter: &[String], environment: &mut key_base::environment::Environment) -> String {
+fn key_function(parameter: &[String], environment: &mut key_base::environment::Environment) -> Result<String, String> {
 	let guild_id = environment.guild_id.clone();
 	let user_id;
 	match &environment.event_info {
@@ -64,14 +64,18 @@ fn key_function(parameter: &[String], environment: &mut key_base::environment::E
 			user_id = event.user_id.clone();
 		}
 		_ => {
-			return String::new();
+			return Err(String::from("`kick` was called on an invalid event type"));
 		}
 	}
 	let member = executor::block_on(environment.discord_context.cache.member(guild_id, user_id)).unwrap();
 	if parameter.len() == 1 {
-		executor::block_on(member.kick_with_reason(&environment.discord_context.http, &parameter[0])).unwrap();
+		if let Err(error) = executor::block_on(member.kick_with_reason(&environment.discord_context.http, &parameter[0])) {
+			return Err(error.to_string());
+		}
 	} else {
-		executor::block_on(member.kick(&environment.discord_context.http)).unwrap();
+		if let Err(error) = executor::block_on(member.kick(&environment.discord_context.http)) {
+			return Err(error.to_string());
+		}
 	}
-	return String::new();
+	return Ok(String::new());
 }

@@ -30,7 +30,7 @@ fn create_key_info() -> key_base::KeyInfo {
 #[allow(non_camel_case_types)]
 struct std_everyone {
 	pub info: key_base::KeyInfo,
-	pub function: fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> String,
+	pub function: fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> Result<String, String>,
 }
 
 impl key_base::Key for std_everyone {
@@ -38,15 +38,15 @@ impl key_base::Key for std_everyone {
 		return &self.info;
 	}
 
-	fn get_key_function(&self) -> fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> String {
+	fn get_key_function(&self) -> fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> Result<String, String> {
 		return self.function;
 	}
 }
 
-fn key_function(parameter: &[String], _environment: &mut key_base::environment::Environment) -> String {
+fn key_function(parameter: &[String], _environment: &mut key_base::environment::Environment) -> Result<String, String> {
 	if !parameter.is_empty() && parameter[0] == "here" {
-		return String::from("@here");
+		return Ok(String::from("@here"));
 	} else {
-		return String::from("@everyone");
+		return Ok(String::from("@everyone"));
 	}
 }

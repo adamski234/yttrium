@@ -5,6 +5,7 @@ The current version of the library contains 27 keys, that implement most of the 
 | attach | Adds a URL to a file to be attached to the message | Required, the file URL |
 | ban | Bans the member from the server | Optional, reason, defaults to nothing<br>Optional, days to remove messages from, default 0<br>Optional, user id, defaults to the sender |
 | channel | Returns information about a channel | Optional, indicates what property should be returned. Can be: `id`, `name`, `position`, `type`. Defaults to id<br>Optional, channel ID to target |
+| cond | A conditional that returns the second parameter if the first parameter is truthy, otherwis it returns the third parameter | Required, the condition to check<br>Required, the value to return if the first parameter is truthy<br>Optional, the value to return if the first parameter is not truthy |
 | database_exists | Checks whether a database, or a database key, exists | Required, what to check for. Can be: db, key<br>Required, database name<br>Required if the first parameter is `key`, the key to check for in database |
 | db_read | Reads a value from the database | Required, the database name<br>Required, the key name to retrieve |
 | db_write_str | Writes text to database | Required, the database name<br>Required, the key name to insert to<br> Required, the text to insert |

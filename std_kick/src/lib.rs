@@ -67,14 +67,20 @@ fn key_function(parameter: &[String], environment: &mut key_base::environment::E
 			return Err(String::from("`kick` was called on an invalid event type"));
 		}
 	}
-	let member = executor::block_on(environment.discord_context.cache.member(guild_id, user_id)).unwrap();
-	if parameter.len() == 1 {
-		if let Err(error) = executor::block_on(member.kick_with_reason(&environment.discord_context.http, &parameter[0])) {
-			return Err(error.to_string());
+	match executor::block_on(environment.discord_context.cache.member(guild_id, user_id)) {
+		Some(member) => {
+			if parameter.len() == 1 {
+				if let Err(error) = executor::block_on(member.kick_with_reason(&environment.discord_context.http, &parameter[0])) {
+					return Err(error.to_string());
+				}
+			} else {
+				if let Err(error) = executor::block_on(member.kick(&environment.discord_context.http)) {
+					return Err(error.to_string());
+				}
+			}
 		}
-	} else {
-		if let Err(error) = executor::block_on(member.kick(&environment.discord_context.http)) {
-			return Err(error.to_string());
+		None => {
+			return Err(String::from("Could not find member"));
 		}
 	}
 	return Ok(String::new());

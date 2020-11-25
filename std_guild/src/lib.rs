@@ -82,7 +82,7 @@ fn key_function(parameter: &[String], environment: &mut key_base::environment::E
 			return Ok(guild.region.clone());
 		}
 		_ => {
-			return Ok(String::new());
+			return Err(String::from("Invalid property passed to `guild`"));
 		}
 	}
 }

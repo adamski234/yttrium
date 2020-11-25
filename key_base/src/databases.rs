@@ -3,21 +3,26 @@ use std::io::Write;
 use std::collections::HashMap;
 
 const DATABASE_DIR: &str = "./databases/";
+
+/// Trait for accessing databases
 pub trait DatabaseManager {
+	/// Gets the database from the manager, possibly creating it
 	fn get_database(&mut self, name: &str) -> Option<&mut Database>;
+	/// Creates a database and returns it. If the database already exists, it might get overwritten but that does not have to happen
 	fn create_database(&mut self, name: &str) -> &mut Database;
+	/// Deletes a database from the manager
 	fn remove_database(&mut self, name: &str);
+	/// Removes all entries from a database
 	fn clear_database(&mut self, name: &str);
 }
 
+///This is a simple JSON based database manager that is good enough for testing but I wouldn't rely on it too much
 #[derive(Debug)]
 pub struct JSONDatabaseManager {
 	pub guild_id: String,
 	databases: HashMap<String, Database>,
 }
 
-//This will be an issue with multiple people trying to write to a single database at the same time
-///This is a simple JSON based database manager that is good enough for testing but I wouldn't rely on it too much
 impl JSONDatabaseManager {
 	pub fn new(guild_id: &str) -> Self {
 		//Converts a json file to a HashMap<String, Database>
@@ -122,17 +127,21 @@ impl PartialEq for JSONDatabaseManager {
 		return self.databases == other.databases;
 	}
 }
+
+/// This struct is a simple wrapper around a HashMap
 #[derive(Debug, PartialEq)]
 pub struct Database {
 	values: HashMap<String, StringOrArray>,
 }
 
 impl Database {
+	/// Creates an empty database
 	pub fn new_empty() -> Self {
 		return Self {
 			values: HashMap::new(),
 		};
 	}
+	/// Builds a database from [serde_json::Value]
 	pub fn new_from_value(value: serde_json::Value) -> Self {
 		let mut result = Self::new_empty();
 		if let serde_json::Value::Object(object) = value {
@@ -184,6 +193,7 @@ impl Database {
 		};
 		return result;
 	}
+	/// Retrieves a key from the database
 	pub fn get_key(&self, name: &str) -> Option<StringOrArray> {
 		match self.values.get(name) {
 			Some(value) => {
@@ -194,12 +204,15 @@ impl Database {
 			}
 		}
 	}
+	/// Inserts a key into the database, overwriting the old one if it already existed
 	pub fn write_key(&mut self, name: String, value: StringOrArray) {
 		self.values.insert(name, value);
 	}
+	/// Deletes a key from the database
 	pub fn remove_key(&mut self, name: &str) {
 		self.values.remove(name);
 	}
+	/// Checks if a key exists in the database
 	pub fn key_exists(&self, name: &str) -> bool {
 		return self.values.contains_key(name);
 	}
@@ -208,6 +221,7 @@ impl Database {
 	}
 }
 
+/// Enum used for differentiation between a string and an array
 #[derive(Debug, PartialEq, Clone)]
 pub enum StringOrArray {
 	String(String),

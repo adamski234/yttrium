@@ -1,6 +1,8 @@
 use std::collections::HashMap;
 use serenity::model::id::{ChannelId, MessageId, UserId, RoleId};
 use serenity::model::channel::ReactionType;
+
+/// Enum describing the event type that should be used for interpretation
 #[derive(Debug)]
 pub enum EventType {
 	Default,

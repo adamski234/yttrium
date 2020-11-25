@@ -5,14 +5,20 @@ use std::collections::HashMap;
 
 #[path = "./errors_and_warns.rs"] pub mod errors_and_warns;
 #[path = "./key_loader.rs"] pub mod key_loader;
-#[path = "./tree_creator.rs"] pub mod tree_creator; //#[path] allows to load a module from an arbitrary part
+#[path = "./tree_creator.rs"] pub mod tree_creator;
 #[path ="./interpreter.rs"] pub mod interpreter;
 
+pub use interpreter::interpret_tree;
 
-pub fn run_ars_string(ars_string: String, key_list: &HashMap<String, Box<dyn key_base::Key>>, environment: key_base::environment::Environment) -> Result<ResultAndWarnings, errors_and_warns::Error> {
+/// Runs an ARS string
+/// # Arguments: 
+/// * `ars_string` - The tree to interpret
+/// * `key_list` - A HashMap of keys, probably returned from [key_loader::load_keys]
+/// * `environment` - The environment from [key_base::environment::Environment]
+pub fn interpret_string(ars_string: String, key_list: &HashMap<String, Box<dyn key_base::Key>>, environment: key_base::environment::Environment) -> Result<ResultAndWarnings, errors_and_warns::Error> {
 	match tree_creator::create_ars_tree(ars_string, key_list) {
 		Ok(tree) => {
-			match run_ars_tree(tree.tree, key_list, environment) {
+			match interpret_tree(tree.tree, key_list, environment) {
 				Ok(result) => {
 					return Ok(ResultAndWarnings {
 						result: result,
@@ -30,10 +36,9 @@ pub fn run_ars_string(ars_string: String, key_list: &HashMap<String, Box<dyn key
 	}
 }
 
-pub fn run_ars_tree(tree: Vec<tree_creator::TreeNode>, key_list: &HashMap<String, Box<dyn key_base::Key>>, environment: key_base::environment::Environment) -> Result<interpreter::InterpretationResult, String> {
-	return interpreter::interpret_tree(tree, key_list, environment);
-}
 
+/// The return value of [interpret_string]
+/// Contains both the result and all warnings, if there are any
 #[derive(Debug)]
 pub struct ResultAndWarnings {
 	pub result: interpreter::InterpretationResult,

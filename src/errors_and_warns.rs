@@ -1,25 +1,35 @@
 use std::collections::HashMap;
 use crate::tree_creator;
 
+/// Enum containing different error types
 #[allow(dead_code)]
 #[derive(Debug, PartialEq)]
 pub enum Error {
+	/// Error used when the key receives the wrong amount of parameters
 	WrongAmountOfParameters,
-	ParameterDelimAfterCondFalse,
+	/// Error used when a parameter is empty, usually happens by accident
 	EmptyParameter,
+	/// Error used when a key does not exist in `keys`
 	NonexistentKey,
+	/// Error returned from [crate::interpreter::interpret_tree]
 	InterpretationError(String),
 }
 
+/// Enum containing warnings that aren't explicitly errors, but are likely undesirable
 #[allow(dead_code)]
 #[derive(Debug, PartialEq)]
 pub enum Warning {
+	/// Warning used when there is an unmatched opening bracket
+	/// Like `{key`
 	UnclosedKeys,
 }
 
+/// Checks the ARS tree for syntax errors
+/// # Arguments:
+/// * `nodes` - An array of [TreeNodes](tree_creator::TreeNode), probably created by [crate::tree_creator::create_ars_tree]
+/// * `keys` - The HashMap of keys
 pub fn check_for_errors(nodes: &[tree_creator::TreeNode], keys: &HashMap<String, Box<dyn key_base::Key>>) -> Option<Error> {
 	for node in nodes {
-		//TODO implement the rest of errors and add tests
 		let param_count = node.parameters.len();
 		match node.key.as_str() {
 			"top" => {

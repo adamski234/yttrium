@@ -2,6 +2,11 @@ use std::collections::HashMap;
 use key_base::environment::Environment;
 use crate::tree_creator;
 
+/// Runs the created ARS tree
+/// # Arguments: 
+/// * `tree` - The tree in vector form returned from [tree_creator::create_ars_tree]
+/// * `key_list` - A HashMap of keys, probably returned from [crate::key_loader::load_keys]
+/// * `environment` - The environment from [key_base::environment::Environment]
 pub fn interpret_tree(tree: Vec<tree_creator::TreeNode>, key_list: &HashMap<String, Box<dyn key_base::Key>>, mut environment: Environment) -> Result<InterpretationResult, String> {
 	let mut current_index = 0; //Pointer to the currently interpreted node
 	let mut interpretable_tree = Vec::with_capacity(tree.len());
@@ -183,13 +188,21 @@ pub fn interpret_tree(tree: Vec<tree_creator::TreeNode>, key_list: &HashMap<Stri
 		}
 	}
 }
+
+/// Struct containing everything that the script might return
 #[derive(Debug)]
 pub struct InterpretationResult {
+	/// The returned message
 	pub message: String,
+	/// The created embed
 	pub embed: Option<key_base::embed::Embed>,
+	/// The next rule to call
 	pub next_rule: Option<String>,
+	/// A list of attachments to send
 	pub attachments: Vec<String>,
+	/// A list of reactions to add to the sent message
 	pub reactions: Vec<String>,
+	/// Time after which the sent message should be deleted
 	pub self_delete: Option<std::time::Duration>,
 }
 

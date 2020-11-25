@@ -27,6 +27,6 @@ fn main() {
 		stdin()
 			.read_line(&mut input)
 			.expect("An error has happened while reading from the console");
-		println!("{:#?}", ars::run_ars_string(input.trim().into(), &keys.keys, env)); //This will crash when I'm done
+		println!("{:#?}", ars::interpret_string(input.trim().into(), &keys.keys, env)); //This will crash when I'm done
 	}
 }

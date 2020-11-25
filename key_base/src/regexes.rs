@@ -1,3 +1,6 @@
+//! Module with shared regexes to simplify matching
+
+/// Regex describing a discord snowflake
 pub static DISCORD_ID: &str = r"\d{18}";
 
 #[cfg(test)]

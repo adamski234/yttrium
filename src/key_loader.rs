@@ -134,6 +134,7 @@ pub fn load_keys(directory: &str) -> Keys {
 	return keys;
 }
 
+/// Struct containing any keys that were loaded, and any libraries that might contain the keys
 pub struct Keys {
 	pub keys: HashMap<String, Box<dyn key_base::Key>>,
 	#[cfg(feature = "loader")]

@@ -1,5 +1,8 @@
 #[allow(clippy::needless_return)]
-/// `split_into_tokens` takes a string of valid or invalid ARS code and separates it into a vector of tokens
+
+/// `split_into_tokens` takes a string of ARS code and separates it into a vector of tokens
+/// # Arguments:
+/// * `ars_string` - The string to tokenize 
 #[allow(dead_code)]
 pub fn split_into_tokens(ars_string: String) -> Vec<Token> {
 	const DEFAULT_STR_LENGTH: usize = 20;

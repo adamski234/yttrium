@@ -9,39 +9,39 @@ description = "Library for parsing ARS code, inspired by the echo discord bot"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-key_base = { path = "./key_base" }
+key_base = { version = "*", path = "./key_base" }
 libloading = { version = "0.6", optional = true }
 serde_json = "1"
 serenity = "0.9"
 futures = "0.3"
 # All the keys for a one file build
-std_db_read = { path = "./std_db_read", optional = true }
-std_db_write_str = { path = "./std_db_write_str", optional = true }
-std_redirect = { path = "./std_redirect", optional = true }
-std_sleep = { path = "./std_sleep", optional = true }
-std_math = { path = "./std_math", optional = true }
-std_attach = { path = "./std_attach", optional = true }
-std_setnickname = { path = "./std_setnickname", optional = true }
-std_pin = { path = "./std_pin", optional = true }
-std_trigger = { path = "./std_trigger", optional = true }
-std_take = { path = "./std_take", optional = true }
-std_role = { path = "./std_role", optional = true }
-std_ban = { path = "./std_ban", optional = true }
-std_kick = { path = "./std_kick", optional = true }
-std_guild = { path = "./std_guild", optional = true }
-std_delete = { path = "./std_delete", optional = true }
-std_selfdelete = { path = "./std_selfdelete", optional = true }
-std_selfreact = { path = "./std_selfreact", optional = true }
-std_joined = { path = "./std_joined", optional = true }
-std_channel = { path = "./std_channel", optional = true }
-std_mention = { path = "./std_mention", optional = true }
-std_user = { path = "./std_user", optional = true }
-std_rand = { path = "./std_rand", optional = true }
-std_everyone = { path = "./std_everyone", optional = true }
-std_database_exists = { path = "./std_database_exists", optional = true }
-std_parameter = { path = "./std_parameter", optional = true }
-std_text = { path = "./std_text", optional = true }
-std_hasrole = { path = "./std_hasrole", optional = true }
+std_db_read = { version = "*", path = "./std_db_read", optional = true }
+std_db_write_str = { version = "*", path = "./std_db_write_str", optional = true }
+std_redirect = { version = "*", path = "./std_redirect", optional = true }
+std_sleep = { version = "*", path = "./std_sleep", optional = true }
+std_math = { version = "*", path = "./std_math", optional = true }
+std_attach = { version = "*", path = "./std_attach", optional = true }
+std_setnickname = { version = "*", path = "./std_setnickname", optional = true }
+std_pin = { version = "*", path = "./std_pin", optional = true }
+std_trigger = { version = "*", path = "./std_trigger", optional = true }
+std_take = { version = "*", path = "./std_take", optional = true }
+std_role = { version = "*", path = "./std_role", optional = true }
+std_ban = { version = "*", path = "./std_ban", optional = true }
+std_kick = { version = "*", path = "./std_kick", optional = true }
+std_guild = { version = "*", path = "./std_guild", optional = true }
+std_delete = { version = "*", path = "./std_delete", optional = true }
+std_selfdelete = { version = "*", path = "./std_selfdelete", optional = true }
+std_selfreact = { version = "*", path = "./std_selfreact", optional = true }
+std_joined = { version = "*", path = "./std_joined", optional = true }
+std_channel = { version = "*", path = "./std_channel", optional = true }
+std_mention = { version = "*", path = "./std_mention", optional = true }
+std_user = { version = "*", path = "./std_user", optional = true }
+std_rand = { version = "*", path = "./std_rand", optional = true }
+std_everyone = { version = "*", path = "./std_everyone", optional = true }
+std_database_exists = { version = "*", path = "./std_database_exists", optional = true }
+std_parameter = { version = "*", path = "./std_parameter", optional = true }
+std_text = { version = "*", path = "./std_text", optional = true }
+std_hasrole = { version = "*", path = "./std_hasrole", optional = true }
 
 [workspace]
 members = [

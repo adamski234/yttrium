@@ -218,9 +218,9 @@ dependencies = [
 
 [[package]]
 name = "cxx"
-version = "1.0.2"
+version = "1.0.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0fd07c9481227e2e56f95f32ff8f2993c00d0ae3dfedb0644cfd179dcbaa5d3b"
+checksum = "b72404148e57026adb6102cabc3cc539cae1b49ba2d83781e0c2aa211f5a6904"
 dependencies = [
  "cc",
  "cxxbridge-flags",
@@ -230,9 +230,9 @@ dependencies = [
 
 [[package]]
 name = "cxx-build"
-version = "1.0.2"
+version = "1.0.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a27cb31901370f3d28384a1063e54b3a518875ba9cc5d1231116a20e67ced94f"
+checksum = "022aab0b05a5363004d0831d0a0eedf2bcb2ea6ae4aa2f5cc7b857be9805cb77"
 dependencies = [
  "cc",
  "codespan-reporting",
@@ -245,15 +245,15 @@ dependencies = [
 
 [[package]]
 name = "cxxbridge-flags"
-version = "1.0.2"
+version = "1.0.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1fa790785d638d4acfd8360e192c9f89b3a19c69a58a32401740f7966aa43a9f"
+checksum = "4976de14d575631e58ccafc385902f0dd9b2f8416b2df3017be2849b140749e6"
 
 [[package]]
 name = "cxxbridge-macro"
-version = "1.0.2"
+version = "1.0.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "da07f00faced1a911614aee6eef4941fb16425ecd42854bf20710d148f80085d"
+checksum = "034e7ce981c13bd5b00476a3aeaabbef9faae9c4ba2bd77d36d712468b9538a5"
 dependencies = [
  "proc-macro2",
  "quote",

@@ -181,86 +181,10 @@ pub struct TreeReturn {
 //A wall of text is incoming. You probably should collapse them
 #[cfg(test)]
 mod tests {
-	//Some basic definitions for testing
-	struct Key1 {
-		function: fn(parameter: &[String], env: &mut key_base::environment::Environment) -> String,
-		info: key_base::KeyInfo,
-	}
-	impl key_base::Key for Key1 {
-		fn get_key_info(&self) -> &key_base::KeyInfo {
-			return &self.info;
-		}
-		fn get_key_function(&self) -> fn(parameter: &[String], env: &mut key_base::environment::Environment) -> String {
-			return self.function;
-		}
-	}
-	#[allow(dead_code)]
-	fn placeholder_fn(_param: &[String], _env: &mut key_base::environment::Environment) -> String {
-		return String::from("return");
-	}
-	fn load_keys_test() -> HashMap<String, Box<dyn key_base::Key>> {
-		let mut keys = HashMap::<String, Box<dyn key_base::Key>>::new();
-		keys.insert(String::from("abc"),
-			Box::new(Key1 {
-				function: placeholder_fn,
-				info: key_base::KeyInfo {
-					parameters_required: vec![0],
-					name: String::from("abc"),
-				}
-			})
-		);
-		keys.insert(String::from("def"),
-			Box::new(Key1 {
-				function: placeholder_fn,
-				info: key_base::KeyInfo {
-					parameters_required: vec![1],
-					name: String::from("def"),
-				}
-			})
-		);
-		keys.insert(String::from("ghi"),
-			Box::new(Key1 {
-				function: placeholder_fn,
-				info: key_base::KeyInfo {
-					parameters_required: vec![0, 1, 3],
-					name: String::from("ghi"),
-				}
-			})
-		);
-		keys.insert(String::from("jkm"),
-			Box::new(Key1 {
-				function: placeholder_fn,
-				info: key_base::KeyInfo {
-					parameters_required: vec![0],
-					name: String::from("jkm"),
-				}
-			})
-		);
-		keys.insert(String::from("ab"),
-			Box::new(Key1 {
-				function: placeholder_fn,
-				info: key_base::KeyInfo {
-					parameters_required: vec![2],
-					name: String::from("ab"),
-				}
-			})
-		);
-		keys.insert(String::from("bc"),
-			Box::new(Key1 {
-				function: placeholder_fn,
-				info: key_base::KeyInfo {
-					parameters_required: vec![1, 2],
-					name: String::from("bc"),
-				}
-			})
-		);
-		return keys;
-	}
-	
 	use super::*;
 	#[test]
 	fn tree_small_nesting() {
-		let tested_string = String::from("{def:{def:abc}}");
+		let tested_string = String::from("{attach:{ban:abc}}");
 		let correct = vec![
 			TreeNode {
 				key: String::from("top"),
@@ -276,7 +200,7 @@ mod tests {
 				parent: None,
 			},
 			TreeNode {
-				key: String::from("def"),
+				key: String::from("attach"),
 				parameters: vec![
 					Parameter::Nodes(
 						vec![
@@ -291,7 +215,7 @@ mod tests {
 				),
 			},
 			TreeNode {
-				key: String::from("def"),
+				key: String::from("ban"),
 				parameters: vec![
 					Parameter::String(
 						String::from("abc"),
@@ -304,12 +228,12 @@ mod tests {
 				),
 			},
 		];
-		let output = create_ars_tree(tested_string, &load_keys_test()).unwrap().tree;
+		let output = create_ars_tree(tested_string, &crate::key_loader::load_keys("").keys).unwrap().tree;
 		assert_eq!(output, correct);
 	}
 	#[test]
 	fn tree_no_nesting_only_keys() {
-		let input = String::from("{abc}{jkm}{abc}");
+		let input = String::from("{ban}{joined}{rand}");
 		let correct = vec![
 			TreeNode {
 				key: String::from("top"),
@@ -327,7 +251,7 @@ mod tests {
 				parent: None,
 			},
 			TreeNode {
-				key: String::from("abc"),
+				key: String::from("ban"),
 				parameters: vec![],
 				is_editing_parameter: false,
 				edited_parameter: 0,
@@ -336,7 +260,7 @@ mod tests {
 				),
 			},
 			TreeNode {
-				key: String::from("jkm"),
+				key: String::from("joined"),
 				parameters: vec![],
 				is_editing_parameter: false,
 				edited_parameter: 0,
@@ -345,7 +269,7 @@ mod tests {
 				),
 			},
 			TreeNode {
-				key: String::from("abc"),
+				key: String::from("rand"),
 				parameters: vec![],
 				is_editing_parameter: false,
 				edited_parameter: 0,
@@ -354,12 +278,12 @@ mod tests {
 				),
 			},
 		];
-		let output = create_ars_tree(input, &load_keys_test()).unwrap().tree;
+		let output = create_ars_tree(input, &crate::key_loader::load_keys("").keys).unwrap().tree;
 		assert_eq!(output, correct);
 	}
 	#[test]
 	fn tree_nesting() {
-		let input = String::from("abc{abc}{ghi:jkm}{bc:{def:ghi}}");
+		let input = String::from("abc{ban}{rand:jkm}{delete:{attach:ghi}}");
 		let correct_output = vec![
 			TreeNode {
 				key: String::from("top"),
@@ -391,7 +315,7 @@ mod tests {
 				),
 			},
 			TreeNode {
-				key: String::from("abc"),
+				key: String::from("ban"),
 				parameters: vec![],
 				is_editing_parameter: false,
 				edited_parameter: 0,
@@ -400,7 +324,7 @@ mod tests {
 				),
 			},
 			TreeNode {
-				key: String::from("ghi"),
+				key: String::from("rand"),
 				parameters: vec![
 					Parameter::String(
 						String::from("jkm"),
@@ -413,7 +337,7 @@ mod tests {
 				),
 			},
 			TreeNode {
-				key: String::from("bc"),
+				key: String::from("delete"),
 				parameters: vec![
 					Parameter::Nodes(
 						vec![
@@ -428,7 +352,7 @@ mod tests {
 				),
 			},
 			TreeNode {
-				key: String::from("def"),
+				key: String::from("attach"),
 				parameters: vec![
 					Parameter::String(
 						String::from("ghi"),
@@ -441,13 +365,14 @@ mod tests {
 				),
 			},
 		];
-		let output = create_ars_tree(input, &load_keys_test()).unwrap().tree;
+		let output = create_ars_tree(input, &crate::key_loader::load_keys("").keys).unwrap().tree;
 		assert_eq!(output, correct_output);
 	}
 	#[test]
 	fn unclosed_keys() {
-		let input = String::from("{abc");
-		let output_warns = create_ars_tree(input, &load_keys_test()).unwrap().warnings;
+		let input = String::from("{rand");
+		let output = create_ars_tree(input, &crate::key_loader::load_keys("").keys).unwrap();
+		let output_warns = output.warnings;
 		assert_eq!(output_warns, Some(vec![errors_and_warns::Warning::UnclosedKeys]));
 	}
 }

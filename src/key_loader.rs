@@ -15,59 +15,59 @@ pub fn load_keys(directory: &str) -> Keys {
 	};
 	#[cfg(feature = "single-file")]
 	{
-		let key = std_attach::safe_create();
+		let key = yttrium_std_attach::safe_create();
 		keys.keys.insert(key.get_key_info().name.clone(), key);
-		let key = std_ban::safe_create();
+		let key = yttrium_std_ban::safe_create();
 		keys.keys.insert(key.get_key_info().name.clone(), key);
-		let key = std_channel::safe_create();
+		let key = yttrium_std_channel::safe_create();
 		keys.keys.insert(key.get_key_info().name.clone(), key);
-		let key = std_database_exists::safe_create();
+		let key = yttrium_std_database_exists::safe_create();
 		keys.keys.insert(key.get_key_info().name.clone(), key);
-		let key = std_db_read::safe_create();
+		let key = yttrium_std_db_read::safe_create();
 		keys.keys.insert(key.get_key_info().name.clone(), key);
-		let key = std_db_write_str::safe_create();
+		let key = yttrium_std_db_write_str::safe_create();
 		keys.keys.insert(key.get_key_info().name.clone(), key);
-		let key = std_delete::safe_create();
+		let key = yttrium_std_delete::safe_create();
 		keys.keys.insert(key.get_key_info().name.clone(), key);
-		let key = std_everyone::safe_create();
+		let key = yttrium_std_everyone::safe_create();
 		keys.keys.insert(key.get_key_info().name.clone(), key);
-		let key = std_guild::safe_create();
+		let key = yttrium_std_guild::safe_create();
 		keys.keys.insert(key.get_key_info().name.clone(), key);
-		let key = std_hasrole::safe_create();
+		let key = yttrium_std_hasrole::safe_create();
 		keys.keys.insert(key.get_key_info().name.clone(), key);
-		let key = std_joined::safe_create();
+		let key = yttrium_std_joined::safe_create();
 		keys.keys.insert(key.get_key_info().name.clone(), key);
-		let key = std_kick::safe_create();
+		let key = yttrium_std_kick::safe_create();
 		keys.keys.insert(key.get_key_info().name.clone(), key);
-		let key = std_math::safe_create();
+		let key = yttrium_std_math::safe_create();
 		keys.keys.insert(key.get_key_info().name.clone(), key);
-		let key = std_mention::safe_create();
+		let key = yttrium_std_mention::safe_create();
 		keys.keys.insert(key.get_key_info().name.clone(), key);
-		let key = std_parameter::safe_create();
+		let key = yttrium_std_parameter::safe_create();
 		keys.keys.insert(key.get_key_info().name.clone(), key);
-		let key = std_pin::safe_create();
+		let key = yttrium_std_pin::safe_create();
 		keys.keys.insert(key.get_key_info().name.clone(), key);
-		let key = std_rand::safe_create();
+		let key = yttrium_std_rand::safe_create();
 		keys.keys.insert(key.get_key_info().name.clone(), key);
-		let key = std_redirect::safe_create();
+		let key = yttrium_std_redirect::safe_create();
 		keys.keys.insert(key.get_key_info().name.clone(), key);
-		let key = std_role::safe_create();
+		let key = yttrium_std_role::safe_create();
 		keys.keys.insert(key.get_key_info().name.clone(), key);
-		let key = std_selfdelete::safe_create();
+		let key = yttrium_std_selfdelete::safe_create();
 		keys.keys.insert(key.get_key_info().name.clone(), key);
-		let key = std_selfreact::safe_create();
+		let key = yttrium_std_selfreact::safe_create();
 		keys.keys.insert(key.get_key_info().name.clone(), key);
-		let key = std_setnickname::safe_create();
+		let key = yttrium_std_setnickname::safe_create();
 		keys.keys.insert(key.get_key_info().name.clone(), key);
-		let key = std_sleep::safe_create();
+		let key = yttrium_std_sleep::safe_create();
 		keys.keys.insert(key.get_key_info().name.clone(), key);
-		let key = std_take::safe_create();
+		let key = yttrium_std_take::safe_create();
 		keys.keys.insert(key.get_key_info().name.clone(), key);
-		let key = std_text::safe_create();
+		let key = yttrium_std_text::safe_create();
 		keys.keys.insert(key.get_key_info().name.clone(), key);
-		let key = std_trigger::safe_create();
+		let key = yttrium_std_trigger::safe_create();
 		keys.keys.insert(key.get_key_info().name.clone(), key);
-		let key = std_user::safe_create();
+		let key = yttrium_std_user::safe_create();
 		keys.keys.insert(key.get_key_info().name.clone(), key);
 	}
 	#[cfg(feature = "loader")]
@@ -136,7 +136,7 @@ pub fn load_keys(directory: &str) -> Keys {
 
 /// Struct containing any keys that were loaded, and any libraries that might contain the keys
 pub struct Keys {
-	pub keys: HashMap<String, Box<dyn key_base::Key>>,
+	pub keys: HashMap<String, Box<dyn yttrium_key_base::Key>>,
 	#[cfg(feature = "loader")]
 	pub libraries: Vec<libloading::Library>,
 }

@@ -16,44 +16,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "ars"
-version = "0.1.0"
-dependencies = [
- "futures",
- "key_base",
- "libloading",
- "serde_json",
- "serenity",
- "std_attach",
- "std_ban",
- "std_channel",
- "std_database_exists",
- "std_db_read",
- "std_db_write_str",
- "std_delete",
- "std_everyone",
- "std_guild",
- "std_hasrole",
- "std_joined",
- "std_kick",
- "std_math",
- "std_mention",
- "std_parameter",
- "std_pin",
- "std_rand",
- "std_redirect",
- "std_role",
- "std_selfdelete",
- "std_selfreact",
- "std_setnickname",
- "std_sleep",
- "std_take",
- "std_text",
- "std_trigger",
- "std_user",
-]
-
-[[package]]
 name = "ars_generator"
 version = "0.1.0"
 dependencies = [
@@ -620,15 +582,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "key_base"
-version = "0.1.0"
-dependencies = [
- "regex",
- "serde_json",
- "serenity",
-]
-
-[[package]]
 name = "lazy_static"
 version = "1.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1152,242 +1105,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a2eb9349b6444b326872e140eb1cf5e7c522154d69e7a0ffb0fb81c06b37543f"
 
 [[package]]
-name = "std_attach"
-version = "0.1.0"
-dependencies = [
- "key_base",
-]
-
-[[package]]
-name = "std_ban"
-version = "0.1.0"
-dependencies = [
- "futures",
- "key_base",
- "regex",
- "serenity",
-]
-
-[[package]]
-name = "std_channel"
-version = "0.1.0"
-dependencies = [
- "futures",
- "key_base",
- "regex",
- "serenity",
-]
-
-[[package]]
-name = "std_database_exists"
-version = "0.1.0"
-dependencies = [
- "key_base",
-]
-
-[[package]]
-name = "std_db_read"
-version = "0.1.0"
-dependencies = [
- "key_base",
-]
-
-[[package]]
-name = "std_db_write_str"
-version = "0.1.0"
-dependencies = [
- "key_base",
-]
-
-[[package]]
-name = "std_delete"
-version = "0.1.0"
-dependencies = [
- "futures",
- "humantime",
- "key_base",
- "regex",
- "serenity",
-]
-
-[[package]]
-name = "std_everyone"
-version = "0.1.0"
-dependencies = [
- "key_base",
-]
-
-[[package]]
-name = "std_guild"
-version = "0.1.0"
-dependencies = [
- "futures",
- "key_base",
- "regex",
- "serenity",
-]
-
-[[package]]
-name = "std_hasrole"
-version = "0.1.0"
-dependencies = [
- "futures",
- "key_base",
- "regex",
- "serenity",
-]
-
-[[package]]
-name = "std_joined"
-version = "0.1.0"
-dependencies = [
- "futures",
- "key_base",
- "serenity",
-]
-
-[[package]]
-name = "std_kick"
-version = "0.1.0"
-dependencies = [
- "futures",
- "key_base",
- "serenity",
-]
-
-[[package]]
-name = "std_math"
-version = "0.1.0"
-dependencies = [
- "cxx",
- "cxx-build",
- "key_base",
-]
-
-[[package]]
-name = "std_mention"
-version = "0.1.0"
-dependencies = [
- "futures",
- "key_base",
- "serenity",
-]
-
-[[package]]
-name = "std_parameter"
-version = "0.1.0"
-dependencies = [
- "key_base",
-]
-
-[[package]]
-name = "std_pin"
-version = "0.1.0"
-dependencies = [
- "futures",
- "key_base",
- "serenity",
-]
-
-[[package]]
-name = "std_rand"
-version = "0.1.0"
-dependencies = [
- "key_base",
- "rand",
-]
-
-[[package]]
-name = "std_redirect"
-version = "0.1.0"
-dependencies = [
- "key_base",
- "regex",
-]
-
-[[package]]
-name = "std_role"
-version = "0.1.0"
-dependencies = [
- "futures",
- "key_base",
- "regex",
- "serenity",
-]
-
-[[package]]
-name = "std_selfdelete"
-version = "0.1.0"
-dependencies = [
- "humantime",
- "key_base",
-]
-
-[[package]]
-name = "std_selfreact"
-version = "0.1.0"
-dependencies = [
- "key_base",
- "regex",
- "serenity",
- "unicode-segmentation",
-]
-
-[[package]]
-name = "std_setnickname"
-version = "0.1.0"
-dependencies = [
- "futures",
- "key_base",
- "regex",
- "serenity",
-]
-
-[[package]]
-name = "std_sleep"
-version = "0.1.0"
-dependencies = [
- "humantime",
- "key_base",
-]
-
-[[package]]
-name = "std_take"
-version = "0.1.0"
-dependencies = [
- "futures",
- "key_base",
- "regex",
- "serenity",
-]
-
-[[package]]
-name = "std_text"
-version = "0.1.0"
-dependencies = [
- "glob",
- "key_base",
- "regex",
-]
-
-[[package]]
-name = "std_trigger"
-version = "0.1.0"
-dependencies = [
- "key_base",
-]
-
-[[package]]
-name = "std_user"
-version = "0.1.0"
-dependencies = [
- "futures",
- "key_base",
- "regex",
- "serenity",
-]
-
-[[package]]
 name = "syn"
 version = "1.0.51"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1867,4 +1584,287 @@ checksum = "d59cefebd0c892fa2dd6de581e937301d8552cb44489cdff035c6187cb63fa5e"
 dependencies = [
  "winapi 0.2.8",
  "winapi-build",
+]
+
+[[package]]
+name = "yttrium"
+version = "0.1.0"
+dependencies = [
+ "futures",
+ "libloading",
+ "serde_json",
+ "serenity",
+ "yttrium_key_base",
+ "yttrium_std_attach",
+ "yttrium_std_ban",
+ "yttrium_std_channel",
+ "yttrium_std_database_exists",
+ "yttrium_std_db_read",
+ "yttrium_std_db_write_str",
+ "yttrium_std_delete",
+ "yttrium_std_everyone",
+ "yttrium_std_guild",
+ "yttrium_std_hasrole",
+ "yttrium_std_joined",
+ "yttrium_std_kick",
+ "yttrium_std_math",
+ "yttrium_std_mention",
+ "yttrium_std_parameter",
+ "yttrium_std_pin",
+ "yttrium_std_rand",
+ "yttrium_std_redirect",
+ "yttrium_std_role",
+ "yttrium_std_selfdelete",
+ "yttrium_std_selfreact",
+ "yttrium_std_setnickname",
+ "yttrium_std_sleep",
+ "yttrium_std_take",
+ "yttrium_std_text",
+ "yttrium_std_trigger",
+ "yttrium_std_user",
+]
+
+[[package]]
+name = "yttrium_key_base"
+version = "0.1.0"
+dependencies = [
+ "regex",
+ "serde_json",
+ "serenity",
+]
+
+[[package]]
+name = "yttrium_std_attach"
+version = "0.1.0"
+dependencies = [
+ "yttrium_key_base",
+]
+
+[[package]]
+name = "yttrium_std_ban"
+version = "0.1.0"
+dependencies = [
+ "futures",
+ "regex",
+ "serenity",
+ "yttrium_key_base",
+]
+
+[[package]]
+name = "yttrium_std_channel"
+version = "0.1.0"
+dependencies = [
+ "futures",
+ "regex",
+ "serenity",
+ "yttrium_key_base",
+]
+
+[[package]]
+name = "yttrium_std_database_exists"
+version = "0.1.0"
+dependencies = [
+ "yttrium_key_base",
+]
+
+[[package]]
+name = "yttrium_std_db_read"
+version = "0.1.0"
+dependencies = [
+ "yttrium_key_base",
+]
+
+[[package]]
+name = "yttrium_std_db_write_str"
+version = "0.1.0"
+dependencies = [
+ "yttrium_key_base",
+]
+
+[[package]]
+name = "yttrium_std_delete"
+version = "0.1.0"
+dependencies = [
+ "futures",
+ "humantime",
+ "regex",
+ "serenity",
+ "yttrium_key_base",
+]
+
+[[package]]
+name = "yttrium_std_everyone"
+version = "0.1.0"
+dependencies = [
+ "yttrium_key_base",
+]
+
+[[package]]
+name = "yttrium_std_guild"
+version = "0.1.0"
+dependencies = [
+ "futures",
+ "regex",
+ "serenity",
+ "yttrium_key_base",
+]
+
+[[package]]
+name = "yttrium_std_hasrole"
+version = "0.1.0"
+dependencies = [
+ "futures",
+ "regex",
+ "serenity",
+ "yttrium_key_base",
+]
+
+[[package]]
+name = "yttrium_std_joined"
+version = "0.1.0"
+dependencies = [
+ "futures",
+ "serenity",
+ "yttrium_key_base",
+]
+
+[[package]]
+name = "yttrium_std_kick"
+version = "0.1.0"
+dependencies = [
+ "futures",
+ "serenity",
+ "yttrium_key_base",
+]
+
+[[package]]
+name = "yttrium_std_math"
+version = "0.1.0"
+dependencies = [
+ "cxx",
+ "cxx-build",
+ "yttrium_key_base",
+]
+
+[[package]]
+name = "yttrium_std_mention"
+version = "0.1.0"
+dependencies = [
+ "futures",
+ "serenity",
+ "yttrium_key_base",
+]
+
+[[package]]
+name = "yttrium_std_parameter"
+version = "0.1.0"
+dependencies = [
+ "yttrium_key_base",
+]
+
+[[package]]
+name = "yttrium_std_pin"
+version = "0.1.0"
+dependencies = [
+ "futures",
+ "serenity",
+ "yttrium_key_base",
+]
+
+[[package]]
+name = "yttrium_std_rand"
+version = "0.1.0"
+dependencies = [
+ "rand",
+ "yttrium_key_base",
+]
+
+[[package]]
+name = "yttrium_std_redirect"
+version = "0.1.0"
+dependencies = [
+ "regex",
+ "yttrium_key_base",
+]
+
+[[package]]
+name = "yttrium_std_role"
+version = "0.1.0"
+dependencies = [
+ "futures",
+ "regex",
+ "serenity",
+ "yttrium_key_base",
+]
+
+[[package]]
+name = "yttrium_std_selfdelete"
+version = "0.1.0"
+dependencies = [
+ "humantime",
+ "yttrium_key_base",
+]
+
+[[package]]
+name = "yttrium_std_selfreact"
+version = "0.1.0"
+dependencies = [
+ "regex",
+ "serenity",
+ "unicode-segmentation",
+ "yttrium_key_base",
+]
+
+[[package]]
+name = "yttrium_std_setnickname"
+version = "0.1.0"
+dependencies = [
+ "futures",
+ "regex",
+ "serenity",
+ "yttrium_key_base",
+]
+
+[[package]]
+name = "yttrium_std_sleep"
+version = "0.1.0"
+dependencies = [
+ "humantime",
+ "yttrium_key_base",
+]
+
+[[package]]
+name = "yttrium_std_take"
+version = "0.1.0"
+dependencies = [
+ "futures",
+ "regex",
+ "serenity",
+ "yttrium_key_base",
+]
+
+[[package]]
+name = "yttrium_std_text"
+version = "0.1.0"
+dependencies = [
+ "glob",
+ "regex",
+ "yttrium_key_base",
+]
+
+[[package]]
+name = "yttrium_std_trigger"
+version = "0.1.0"
+dependencies = [
+ "yttrium_key_base",
+]
+
+[[package]]
+name = "yttrium_std_user"
+version = "0.1.0"
+dependencies = [
+ "futures",
+ "regex",
+ "serenity",
+ "yttrium_key_base",
 ]

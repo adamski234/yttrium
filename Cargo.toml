@@ -1,112 +1,112 @@
 [package]
-name = "ars"
+name = "yttrium"
 version = "0.1.0"
 authors = ["adamski234 <adamski234@protonmail.com>"]
 edition = "2018"
 license = "MPL"
 description = "Library for parsing ARS code, inspired by the echo discord bot"
-homepage = "https://adamski234.github.io/ars-parser"
-repository = "https://github.com/adamski234/ars-parser"
+homepage = "https://adamski234.github.io/yttrium"
+repository = "https://github.com/adamski234/yttrium"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-key_base = { version = "*", path = "./key_base" }
-libloading = { version = "0.6", optional = true }
+yttrium_key_base = { version = "*", path = "./yttrium_key_base" }
 serde_json = "1"
 serenity = "0.9"
 futures = "0.3"
+libloading = { version = "0.6", optional = true }
 # All the keys for a one file build
-std_db_read = { version = "*", path = "./std_db_read", optional = true }
-std_db_write_str = { version = "*", path = "./std_db_write_str", optional = true }
-std_redirect = { version = "*", path = "./std_redirect", optional = true }
-std_sleep = { version = "*", path = "./std_sleep", optional = true }
-std_math = { version = "*", path = "./std_math", optional = true }
-std_attach = { version = "*", path = "./std_attach", optional = true }
-std_setnickname = { version = "*", path = "./std_setnickname", optional = true }
-std_pin = { version = "*", path = "./std_pin", optional = true }
-std_trigger = { version = "*", path = "./std_trigger", optional = true }
-std_take = { version = "*", path = "./std_take", optional = true }
-std_role = { version = "*", path = "./std_role", optional = true }
-std_ban = { version = "*", path = "./std_ban", optional = true }
-std_kick = { version = "*", path = "./std_kick", optional = true }
-std_guild = { version = "*", path = "./std_guild", optional = true }
-std_delete = { version = "*", path = "./std_delete", optional = true }
-std_selfdelete = { version = "*", path = "./std_selfdelete", optional = true }
-std_selfreact = { version = "*", path = "./std_selfreact", optional = true }
-std_joined = { version = "*", path = "./std_joined", optional = true }
-std_channel = { version = "*", path = "./std_channel", optional = true }
-std_mention = { version = "*", path = "./std_mention", optional = true }
-std_user = { version = "*", path = "./std_user", optional = true }
-std_rand = { version = "*", path = "./std_rand", optional = true }
-std_everyone = { version = "*", path = "./std_everyone", optional = true }
-std_database_exists = { version = "*", path = "./std_database_exists", optional = true }
-std_parameter = { version = "*", path = "./std_parameter", optional = true }
-std_text = { version = "*", path = "./std_text", optional = true }
-std_hasrole = { version = "*", path = "./std_hasrole", optional = true }
+yttrium_std_db_read = { version = "*", path = "./yttrium_std_db_read", optional = true }
+yttrium_std_db_write_str = { version = "*", path = "./yttrium_std_db_write_str", optional = true }
+yttrium_std_redirect = { version = "*", path = "./yttrium_std_redirect", optional = true }
+yttrium_std_sleep = { version = "*", path = "./yttrium_std_sleep", optional = true }
+yttrium_std_math = { version = "*", path = "./yttrium_std_math", optional = true }
+yttrium_std_attach = { version = "*", path = "./yttrium_std_attach", optional = true }
+yttrium_std_setnickname = { version = "*", path = "./yttrium_std_setnickname", optional = true }
+yttrium_std_pin = { version = "*", path = "./yttrium_std_pin", optional = true }
+yttrium_std_trigger = { version = "*", path = "./yttrium_std_trigger", optional = true }
+yttrium_std_take = { version = "*", path = "./yttrium_std_take", optional = true }
+yttrium_std_role = { version = "*", path = "./yttrium_std_role", optional = true }
+yttrium_std_ban = { version = "*", path = "./yttrium_std_ban", optional = true }
+yttrium_std_kick = { version = "*", path = "./yttrium_std_kick", optional = true }
+yttrium_std_guild = { version = "*", path = "./yttrium_std_guild", optional = true }
+yttrium_std_delete = { version = "*", path = "./yttrium_std_delete", optional = true }
+yttrium_std_selfdelete = { version = "*", path = "./yttrium_std_selfdelete", optional = true }
+yttrium_std_selfreact = { version = "*", path = "./yttrium_std_selfreact", optional = true }
+yttrium_std_joined = { version = "*", path = "./yttrium_std_joined", optional = true }
+yttrium_std_channel = { version = "*", path = "./yttrium_std_channel", optional = true }
+yttrium_std_mention = { version = "*", path = "./yttrium_std_mention", optional = true }
+yttrium_std_user = { version = "*", path = "./yttrium_std_user", optional = true }
+yttrium_std_rand = { version = "*", path = "./yttrium_std_rand", optional = true }
+yttrium_std_everyone = { version = "*", path = "./yttrium_std_everyone", optional = true }
+yttrium_std_database_exists = { version = "*", path = "./yttrium_std_database_exists", optional = true }
+yttrium_std_parameter = { version = "*", path = "./yttrium_std_parameter", optional = true }
+yttrium_std_text = { version = "*", path = "./yttrium_std_text", optional = true }
+yttrium_std_hasrole = { version = "*", path = "./yttrium_std_hasrole", optional = true }
 
 [workspace]
 members = [
     "ars_generator",
-    "key_base",
-    "std_db_read",
-    "std_db_write_str",
-    "std_redirect",
-    "std_sleep",
-    "std_math",
-    "std_attach",
-    "std_setnickname",
-    "std_pin",
-    "std_trigger",
-    "std_take",
-    "std_role",
-    "std_ban",
-    "std_kick",
-    "std_guild",
-    "std_delete",
-    "std_selfdelete",
-    "std_selfreact",
-    "std_joined",
-    "std_channel",
-    "std_mention",
-    "std_user",
-    "std_rand",
-    "std_everyone",
-    "std_database_exists",
-    "std_parameter",
-    "std_text",
-    "std_hasrole",
+    "yttrium_key_base",
+    "yttrium_std_db_read",
+    "yttrium_std_db_write_str",
+    "yttrium_std_redirect",
+    "yttrium_std_sleep",
+    "yttrium_std_math",
+    "yttrium_std_attach",
+    "yttrium_std_setnickname",
+    "yttrium_std_pin",
+    "yttrium_std_trigger",
+    "yttrium_std_take",
+    "yttrium_std_role",
+    "yttrium_std_ban",
+    "yttrium_std_kick",
+    "yttrium_std_guild",
+    "yttrium_std_delete",
+    "yttrium_std_selfdelete",
+    "yttrium_std_selfreact",
+    "yttrium_std_joined",
+    "yttrium_std_channel",
+    "yttrium_std_mention",
+    "yttrium_std_user",
+    "yttrium_std_rand",
+    "yttrium_std_everyone",
+    "yttrium_std_database_exists",
+    "yttrium_std_parameter",
+    "yttrium_std_text",
+    "yttrium_std_hasrole",
 ]
 
 [features]
 single-file = [
-    "std_db_read",
-    "std_db_write_str",
-    "std_redirect",
-    "std_sleep",
-    "std_math",
-    "std_attach",
-    "std_setnickname",
-    "std_pin",
-    "std_trigger",
-    "std_take",
-    "std_role",
-    "std_ban",
-    "std_kick",
-    "std_guild",
-    "std_delete",
-    "std_selfdelete",
-    "std_selfreact",
-    "std_joined",
-    "std_channel",
-    "std_mention",
-    "std_user",
-    "std_rand",
-    "std_everyone",
-    "std_database_exists",
-    "std_parameter",
-    "std_text",
-    "std_hasrole",
+    "yttrium_std_db_read",
+    "yttrium_std_db_write_str",
+    "yttrium_std_redirect",
+    "yttrium_std_sleep",
+    "yttrium_std_math",
+    "yttrium_std_attach",
+    "yttrium_std_setnickname",
+    "yttrium_std_pin",
+    "yttrium_std_trigger",
+    "yttrium_std_take",
+    "yttrium_std_role",
+    "yttrium_std_ban",
+    "yttrium_std_kick",
+    "yttrium_std_guild",
+    "yttrium_std_delete",
+    "yttrium_std_selfdelete",
+    "yttrium_std_selfreact",
+    "yttrium_std_joined",
+    "yttrium_std_channel",
+    "yttrium_std_mention",
+    "yttrium_std_user",
+    "yttrium_std_rand",
+    "yttrium_std_everyone",
+    "yttrium_std_database_exists",
+    "yttrium_std_parameter",
+    "yttrium_std_text",
+    "yttrium_std_hasrole",
 ]
 loader = ["libloading"]
 default = ["single-file"]

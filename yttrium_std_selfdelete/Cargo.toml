@@ -1,0 +1,17 @@
+[package]
+name = "yttrium_std_selfdelete"
+version = "0.1.0"
+authors = ["adamski234 <adamski234@protonmail.com>"]
+edition = "2018"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+yttrium_key_base = { path = "../yttrium_key_base" }
+humantime = "2"
+
+[features]
+loader = []

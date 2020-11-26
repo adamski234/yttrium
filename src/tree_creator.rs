@@ -5,7 +5,7 @@ use crate::errors_and_warns;
 type Id = usize;
 
 #[allow(dead_code)]
-pub fn create_ars_tree(ars_string: String, key_list: &HashMap<String, Box<dyn key_base::Key>>) -> Result<TreeReturn, errors_and_warns::Error> {
+pub fn create_ars_tree(ars_string: String, key_list: &HashMap<String, Box<dyn yttrium_key_base::Key>>) -> Result<TreeReturn, errors_and_warns::Error> {
 	/*
 	How things work:
 	node_list is a flat vector of all nodes in the tree.

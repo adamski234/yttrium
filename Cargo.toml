@@ -47,7 +47,6 @@ yttrium_std_hasrole = { version = "*", path = "./yttrium_std_hasrole", optional 
 
 [workspace]
 members = [
-    "ars_generator",
     "yttrium_key_base",
     "yttrium_std_db_read",
     "yttrium_std_db_write_str",

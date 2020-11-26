@@ -3,6 +3,8 @@ name = "yttrium_std_user"
 version = "0.1.0"
 authors = ["adamski234 <adamski234@protonmail.com>"]
 edition = "2018"
+license = "MPL"
+description = "Plugin for the Yttrium project"
 
 [lib]
 crate-type = ["cdylib", "rlib"]

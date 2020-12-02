@@ -13,7 +13,7 @@ crate-type = ["cdylib", "rlib"]
 
 [dependencies]
 yttrium_key_base = { version = "0.1", path = "../yttrium_key_base" }
-serenity = "0.9"
+serenity = { version = "0.9", default-features = false, features = ["client", "gateway", "rustls_backend", "model"] }
 futures = "0.3"
 humantime = "2"
 regex = "1"

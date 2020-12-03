@@ -221,6 +221,9 @@ impl Database {
 	}
 }
 
+unsafe impl Send for JSONDatabaseManager {}
+unsafe impl Sync for JSONDatabaseManager {}
+
 /// Enum used for differentiation between a string and an array
 #[derive(Debug, PartialEq, Clone)]
 pub enum StringOrArray {

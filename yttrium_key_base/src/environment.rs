@@ -18,7 +18,7 @@ pub struct Environment<'a> {
 	/// The event
 	pub event_info: events::EventType,
 	/// Shared serenity context used for accessing discord
-	pub discord_context: &'a mut serenity::client::Context,
+	pub discord_context: &'a serenity::client::Context,
 	/// Used for deleting the response message
 	pub delete_option: Option<std::time::Duration>,
 	/// Used for adding reactions to the response message
@@ -26,7 +26,7 @@ pub struct Environment<'a> {
 }
 
 impl<'a> Environment<'a> {
-	pub fn new(event_info: events::EventType, guild_id: GuildId, context: &'a mut serenity::client::Context, db_manager: Box<dyn databases::DatabaseManager>) -> Self {
+	pub fn new(event_info: events::EventType, guild_id: GuildId, context: &'a serenity::client::Context, db_manager: Box<dyn databases::DatabaseManager>) -> Self {
 		return Self {
 			embed: None,
 			target: String::new(),

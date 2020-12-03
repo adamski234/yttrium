@@ -140,3 +140,6 @@ pub struct Keys {
 	#[cfg(feature = "loader")]
 	pub libraries: Vec<libloading::Library>,
 }
+
+unsafe impl Send for Keys {}
+unsafe impl Sync for Keys {}

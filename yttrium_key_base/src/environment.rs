@@ -40,3 +40,6 @@ impl<'a> Environment<'a> {
 		};
 	}
 }
+
+unsafe impl<'a> Send for Environment<'a> {}
+unsafe impl<'a> Sync for Environment<'a> {}

@@ -2,7 +2,7 @@
 #![deny(clippy::implicit_return)]
 use yttrium_key_base as key_base;
 
-pub fn safe_create() -> Box<dyn key_base::Key> {
+pub fn safe_create() -> Box<dyn key_base::Key + Send + Sync> {
 	return Box::new(std_database_exists {
 		info: create_key_info(),
 		function: key_function,
@@ -26,6 +26,9 @@ struct std_database_exists {
 	pub info: key_base::KeyInfo,
 	pub function: fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> Result<String, String>,
 }
+
+unsafe impl Send for std_database_exists {}
+unsafe impl Sync for std_database_exists {}
 
 impl key_base::Key for std_database_exists {
 	fn get_key_info(&self) -> &key_base::KeyInfo {

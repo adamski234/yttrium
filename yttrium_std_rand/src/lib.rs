@@ -3,7 +3,7 @@
 use yttrium_key_base as key_base;
 use rand::Rng;
 
-pub fn safe_create() -> Box<dyn key_base::Key> {
+pub fn safe_create() -> Box<dyn key_base::Key + Send + Sync> {
 	return Box::new(std_rand {
 		info: create_key_info(),
 		function: key_function,
@@ -27,6 +27,9 @@ struct std_rand {
 	pub info: key_base::KeyInfo,
 	pub function: fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> Result<String, String>,
 }
+
+unsafe impl Send for std_rand {}
+unsafe impl Sync for std_rand {}
 
 impl key_base::Key for std_rand {
 	fn get_key_info(&self) -> &key_base::KeyInfo {

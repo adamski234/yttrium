@@ -5,7 +5,7 @@ use yttrium_key_base as key_base;
 use key_base::environment::events;
 use futures::executor;
 
-pub fn safe_create() -> Box<dyn key_base::Key> {
+pub fn safe_create() -> Box<dyn key_base::Key + Send + Sync> {
 	return Box::new(std_pin {
 		info: create_key_info(),
 		function: key_function,
@@ -24,6 +24,9 @@ struct std_pin {
 	pub info: key_base::KeyInfo,
 	pub function: fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> Result<String, String>,
 }
+
+unsafe impl Send for std_pin {}
+unsafe impl Sync for std_pin {}
 
 impl key_base::Key for std_pin {
 	fn get_key_info(&self) -> &key_base::KeyInfo {

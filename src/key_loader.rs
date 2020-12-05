@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-pub fn load_keys() -> HashMap<String, Box<dyn yttrium_key_base::Key>> {
+pub fn load_keys() -> HashMap<String, Box<dyn yttrium_key_base::Key + Send + Sync>> {
 	let mut keys = HashMap::new();
 	let key = yttrium_std_attach::safe_create();
 	keys.insert(key.get_key_info().name.clone(), key);

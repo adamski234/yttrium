@@ -6,7 +6,7 @@ use key_base::environment::events;
 use serenity::model::id::{UserId, RoleId};
 use futures::executor;
 
-pub fn safe_create() -> Box<dyn key_base::Key> {
+pub fn safe_create() -> Box<dyn key_base::Key + Send + Sync> {
 	return Box::new(std_take {
 		info: create_key_info(),
 		function: key_function,
@@ -25,6 +25,9 @@ struct std_take {
 	pub info: key_base::KeyInfo,
 	pub function: fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> Result<String, String>,
 }
+
+unsafe impl Send for std_take {}
+unsafe impl Sync for std_take {}
 
 impl key_base::Key for std_take {
 	fn get_key_info(&self) -> &key_base::KeyInfo {

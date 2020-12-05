@@ -81,7 +81,7 @@ mod tests {
 	#[test]
 	fn no_parameter() {
 		use crate::tree_creator::{TreeNode, Parameter};
-		let keys = crate::key_loader::load_keys("");
+		let keys = crate::key_loader::load_keys();
 		let input = vec![TreeNode {
 			key: String::from("does_not_exist"),
 			parameters: vec![
@@ -93,7 +93,7 @@ mod tests {
 			edited_parameter: 0,
 			parent: None
 		}];
-		let output = check_for_errors(&input, &keys.keys);
+		let output = check_for_errors(&input, &keys);
 		assert_eq!(output, Some(Error::NonexistentKey));
 	}
 }

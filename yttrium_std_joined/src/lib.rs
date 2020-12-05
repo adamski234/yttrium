@@ -3,14 +3,6 @@
 use futures::executor;
 use serenity::model::id::UserId;
 use yttrium_key_base as key_base;
-#[cfg(feature = "loader")]
-#[no_mangle]
-pub fn key_create() -> *mut dyn key_base::Key {
-	return Box::into_raw(Box::new(std_joined {
-		info: create_key_info(),
-		function: key_function,
-	}));
-}
 
 pub fn safe_create() -> Box<dyn key_base::Key> {
 	return Box::new(std_joined {

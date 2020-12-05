@@ -5,14 +5,6 @@
 use yttrium_key_base as key_base;
 #[allow(unused_imports)]
 use cxx::{CxxString, UniquePtr};
-#[cfg(feature = "loader")]
-#[no_mangle]
-pub fn key_create() -> *mut dyn key_base::Key {
-	return Box::into_raw(Box::new(std_math {
-		info: create_key_info(),
-		function: key_function,
-	}));
-}
 
 pub fn safe_create() -> Box<dyn key_base::Key> {
 	return Box::new(std_math {

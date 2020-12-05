@@ -228,7 +228,7 @@ mod tests {
 				),
 			},
 		];
-		let output = create_ars_tree(tested_string, &crate::key_loader::load_keys("").keys).unwrap().tree;
+		let output = create_ars_tree(tested_string, &crate::key_loader::load_keys()).unwrap().tree;
 		assert_eq!(output, correct);
 	}
 	#[test]
@@ -278,7 +278,7 @@ mod tests {
 				),
 			},
 		];
-		let output = create_ars_tree(input, &crate::key_loader::load_keys("").keys).unwrap().tree;
+		let output = create_ars_tree(input, &crate::key_loader::load_keys()).unwrap().tree;
 		assert_eq!(output, correct);
 	}
 	#[test]
@@ -365,13 +365,13 @@ mod tests {
 				),
 			},
 		];
-		let output = create_ars_tree(input, &crate::key_loader::load_keys("").keys).unwrap().tree;
+		let output = create_ars_tree(input, &crate::key_loader::load_keys()).unwrap().tree;
 		assert_eq!(output, correct_output);
 	}
 	#[test]
 	fn unclosed_keys() {
 		let input = String::from("{rand");
-		let output = create_ars_tree(input, &crate::key_loader::load_keys("").keys).unwrap();
+		let output = create_ars_tree(input, &crate::key_loader::load_keys()).unwrap();
 		let output_warns = output.warnings;
 		assert_eq!(output_warns, Some(vec![errors_and_warns::Warning::UnclosedKeys]));
 	}

@@ -14,25 +14,12 @@ pub fn interpret_tree(tree: Vec<tree_creator::TreeNode>, key_list: &HashMap<Stri
 	for node in tree {
 		let cond_if_false = node.key == "cond" && node.parameters.len() == 3;
 		let param_count = node.parameters.len();
-		let mut subparam_longest = 0;
-		for param in &node.parameters {
-			match param {
-				tree_creator::Parameter::Nodes(nodes) => {
-					if nodes.len() > subparam_longest {
-						subparam_longest = nodes.len();
-					}
-				}
-				tree_creator::Parameter::String(_) => {
-					continue;
-				}
-			}
-		}
 		interpretable_tree.push(InterpretableNode {
 			inner_node: node,
 			interpreted_param: 0, //For `inner_node.parameters`
 			interpreted_subparam: 0, //For `inner_node.parameters[interpreted_param]` (Nodes)
 			returned_values: Vec::with_capacity(param_count),
-			returned_subvalues: Vec::with_capacity(subparam_longest),
+			returned_subvalues: Vec::with_capacity(2),
 			cond_if_false: cond_if_false,
 		});
 	}

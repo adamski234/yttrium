@@ -6,7 +6,7 @@ use yttrium_key_base::databases::{
 
 pub fn load_keys<Manager: 'static + DatabaseManager<DB>, DB: 'static + Database>() -> HashMap<String, Box<dyn yttrium_key_base::Key<Manager, DB> + Send + Sync>> {
 	let mut keys = HashMap::new();
-/*	let key = yttrium_std_attach::safe_create();
+	let key = yttrium_std_attach::safe_create();
 	keys.insert(key.get_key_info().name.clone(), key);
 	let key = yttrium_std_ban::safe_create();
 	keys.insert(key.get_key_info().name.clone(), key);
@@ -16,9 +16,9 @@ pub fn load_keys<Manager: 'static + DatabaseManager<DB>, DB: 'static + Database>
 	keys.insert(key.get_key_info().name.clone(), key);
 	let key = yttrium_std_db_read::safe_create();
 	keys.insert(key.get_key_info().name.clone(), key);
-*/	let key = yttrium_std_db_write_str::safe_create();
+	let key = yttrium_std_db_write_str::safe_create();
 	keys.insert(key.get_key_info().name.clone(), key);
-/*	let key = yttrium_std_delete::safe_create();
+	let key = yttrium_std_delete::safe_create();
 	keys.insert(key.get_key_info().name.clone(), key);
 	let key = yttrium_std_everyone::safe_create();
 	keys.insert(key.get_key_info().name.clone(), key);
@@ -30,11 +30,11 @@ pub fn load_keys<Manager: 'static + DatabaseManager<DB>, DB: 'static + Database>
 	keys.insert(key.get_key_info().name.clone(), key);
 	let key = yttrium_std_kick::safe_create();
 	keys.insert(key.get_key_info().name.clone(), key);
-	let key = yttrium_std_math::safe_create();
-	keys.insert(key.get_key_info().name.clone(), key);
+//	let key = yttrium_std_math::safe_create();
+//	keys.insert(key.get_key_info().name.clone(), key);
 	let key = yttrium_std_mention::safe_create();
 	keys.insert(key.get_key_info().name.clone(), key);
-	let key = yttrium_std_parameter::safe_create();
+/*	let key = yttrium_std_parameter::safe_create();
 	keys.insert(key.get_key_info().name.clone(), key);
 	let key = yttrium_std_pin::safe_create();
 	keys.insert(key.get_key_info().name.clone(), key);

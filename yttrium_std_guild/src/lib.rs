@@ -2,8 +2,12 @@
 #![deny(clippy::implicit_return)]
 use yttrium_key_base as key_base;
 use futures::executor;
+use key_base::databases::{
+	DatabaseManager,
+	Database,
+};
 
-pub fn safe_create() -> Box<dyn key_base::Key + Send + Sync> {
+pub fn safe_create<Manager: 'static + DatabaseManager<DB>, DB: 'static + Database>() -> Box<dyn key_base::Key<Manager, DB> + Send + Sync> {
 	return Box::new(std_guild {
 		info: create_key_info(),
 		function: key_function,
@@ -16,25 +20,27 @@ fn create_key_info() -> key_base::KeyInfo {
 		parameters_required: vec![1],
 	};
 }
+
 #[allow(non_camel_case_types)]
-struct std_guild {
+struct std_guild<Manager: DatabaseManager<DB>, DB: Database> {
 	pub info: key_base::KeyInfo,
-	pub function: fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> Result<String, String>,
+	pub function: fn(parameter: &[String], environment: &mut key_base::environment::Environment<Manager, DB>) -> Result<String, String>,
 }
 
-unsafe impl Send for std_guild {}
-unsafe impl Sync for std_guild {}
+unsafe impl<Manager: DatabaseManager<DB>, DB: Database> Send for std_guild<Manager, DB> {}
+unsafe impl<Manager: DatabaseManager<DB>, DB: Database> Sync for std_guild<Manager, DB> {}
 
-impl key_base::Key for std_guild {
+impl<Manager: DatabaseManager<DB>, DB: Database> key_base::Key<Manager, DB> for std_guild<Manager, DB> {
 	fn get_key_info(&self) -> &key_base::KeyInfo {
 		return &self.info;
 	}
 
-	fn get_key_function(&self) -> fn(parameter: &[String], environment: &mut key_base::environment::Environment) -> Result<String, String> {
+	fn get_key_function(&self) -> fn(parameter: &[String], environment: &mut key_base::environment::Environment<Manager, DB>) -> Result<String, String> {
 		return self.function;
 	}
 }
-fn key_function(parameter: &[String], environment: &mut key_base::environment::Environment) -> Result<String, String> {
+
+fn key_function<Manager: DatabaseManager<DB>, DB: Database>(parameter: &[String], environment: &mut key_base::environment::Environment<Manager, DB>) -> Result<String, String> {
 	if parameter.is_empty() {
 		return Ok(String::new());
 	}

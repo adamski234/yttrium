@@ -1,11 +1,15 @@
-use std::collections::HashMap;
 #[path = "./tokenizer.rs"] mod tokenizer;
+use std::collections::HashMap;
 use crate::errors_and_warns;
+use yttrium_key_base::databases::{
+	Database,
+	DatabaseManager,
+};
 
 type Id = usize;
 
 #[allow(dead_code)]
-pub fn create_ars_tree(ars_string: String, key_list: &HashMap<String, Box<dyn yttrium_key_base::Key + Send + Sync>>) -> Result<TreeReturn, errors_and_warns::Error> {
+pub fn create_ars_tree<Manager: DatabaseManager<DB>, DB: Database>(ars_string: String, key_list: &HashMap<String, Box<dyn yttrium_key_base::Key<Manager, DB> + Send + Sync>>) -> Result<TreeReturn, errors_and_warns::Error> {
 	/*
 	How things work:
 	node_list is a flat vector of all nodes in the tree.

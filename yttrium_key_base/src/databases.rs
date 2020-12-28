@@ -5,22 +5,34 @@ use std::collections::HashMap;
 const DATABASE_DIR: &str = "./databases/";
 
 /// Trait for accessing databases
-pub trait DatabaseManager {
+pub trait DatabaseManager<T: Database> {
 	/// Gets the database from the manager, possibly creating it
-	fn get_database(&mut self, name: &str) -> Option<&mut Database>;
+	fn get_database(&mut self, name: &str) -> Option<&mut T>;
 	/// Creates a database and returns it. If the database already exists, it might get overwritten but that does not have to happen
-	fn create_database(&mut self, name: &str) -> &mut Database;
+	fn create_database(&mut self, name: &str) -> &mut T;
 	/// Deletes a database from the manager
 	fn remove_database(&mut self, name: &str);
 	/// Removes all entries from a database
 	fn clear_database(&mut self, name: &str);
 }
 
+/// Trait for accessing data from a database
+pub trait Database {
+	/// Retrieves a key from the database
+	fn get_key(&self, name: &str) -> Option<StringOrArray>;
+	/// Inserts a key into the database, overwriting the old one if it already existed
+	fn write_key(&mut self, name: String, value: StringOrArray);
+	/// Deletes a key from the database
+	fn remove_key(&mut self, name: &str);
+	/// Checks if a key exists in the database
+	fn key_exists(&self, name: &str) -> bool;
+}
+
 ///This is a simple JSON based database manager that is good enough for testing but I wouldn't rely on it too much
 #[derive(Debug)]
 pub struct JSONDatabaseManager {
 	pub guild_id: String,
-	databases: HashMap<String, Database>,
+	databases: HashMap<String, JSONDatabase>,
 }
 
 impl JSONDatabaseManager {
@@ -65,7 +77,7 @@ impl JSONDatabaseManager {
 		match value {
 			serde_json::Value::Object(value) => {
 				for (db_name, db_value) in value.into_iter() {
-					result.databases.insert(db_name, Database::new_from_value(db_value));
+					result.databases.insert(db_name, JSONDatabase::new_from_value(db_value));
 				}
 			}
 			_ => {
@@ -100,15 +112,15 @@ impl JSONDatabaseManager {
 	}
 }
 
-impl DatabaseManager for JSONDatabaseManager {
-	fn get_database(&mut self, name: &str) -> Option<&mut Database> {
+impl DatabaseManager<JSONDatabase> for JSONDatabaseManager {
+	fn get_database(&mut self, name: &str) -> Option<&mut JSONDatabase> {
 		return self.databases.get_mut(name);
 	}
-	fn create_database(&mut self, name: &str) -> &mut Database {
+	fn create_database(&mut self, name: &str) -> &mut JSONDatabase {
 		if self.databases.contains_key(name) {
 			return self.databases.get_mut(name).unwrap();
 		} else {
-			self.databases.insert(name.to_owned(), Database::new_empty());
+			self.databases.insert(name.to_owned(), JSONDatabase::new_empty());
 			return self.databases.get_mut(name).unwrap();
 		}
 	}
@@ -117,7 +129,7 @@ impl DatabaseManager for JSONDatabaseManager {
 	}
 	fn clear_database(&mut self, name: &str) {
 		if self.databases.contains_key(name) {
-			self.databases.insert(String::from(name), Database::new_empty());
+			self.databases.insert(String::from(name), JSONDatabase::new_empty());
 		}
 	}
 }
@@ -130,11 +142,11 @@ impl PartialEq for JSONDatabaseManager {
 
 /// This struct is a simple wrapper around a HashMap
 #[derive(Debug, PartialEq)]
-pub struct Database {
+pub struct JSONDatabase {
 	values: HashMap<String, StringOrArray>,
 }
 
-impl Database {
+impl JSONDatabase {
 	/// Creates an empty database
 	pub fn new_empty() -> Self {
 		return Self {
@@ -193,8 +205,14 @@ impl Database {
 		};
 		return result;
 	}
+	fn get_values(self) -> HashMap<String, StringOrArray> {
+		return self.values;
+	}
+}
+
+impl Database for JSONDatabase {
 	/// Retrieves a key from the database
-	pub fn get_key(&self, name: &str) -> Option<StringOrArray> {
+	fn get_key(&self, name: &str) -> Option<StringOrArray> {
 		match self.values.get(name) {
 			Some(value) => {
 				return Some(value.clone());
@@ -205,19 +223,16 @@ impl Database {
 		}
 	}
 	/// Inserts a key into the database, overwriting the old one if it already existed
-	pub fn write_key(&mut self, name: String, value: StringOrArray) {
+	fn write_key(&mut self, name: String, value: StringOrArray) {
 		self.values.insert(name, value);
 	}
 	/// Deletes a key from the database
-	pub fn remove_key(&mut self, name: &str) {
+	fn remove_key(&mut self, name: &str) {
 		self.values.remove(name);
 	}
 	/// Checks if a key exists in the database
-	pub fn key_exists(&self, name: &str) -> bool {
+	fn key_exists(&self, name: &str) -> bool {
 		return self.values.contains_key(name);
-	}
-	pub(crate) fn get_values(self) -> HashMap<String, StringOrArray> {
-		return self.values;
 	}
 }
 
@@ -237,12 +252,12 @@ mod tests {
 	fn simple_database() {
 		use crate::databases::*;
 		let input = r#"{"string_value": "string", "array_value": ["entry1", "entry2"]}"#;
-		let mut correct_output = Database {
+		let mut correct_output = JSONDatabase {
 			values: HashMap::new(),
 		};
 		correct_output.values.insert(String::from("string_value"), StringOrArray::String(String::from("string")));
 		correct_output.values.insert(String::from("array_value"), StringOrArray::Array(vec![String::from("entry1"), String::from("entry2")]));
-		let output = Database::new_from_value(serde_json::from_str(input).unwrap());
+		let output = JSONDatabase::new_from_value(serde_json::from_str(input).unwrap());
 		assert_eq!(correct_output, output);
 	}
 	#[test]
@@ -252,7 +267,7 @@ mod tests {
 		let guild_id = String::from("abc");
 		let mut correct_hashmap = HashMap::new();
 		//This bases on `simple_database` succeeding
-		correct_hashmap.insert(String::from("db1"), Database::new_from_value(serde_json::from_str(r#"{"string_value": "string", "array_value": ["entry1", "entry2"]}"#).unwrap()));
+		correct_hashmap.insert(String::from("db1"), JSONDatabase::new_from_value(serde_json::from_str(r#"{"string_value": "string", "array_value": ["entry1", "entry2"]}"#).unwrap()));
 		let output = JSONDatabaseManager::new_from_json(&input, &guild_id);
 		let correct_output = JSONDatabaseManager {
 			guild_id: guild_id,

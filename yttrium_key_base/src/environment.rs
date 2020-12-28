@@ -1,14 +1,15 @@
 use crate::embed;
 use crate::databases;
+use databases::{Database, DatabaseManager};
 use serenity::model::id::GuildId;
 #[path = "./events.rs"] pub mod events;
 
 /// The environment shared between all called keys, containing the global state
-pub struct Environment<'a> {
+pub struct Environment<'a, Manager: DatabaseManager<DB>, DB: Database> {
 	/// Unfinished
 	pub embed: Option<embed::Embed>,
 	/// The database manager used for accessing databases
-	pub database_manager: Box<dyn databases::DatabaseManager>,
+	pub database_manager: Manager,
 	/// The ID of the guild the message was sent in
 	pub guild_id: GuildId,
 	/// The target channel ID, defaults to the channel in which the bot was triggered
@@ -23,10 +24,11 @@ pub struct Environment<'a> {
 	pub delete_option: Option<std::time::Duration>,
 	/// Used for adding reactions to the response message
 	pub reactions_to_add: Vec<String>,
+	_phantom: std::marker::PhantomData<DB>,
 }
 
-impl<'a> Environment<'a> {
-	pub fn new(event_info: events::EventType, guild_id: GuildId, context: &'a serenity::client::Context, db_manager: Box<dyn databases::DatabaseManager>) -> Self {
+impl<'a, Manager: DatabaseManager<DB>, DB: Database> Environment<'a, Manager, DB> {
+	pub fn new(event_info: events::EventType, guild_id: GuildId, context: &'a serenity::client::Context, db_manager: Manager) -> Self {
 		return Self {
 			embed: None,
 			target: String::new(),
@@ -37,9 +39,10 @@ impl<'a> Environment<'a> {
 			discord_context: context,
 			delete_option: None,
 			reactions_to_add: vec![],
+			_phantom: std::marker::PhantomData,
 		};
 	}
 }
 
-unsafe impl<'a> Send for Environment<'a> {}
-unsafe impl<'a> Sync for Environment<'a> {}
+unsafe impl<'a, Manager: DatabaseManager<DB>, DB: Database> Send for Environment<'a, Manager, DB> {}
+unsafe impl<'a, Manager: DatabaseManager<DB>, DB: Database> Sync for Environment<'a, Manager, DB> {}

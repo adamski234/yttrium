@@ -27,7 +27,7 @@ yttrium_std_guild = { version = "0.1", path = "./yttrium_std_guild" }
 yttrium_std_hasrole = { version = "0.1", path = "./yttrium_std_hasrole" }
 yttrium_std_joined = { version = "0.1", path = "./yttrium_std_joined" }
 yttrium_std_kick = { version = "0.1", path = "./yttrium_std_kick" }
-#yttrium_std_math = { version = "0.1", path = "./yttrium_std_math" }
+yttrium_std_math = { version = "0.1", path = "./yttrium_std_math" }
 yttrium_std_mention = { version = "0.1", path = "./yttrium_std_mention" }
 yttrium_std_parameter = { version = "0.1", path = "./yttrium_std_parameter" }
 yttrium_std_pin = { version = "0.1", path = "./yttrium_std_pin" }

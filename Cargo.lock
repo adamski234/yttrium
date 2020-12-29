@@ -1541,6 +1541,7 @@ dependencies = [
  "yttrium_std_hasrole",
  "yttrium_std_joined",
  "yttrium_std_kick",
+ "yttrium_std_math",
  "yttrium_std_mention",
  "yttrium_std_parameter",
  "yttrium_std_pin",

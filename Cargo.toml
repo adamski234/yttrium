@@ -29,19 +29,19 @@ yttrium_std_joined = { version = "0.1", path = "./yttrium_std_joined" }
 yttrium_std_kick = { version = "0.1", path = "./yttrium_std_kick" }
 #yttrium_std_math = { version = "0.1", path = "./yttrium_std_math" }
 yttrium_std_mention = { version = "0.1", path = "./yttrium_std_mention" }
-#yttrium_std_redirect = { version = "0.1", path = "./yttrium_std_redirect" }
-#yttrium_std_sleep = { version = "0.1", path = "./yttrium_std_sleep" }
-#yttrium_std_setnickname = { version = "0.1", path = "./yttrium_std_setnickname" }
-#yttrium_std_pin = { version = "0.1", path = "./yttrium_std_pin" }
-#yttrium_std_trigger = { version = "0.1", path = "./yttrium_std_trigger" }
-#yttrium_std_take = { version = "0.1", path = "./yttrium_std_take" }
-#yttrium_std_role = { version = "0.1", path = "./yttrium_std_role" }
-#yttrium_std_selfdelete = { version = "0.1", path = "./yttrium_std_selfdelete" }
-#yttrium_std_selfreact = { version = "0.1", path = "./yttrium_std_selfreact" }
-#yttrium_std_user = { version = "0.1", path = "./yttrium_std_user" }
-#yttrium_std_rand = { version = "0.1", path = "./yttrium_std_rand" }
-#yttrium_std_parameter = { version = "0.1", path = "./yttrium_std_parameter" }
-#yttrium_std_text = { version = "0.1", path = "./yttrium_std_text" }
+yttrium_std_parameter = { version = "0.1", path = "./yttrium_std_parameter" }
+yttrium_std_pin = { version = "0.1", path = "./yttrium_std_pin" }
+yttrium_std_rand = { version = "0.1", path = "./yttrium_std_rand" }
+yttrium_std_redirect = { version = "0.1", path = "./yttrium_std_redirect" }
+yttrium_std_role = { version = "0.1", path = "./yttrium_std_role" }
+yttrium_std_selfdelete = { version = "0.1", path = "./yttrium_std_selfdelete" }
+yttrium_std_selfreact = { version = "0.1", path = "./yttrium_std_selfreact" }
+yttrium_std_setnickname = { version = "0.1", path = "./yttrium_std_setnickname" }
+yttrium_std_sleep = { version = "0.1", path = "./yttrium_std_sleep" }
+yttrium_std_take = { version = "0.1", path = "./yttrium_std_take" }
+yttrium_std_text = { version = "0.1", path = "./yttrium_std_text" }
+yttrium_std_trigger = { version = "0.1", path = "./yttrium_std_trigger" }
+yttrium_std_user = { version = "0.1", path = "./yttrium_std_user" }
 
 [workspace]
 members = [

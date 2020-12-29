@@ -163,9 +163,9 @@ dependencies = [
 
 [[package]]
 name = "cxx"
-version = "1.0.21"
+version = "1.0.23"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c58b617cc211c189430b2e4a65c6cbeb81051d141f20907ce5a3f9d252cd551f"
+checksum = "5f1932f484faf0e47e3c1d31d34b9d4e7012981bfd6ce27bb2520abf9f8fa836"
 dependencies = [
  "cc",
  "cxxbridge-flags",
@@ -175,9 +175,9 @@ dependencies = [
 
 [[package]]
 name = "cxx-build"
-version = "1.0.21"
+version = "1.0.23"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7cf2d4c20dee036b0548b12abaef22b15059fa1bb4fe83dec041f213f53c01f2"
+checksum = "94d5719f8ca897ee641b16c861c9dc5ac3177e88015e92c6e186691ef1ac28dd"
 dependencies = [
  "cc",
  "codespan-reporting",
@@ -190,15 +190,15 @@ dependencies = [
 
 [[package]]
 name = "cxxbridge-flags"
-version = "1.0.21"
+version = "1.0.23"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cee4923bc51385f02f1d3bd8866b155f12764a8d4c7094955eff9c6f97cb5c7c"
+checksum = "8f6a4ed0fadea5434a587c85c5f2aafba358201cf6ae0bc467c29756c82b6ef0"
 
 [[package]]
 name = "cxxbridge-macro"
-version = "1.0.21"
+version = "1.0.23"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "951e26a5991c0d58870fae801fd19684790639184f38b45e896e514f41f20252"
+checksum = "dfa1f8b12e87a633d8b9fdb636c087f1dd08935a6ebaf775fa632d55596cbd58"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -973,9 +973,9 @@ dependencies = [
 
 [[package]]
 name = "serde_json"
-version = "1.0.60"
+version = "1.0.61"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1500e84d27fe482ed1dc791a56eddc2f230046a040fa908c08bda1d9fb615779"
+checksum = "4fceb2595057b6891a4ee808f70054bd2d12f0e97f1cbb78689b59f676df325a"
 dependencies = [
  "itoa",
  "ryu",
@@ -1542,6 +1542,19 @@ dependencies = [
  "yttrium_std_joined",
  "yttrium_std_kick",
  "yttrium_std_mention",
+ "yttrium_std_parameter",
+ "yttrium_std_pin",
+ "yttrium_std_rand",
+ "yttrium_std_redirect",
+ "yttrium_std_role",
+ "yttrium_std_selfdelete",
+ "yttrium_std_selfreact",
+ "yttrium_std_setnickname",
+ "yttrium_std_sleep",
+ "yttrium_std_take",
+ "yttrium_std_text",
+ "yttrium_std_trigger",
+ "yttrium_std_user",
 ]
 
 [[package]]

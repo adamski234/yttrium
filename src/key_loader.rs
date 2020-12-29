@@ -34,7 +34,7 @@ pub fn load_keys<Manager: 'static + DatabaseManager<DB>, DB: 'static + Database>
 //	keys.insert(key.get_key_info().name.clone(), key);
 	let key = yttrium_std_mention::safe_create();
 	keys.insert(key.get_key_info().name.clone(), key);
-/*	let key = yttrium_std_parameter::safe_create();
+	let key = yttrium_std_parameter::safe_create();
 	keys.insert(key.get_key_info().name.clone(), key);
 	let key = yttrium_std_pin::safe_create();
 	keys.insert(key.get_key_info().name.clone(), key);
@@ -60,5 +60,5 @@ pub fn load_keys<Manager: 'static + DatabaseManager<DB>, DB: 'static + Database>
 	keys.insert(key.get_key_info().name.clone(), key);
 	let key = yttrium_std_user::safe_create();
 	keys.insert(key.get_key_info().name.clone(), key);
-*/	return keys;
+	return keys;
 }

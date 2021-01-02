@@ -81,15 +81,12 @@ pub fn check_for_errors<Manager: DatabaseManager<DB>, DB: Database>(nodes: &[tre
 
 #[cfg(test)]
 mod tests {
-	use yttrium_key_base::databases::{
-		JSONDatabaseManager,
-		JSONDatabase,
-	};
+	use yttrium_key_base::databases::Placeholder;
     use super::*;
 	#[test]
 	fn no_parameter() {
 		use crate::tree_creator::{TreeNode, Parameter};
-		let keys = crate::key_loader::load_keys::<JSONDatabaseManager, JSONDatabase>();
+		let keys = crate::key_loader::load_keys::<Placeholder, Placeholder>();
 		let input = vec![TreeNode {
 			key: String::from("does_not_exist"),
 			parameters: vec![

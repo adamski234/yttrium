@@ -185,10 +185,7 @@ pub struct TreeReturn {
 //A wall of text is incoming. You probably should collapse them
 #[cfg(test)]
 mod tests {
-	use yttrium_key_base::databases::{
-		JSONDatabaseManager,
-		JSONDatabase,
-	};
+	use yttrium_key_base::databases::Placeholder;
 	use super::*;
 	#[test]
 	fn tree_small_nesting() {
@@ -236,7 +233,7 @@ mod tests {
 				),
 			},
 		];
-		let output = create_ars_tree::<JSONDatabaseManager, JSONDatabase>(tested_string, &crate::key_loader::load_keys()).unwrap().tree;
+		let output = create_ars_tree::<Placeholder, Placeholder>(tested_string, &crate::key_loader::load_keys()).unwrap().tree;
 		assert_eq!(output, correct);
 	}
 	#[test]
@@ -286,7 +283,7 @@ mod tests {
 				),
 			},
 		];
-		let output = create_ars_tree::<JSONDatabaseManager, JSONDatabase>(input, &crate::key_loader::load_keys()).unwrap().tree;
+		let output = create_ars_tree::<Placeholder, Placeholder>(input, &crate::key_loader::load_keys()).unwrap().tree;
 		assert_eq!(output, correct);
 	}
 	#[test]
@@ -373,13 +370,13 @@ mod tests {
 				),
 			},
 		];
-		let output = create_ars_tree::<JSONDatabaseManager, JSONDatabase>(input, &crate::key_loader::load_keys()).unwrap().tree;
+		let output = create_ars_tree::<Placeholder, Placeholder>(input, &crate::key_loader::load_keys()).unwrap().tree;
 		assert_eq!(output, correct_output);
 	}
 	#[test]
 	fn unclosed_keys() {
 		let input = String::from("{rand");
-		let output = create_ars_tree::<JSONDatabaseManager, JSONDatabase>(input, &crate::key_loader::load_keys()).unwrap();
+		let output = create_ars_tree::<Placeholder, Placeholder>(input, &crate::key_loader::load_keys()).unwrap();
 		let output_warns = output.warnings;
 		assert_eq!(output_warns, Some(vec![errors_and_warns::Warning::UnclosedKeys]));
 	}

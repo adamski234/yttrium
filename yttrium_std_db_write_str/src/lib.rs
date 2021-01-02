@@ -39,8 +39,7 @@ impl<Manager: DatabaseManager<DB>, DB: Database> key_base::Key<Manager, DB> for 
 }
 
 fn key_function<Manager: DatabaseManager<DB>, DB: Database>(parameter: &[String], environment: &mut key_base::environment::Environment<Manager, DB>) -> Result<String, String> {
-	if let Some(result) = environment.database_manager.get_database(&parameter[0]) {
-        result.write_key(parameter[1].clone(), key_base::databases::StringOrArray::String(parameter[2].clone()));
-	}
+	let mut db = environment.database_manager.get_database(&parameter[0]);
+    db.write_key(parameter[1].clone(), key_base::databases::StringOrArray::String(parameter[2].clone()));
 	return Ok(String::new());
 }

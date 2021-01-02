@@ -40,21 +40,15 @@ impl<Manager: DatabaseManager<DB>, DB: Database> key_base::Key<Manager, DB> for 
 }
 
 fn key_function<Manager: DatabaseManager<DB>, DB: Database>(parameter: &[String], environment: &mut key_base::environment::Environment<Manager, DB>) -> Result<String, String> {
-	match environment.database_manager.get_database(&parameter[0]) {
-		Some(result) => {
-			match result.get_key(&parameter[1]) {
-				Some(value) => {
-					match value {
-						key_base::databases::StringOrArray::String(string) => {
-							return Ok(string);
-						}
-						key_base::databases::StringOrArray::Array(array) => {
-							return Ok(array.join(""));
-						}
-					}
+	let db = environment.database_manager.get_database(&parameter[0]);
+	match db.get_key(&parameter[1]) {
+		Some(value) => {
+			match value {
+				key_base::databases::StringOrArray::String(string) => {
+					return Ok(string);
 				}
-				None => {
-					return Ok(String::new());
+				key_base::databases::StringOrArray::Array(array) => {
+					return Ok(array.join(""));
 				}
 			}
 		}

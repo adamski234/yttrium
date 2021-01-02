@@ -1532,7 +1532,6 @@ dependencies = [
  "yttrium_std_attach",
  "yttrium_std_ban",
  "yttrium_std_channel",
- "yttrium_std_database_exists",
  "yttrium_std_db_read",
  "yttrium_std_db_write_str",
  "yttrium_std_delete",
@@ -1591,13 +1590,6 @@ dependencies = [
  "futures",
  "regex",
  "serenity",
- "yttrium_key_base",
-]
-
-[[package]]
-name = "yttrium_std_database_exists"
-version = "0.1.0"
-dependencies = [
  "yttrium_key_base",
 ]
 

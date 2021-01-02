@@ -18,7 +18,6 @@ futures = "0.3"
 yttrium_std_attach = { version = "0.1", path = "./yttrium_std_attach" }
 yttrium_std_ban = { version = "0.1", path = "./yttrium_std_ban" }
 yttrium_std_channel = { version = "0.1", path = "./yttrium_std_channel" }
-yttrium_std_database_exists = { version = "0.1", path = "./yttrium_std_database_exists" }
 yttrium_std_db_read = { version = "0.1", path = "./yttrium_std_db_read" }
 yttrium_std_db_write_str = { version = "0.1", path = "./yttrium_std_db_write_str" }
 yttrium_std_delete = { version = "0.1", path = "./yttrium_std_delete" }
@@ -69,7 +68,6 @@ members = [
     "yttrium_std_user",
     "yttrium_std_rand",
     "yttrium_std_everyone",
-    "yttrium_std_database_exists",
     "yttrium_std_parameter",
     "yttrium_std_text",
     "yttrium_std_hasrole",

@@ -13,7 +13,7 @@ repository = "https://github.com/adamski234/yttrium"
 [dependencies]
 yttrium_key_base = { version = "0.1", path = "./yttrium_key_base" }
 serde_json = "1"
-serenity = "0.9"
+serenity = "0.10"
 futures = "0.3"
 yttrium_std_attach = { version = "0.1", path = "./yttrium_std_attach" }
 yttrium_std_ban = { version = "0.1", path = "./yttrium_std_ban" }

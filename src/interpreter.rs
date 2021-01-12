@@ -124,6 +124,7 @@ pub fn interpret_tree<Manager: DatabaseManager<DB>, DB: Database>(tree: Vec<tree
 							attachments: environment.attachments,
 							reactions: environment.reactions_to_add,
 							self_delete: environment.delete_option,
+							target: serenity::model::id::ChannelId::from(environment.target.parse::<u64>().unwrap()),
 						});
 					} else {
 						let key = key_list.get(&current_node.inner_node.key).unwrap().get_key_function();
@@ -149,6 +150,7 @@ pub fn interpret_tree<Manager: DatabaseManager<DB>, DB: Database>(tree: Vec<tree
 						attachments: environment.attachments,
 						reactions: environment.reactions_to_add,
 						self_delete: environment.delete_option,
+						target: serenity::model::id::ChannelId::from(environment.target.parse::<u64>().unwrap()),
 					});
 				}
 			}
@@ -195,6 +197,8 @@ pub struct InterpretationResult {
 	pub reactions: Vec<String>,
 	/// Time after which the sent message should be deleted
 	pub self_delete: Option<std::time::Duration>,
+	/// Channel to send the result to
+	pub target: serenity::model::id::ChannelId,
 }
 
 struct InterpretableNode {

@@ -51,6 +51,6 @@ fn key_function<Manager: DatabaseManager<DB>, DB: Database>(parameter: &[String]
 	if lower > upper {
 		return Err(String::from("Lower bound was higher than upper bound in `rand`"));
 	}
-	let result = rand::thread_rng().gen_range(lower, upper);
+	let result = rand::thread_rng().gen_range(lower..upper);
 	return Ok(result.to_string());
 }

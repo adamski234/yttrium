@@ -1,9 +1,12 @@
 #![allow(clippy::needless_return)]
 #![deny(clippy::implicit_return)]
 use yttrium_key_base as key_base;
-use key_base::databases::{
-	DatabaseManager,
-	Database,
+use key_base::{
+	databases::{
+		DatabaseManager,
+		Database,
+	},
+	environment::Environment,
 };
 
 pub fn create<Manager: 'static + DatabaseManager<DB>, DB: 'static + Database>() -> Box<dyn key_base::Key<Manager, DB> + Send + Sync> {

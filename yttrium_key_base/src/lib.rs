@@ -12,7 +12,7 @@ pub trait Key<Manager: DatabaseManager<DB>, DB: Database> {
 	/// Returns a reference to a [KeyInfo] describing the key
 	fn get_key_info(&self) -> &KeyInfo;
 	/// Returns the key function that gets called during interpretation
-	fn get_key_function(&self) -> fn(parameter: &[String], environment: &mut environment::Environment<Manager, DB>) -> Result<String, String>;
+	fn run_key(&self, parameter: &[String], environment: &mut environment::Environment<Manager, DB>) -> Result<String, String>;
 }
 
 /// Struct describing the key

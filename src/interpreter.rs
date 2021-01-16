@@ -127,8 +127,7 @@ pub fn interpret_tree<Manager: DatabaseManager<DB>, DB: Database>(tree: Vec<tree
 							target: serenity::model::id::ChannelId::from(environment.target.parse::<u64>().unwrap()),
 						});
 					} else {
-						let key = key_list.get(&current_node.inner_node.key).unwrap().get_key_function();
-						match key(&current_node.returned_values, &mut environment) {
+						match key_list.get(&current_node.inner_node.key).unwrap().run_key(&current_node.returned_values, &mut environment) {
 							Ok(result) => {
 								returned = result;
 							}

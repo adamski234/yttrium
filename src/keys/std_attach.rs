@@ -9,7 +9,6 @@ use key_base::databases::{
 pub fn create<Manager: 'static + DatabaseManager<DB>, DB: 'static + Database>() -> Box<dyn key_base::Key<Manager, DB> + Send + Sync> {
 	return Box::new(std_attach {
 		info: create_key_info(),
-		function: key_function,
 	});
 }
 
@@ -20,25 +19,20 @@ fn create_key_info() -> key_base::KeyInfo {
 	};
 }
 #[allow(non_camel_case_types)]
-struct std_attach<Manager: DatabaseManager<DB>, DB: Database> {
+struct std_attach {
 	pub info: key_base::KeyInfo,
-	pub function: fn(parameter: &[String], environment: &mut key_base::environment::Environment<Manager, DB>) -> Result<String, String>,
 }
 
-unsafe impl<Manager: DatabaseManager<DB>, DB: Database> Send for std_attach<Manager, DB> {}
-unsafe impl<Manager: DatabaseManager<DB>, DB: Database> Sync for std_attach<Manager, DB> {}
+unsafe impl Send for std_attach {}
+unsafe impl Sync for std_attach {}
 
-impl<Manager: DatabaseManager<DB>, DB: Database> key_base::Key<Manager, DB> for std_attach<Manager, DB> {
+impl<Manager: DatabaseManager<DB>, DB: Database> key_base::Key<Manager, DB> for std_attach {
 	fn get_key_info(&self) -> &key_base::KeyInfo {
 		return &self.info;
 	}
 
-	fn get_key_function(&self) -> fn(parameter: &[String], environment: &mut key_base::environment::Environment<Manager, DB>) -> Result<String, String> {
-		return self.function;
+	fn run_key(&self, parameter: &[String], environment: &mut key_base::environment::Environment<Manager, DB>) -> Result<String, String> {
+		environment.attachments.push(parameter[0].clone());
+		return Ok(String::new());
 	}
-}
-
-fn key_function<Manager: DatabaseManager<DB>, DB: Database>(parameter: &[String], environment: &mut key_base::environment::Environment<Manager, DB>) -> Result<String, String> {
-	environment.attachments.push(parameter[0].clone());
-	return Ok(String::new());
 }

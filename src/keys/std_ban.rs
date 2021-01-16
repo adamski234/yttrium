@@ -9,7 +9,7 @@ use key_base::databases::{
 };
 use serenity::model::id::UserId;
 
-pub fn safe_create<Manager: 'static + DatabaseManager<DB>, DB: 'static + Database>() -> Box<dyn key_base::Key<Manager, DB> + Send + Sync> {
+pub fn create<Manager: 'static + DatabaseManager<DB>, DB: 'static + Database>() -> Box<dyn key_base::Key<Manager, DB> + Send + Sync> {
 	return Box::new(std_ban {
 		info: create_key_info(),
 		function: key_function,

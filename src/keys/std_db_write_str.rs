@@ -6,7 +6,7 @@ use key_base::databases::{
 };
 use yttrium_key_base as key_base;
 
-pub fn safe_create<Manager: 'static + DatabaseManager<DB>, DB: 'static + Database>() -> Box<dyn key_base::Key<Manager, DB> + Send + Sync> {
+pub fn create<Manager: 'static + DatabaseManager<DB>, DB: 'static + Database>() -> Box<dyn key_base::Key<Manager, DB> + Send + Sync> {
 	return Box::new(std_db_write_str {
 		info: create_key_info(),
 		function: key_function,

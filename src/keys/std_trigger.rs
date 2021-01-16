@@ -8,7 +8,7 @@ use key_base::databases::{
 	Database,
 };
 
-pub fn safe_create<Manager: 'static + DatabaseManager<DB>, DB: 'static + Database>() -> Box<dyn key_base::Key<Manager, DB> + Send + Sync> {
+pub fn create<Manager: 'static + DatabaseManager<DB>, DB: 'static + Database>() -> Box<dyn key_base::Key<Manager, DB> + Send + Sync> {
 	return Box::new(std_trigger {
 		info: create_key_info(),
 		function: key_function,

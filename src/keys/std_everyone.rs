@@ -39,7 +39,7 @@ impl<Manager: DatabaseManager<DB>, DB: Database> key_base::Key<Manager, DB> for 
 		return &self.info;
 	}
 
-	fn run_key(&self, parameter: &[String], environment: &mut Environment<Manager, DB>) -> Result<String, String> {
+	fn run_key(&self, parameter: &[String], _environment: &mut Environment<Manager, DB>) -> Result<String, String> {
 		if !parameter.is_empty() && parameter[0] == "here" {
 			return Ok(String::from("@here"));
 		} else {

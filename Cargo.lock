@@ -1531,6 +1531,7 @@ dependencies = [
  "rand 0.8.2",
  "regex",
  "serenity",
+ "tokio",
  "unicode-segmentation",
  "yttrium_key_base",
  "yttrium_std_math",
@@ -1551,5 +1552,6 @@ version = "0.1.0"
 dependencies = [
  "cxx",
  "cxx-build",
+ "serenity",
  "yttrium_key_base",
 ]

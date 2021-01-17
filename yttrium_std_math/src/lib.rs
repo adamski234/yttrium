@@ -10,6 +10,7 @@ use key_base::{
 	},
 	environment::Environment,
 };
+use serenity::async_trait;
 
 pub fn create<Manager: 'static + DatabaseManager<DB>, DB: 'static + Database>() -> Box<dyn key_base::Key<Manager, DB> + Send + Sync> {
 	return Box::new(std_math {
@@ -32,12 +33,13 @@ struct std_math {
 unsafe impl Send for std_math {}
 unsafe impl Sync for std_math {}
 
+#[async_trait]
 impl<Manager: DatabaseManager<DB>, DB: Database> key_base::Key<Manager, DB> for std_math {
 	fn get_key_info(&self) -> &key_base::KeyInfo {
 		return &self.info;
 	}
 
-	fn run_key(&self, parameter: &[String], _environment: &mut Environment<Manager, DB>) -> Result<String, String> {
+	async fn run_key(&self, parameter: &[String], _environment: &mut Environment<'_, Manager, DB>) -> Result<String, String> {
 		#[allow(unused_unsafe)]
 		return Ok(unsafe { ffi::calculate(&parameter[0]).to_str().unwrap().to_string() });
 	}

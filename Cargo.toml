@@ -19,6 +19,7 @@ regex = "1.4"
 humantime = "2"
 unicode-segmentation = "1.7"
 glob = "0.3"
+tokio = "1"
 # Math is too hard to figure out to be kept in the main source tree
 yttrium_std_math = { version = "0.1", path = "./yttrium_std_math" }
 

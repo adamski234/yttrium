@@ -1,6 +1,7 @@
 #![allow(clippy::needless_return)]
 #![deny(clippy::implicit_return)]
 use yttrium_key_base as key_base;
+use serenity::async_trait;
 use key_base::{
 	databases::{
 		DatabaseManager,
@@ -29,14 +30,15 @@ struct std_db_write_str {
 unsafe impl Send for std_db_write_str {}
 unsafe impl Sync for std_db_write_str {}
 
+#[async_trait]
 impl<Manager: DatabaseManager<DB>, DB: Database> key_base::Key<Manager, DB> for std_db_write_str {
 	fn get_key_info(&self) -> &key_base::KeyInfo {
 		return &self.info;
 	}
 
-	fn run_key(&self, parameter: &[String], environment: &mut Environment<Manager, DB>) -> Result<String, String> {
+	async fn run_key(&self, parameter: &[String], environment: &mut Environment<'_, Manager, DB>) -> Result<String, String> {
 		let mut db = environment.database_manager.get_database(&parameter[0]);
- 	   db.write_key(parameter[1].clone(), key_base::databases::StringOrArray::String(parameter[2].clone()));
+		db.write_key(parameter[1].clone(), key_base::databases::StringOrArray::String(parameter[2].clone()));
 		return Ok(String::new());
 	}
 }

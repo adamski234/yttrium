@@ -11,6 +11,7 @@ use key_base::databases::{
 	Database,
 };
 use serenity::model::id::UserId;
+use serenity::async_trait;
 
 pub fn create<Manager: 'static + DatabaseManager<DB>, DB: 'static + Database>() -> Box<dyn key_base::Key<Manager, DB> + Send + Sync> {
 	return Box::new(std_ban {
@@ -38,12 +39,13 @@ struct std_ban {
 unsafe impl Send for std_ban {}
 unsafe impl Sync for std_ban {}
 
+#[async_trait]
 impl<Manager: DatabaseManager<DB>, DB: Database> key_base::Key<Manager, DB> for std_ban {
 	fn get_key_info(&self) -> &key_base::KeyInfo {
 		return &self.info;
 	}
 
-	fn run_key(&self, parameter: &[String], environment: &mut Environment<Manager, DB>) -> Result<String, String> {
+	async fn run_key(&self, parameter: &[String], environment: &mut Environment<'_, Manager, DB>) -> Result<String, String> {
 		let matcher = regex::Regex::new(key_base::regexes::DISCORD_ID).unwrap();
 		let guild_id = environment.guild_id.clone();
 		let user_id;
@@ -81,7 +83,7 @@ impl<Manager: DatabaseManager<DB>, DB: Database> key_base::Key<Manager, DB> for 
 			}
 		}
 		let member;
-		match futures::executor::block_on(environment.discord_context.cache.member(guild_id, user_id)) {
+		match environment.discord_context.cache.member(guild_id, user_id).await {
 			Some(memb) => {
 				member = memb;
 			}
@@ -92,9 +94,9 @@ impl<Manager: DatabaseManager<DB>, DB: Database> key_base::Key<Manager, DB> for 
 		let result;
 		if parameter.len() >= 2 {
 			let reason = &parameter[0];
-			result = futures::executor::block_on(member.ban_with_reason(&environment.discord_context.http, days_to_remove, reason));
+			result = member.ban_with_reason(&environment.discord_context.http, days_to_remove, reason).await;
 		} else {
-			result = futures::executor::block_on(member.ban(&environment.discord_context.http, days_to_remove));
+			result = member.ban(&environment.discord_context.http, days_to_remove).await;
 		}
 		if let Err(error) = result {
 			return Err(error.to_string());

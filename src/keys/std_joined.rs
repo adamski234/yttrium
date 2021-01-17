@@ -1,6 +1,6 @@
 #![allow(clippy::needless_return)]
 #![deny(clippy::implicit_return)]
-use futures::executor;
+use serenity::async_trait;
 use serenity::model::id::UserId;
 use yttrium_key_base as key_base;
 use key_base::{
@@ -32,12 +32,13 @@ struct std_joined {
 unsafe impl Send for std_joined {}
 unsafe impl Sync for std_joined {}
 
+#[async_trait]
 impl<Manager: DatabaseManager<DB>, DB: Database> key_base::Key<Manager, DB> for std_joined {
 	fn get_key_info(&self) -> &key_base::KeyInfo {
 		return &self.info;
 	}
 
-	fn run_key(&self, parameter: &[String], environment: &mut Environment<Manager, DB>) -> Result<String, String> {
+	async fn run_key(&self, parameter: &[String], environment: &mut Environment<'_, Manager, DB>) -> Result<String, String> {
 		let guild_id = environment.guild_id.clone();
 		let user_id;
 		if parameter.is_empty() {
@@ -68,7 +69,7 @@ impl<Manager: DatabaseManager<DB>, DB: Database> key_base::Key<Manager, DB> for 
 			user_id = UserId::from(parameter[0].parse::<u64>().unwrap());
 		}
 		let member;
-		match executor::block_on(environment.discord_context.cache.member(guild_id, user_id)) {
+		match environment.discord_context.cache.member(guild_id, user_id).await {
 			Some(result) => {
 				member = result;
 			}

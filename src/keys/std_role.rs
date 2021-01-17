@@ -3,7 +3,7 @@
 
 use yttrium_key_base as key_base;
 use serenity::model::id::{UserId, RoleId};
-use futures::executor;
+use serenity::async_trait;
 use key_base::{
 	databases::{
 		DatabaseManager,
@@ -36,12 +36,13 @@ struct std_role {
 unsafe impl Send for std_role {}
 unsafe impl Sync for std_role {}
 
+#[async_trait]
 impl<Manager: DatabaseManager<DB>, DB: Database> key_base::Key<Manager, DB> for std_role {
 	fn get_key_info(&self) -> &key_base::KeyInfo {
 		return &self.info;
 	}
 
-	fn run_key(&self, parameter: &[String], environment: &mut Environment<Manager, DB>) -> Result<String, String> {
+	async fn run_key(&self, parameter: &[String], environment: &mut Environment<'_, Manager, DB>) -> Result<String, String> {
 		let matcher = regex::Regex::new(key_base::regexes::DISCORD_ID).unwrap();
 		let guild_id = environment.guild_id.clone();
 		let user_id;
@@ -79,7 +80,7 @@ impl<Manager: DatabaseManager<DB>, DB: Database> key_base::Key<Manager, DB> for 
 				}
 			}
 		}
-		match executor::block_on(environment.discord_context.cache.guild(guild_id)) {
+		match environment.discord_context.cache.guild(guild_id).await {
 			Some(guild) => {
 				let mut role_id;
 				if matcher.is_match(&parameter[0]) {
@@ -105,9 +106,9 @@ impl<Manager: DatabaseManager<DB>, DB: Database> key_base::Key<Manager, DB> for 
 						}
 					}
 				}
-				match executor::block_on(guild.member(&environment.discord_context.http, user_id)) {
+				match guild.member(&environment.discord_context.http, user_id).await {
 					Ok(mut member) => {
-						if let Err(error) = executor::block_on(member.add_role(&environment.discord_context.http, role_id)) {
+						if let Err(error) = member.add_role(&environment.discord_context.http, role_id).await {
 							return Err(format!("Could not add role: `{}`", error));
 						}
 					}

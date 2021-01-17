@@ -11,7 +11,7 @@ use crate::tree_creator;
 /// * `tree` - The tree in vector form returned from [tree_creator::create_ars_tree]
 /// * `key_list` - A HashMap of keys, probably returned from [crate::key_loader::load_keys]
 /// * `environment` - The environment from [key_base::environment::Environment]
-pub fn interpret_tree<Manager: DatabaseManager<DB>, DB: Database>(tree: Vec<tree_creator::TreeNode>, key_list: &HashMap<String, Box<dyn yttrium_key_base::Key<Manager, DB> + Send + Sync>>, mut environment: Environment<Manager, DB>) -> Result<InterpretationResult, String> {
+pub async fn interpret_tree<Manager: DatabaseManager<DB>, DB: Database>(tree: Vec<tree_creator::TreeNode>, key_list: &HashMap<String, Box<dyn yttrium_key_base::Key<Manager, DB> + Send + Sync>>, mut environment: Environment<'_, Manager, DB>) -> Result<InterpretationResult, String> {
 	let mut current_index = 0; //Pointer to the currently interpreted node
 	let mut interpretable_tree = Vec::with_capacity(tree.len());
 	let mut next_rule = None;
@@ -127,7 +127,7 @@ pub fn interpret_tree<Manager: DatabaseManager<DB>, DB: Database>(tree: Vec<tree
 							target: serenity::model::id::ChannelId::from(environment.target.parse::<u64>().unwrap()),
 						});
 					} else {
-						match key_list.get(&current_node.inner_node.key).unwrap().run_key(&current_node.returned_values, &mut environment) {
+						match key_list.get(&current_node.inner_node.key).unwrap().run_key(&current_node.returned_values, &mut environment).await {
 							Ok(result) => {
 								returned = result;
 							}

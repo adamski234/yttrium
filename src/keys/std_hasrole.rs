@@ -3,6 +3,7 @@
 
 use yttrium_key_base as key_base;
 use serenity::model::id::{UserId, RoleId};
+use serenity::async_trait;
 use key_base::{
 	databases::{
 		DatabaseManager,
@@ -37,12 +38,13 @@ struct std_hasrole {
 unsafe impl Send for std_hasrole {}
 unsafe impl Sync for std_hasrole {}
 
+#[async_trait]
 impl<Manager: DatabaseManager<DB>, DB: Database> key_base::Key<Manager, DB> for std_hasrole {
 	fn get_key_info(&self) -> &key_base::KeyInfo {
 		return &self.info;
 	}
 
-	fn run_key(&self, parameter: &[String], environment: &mut Environment<Manager, DB>) -> Result<String, String> {
+	async fn run_key(&self, parameter: &[String], environment: &mut Environment<'_, Manager, DB>) -> Result<String, String> {
 		let matcher = regex::Regex::new(key_base::regexes::DISCORD_ID).unwrap();
 		if matcher.is_match(&parameter[0]) {
 			let guild_id = environment.guild_id.clone();
@@ -51,7 +53,7 @@ impl<Manager: DatabaseManager<DB>, DB: Database> key_base::Key<Manager, DB> for 
 			if matcher.is_match(&parameter[1]) {
 				role_id = RoleId::from(parameter[1].parse::<u64>().unwrap());
 			} else {
-				let guild = futures::executor::block_on(environment.discord_context.cache.guild(guild_id.clone())).unwrap();
+				let guild = environment.discord_context.cache.guild(guild_id.clone()).await.unwrap();
 				match guild.role_by_name(&parameter[1]) {
 					Some(role) => {
 						role_id = role.id;

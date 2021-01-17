@@ -1,7 +1,7 @@
 #![allow(clippy::needless_return)]
 #![deny(clippy::implicit_return)]
 use yttrium_key_base as key_base;
-use futures::executor;
+use serenity::async_trait;
 use key_base::{
 	databases::{
 		DatabaseManager,
@@ -31,13 +31,14 @@ struct std_setnickname {
 unsafe impl Send for std_setnickname {}
 unsafe impl Sync for std_setnickname {}
 
+#[async_trait]
 impl<Manager: DatabaseManager<DB>, DB: Database> key_base::Key<Manager, DB> for std_setnickname {
 	fn get_key_info(&self) -> &key_base::KeyInfo {
 		return &self.info;
 	}
 
-	fn run_key(&self, parameter: &[String], environment: &mut Environment<Manager, DB>) -> Result<String, String> {
-		let guild = executor::block_on(environment.discord_context.cache.guild(environment.guild_id.clone())).unwrap();
+	async fn run_key(&self, parameter: &[String], environment: &mut Environment<'_, Manager, DB>) -> Result<String, String> {
+		let guild = environment.discord_context.cache.guild(environment.guild_id.clone()).await.unwrap();
 		let member_id;
 		if parameter.len() == 1 {
 			match &environment.event_info {
@@ -68,10 +69,10 @@ impl<Manager: DatabaseManager<DB>, DB: Database> key_base::Key<Manager, DB> for 
 				return Err(String::from("Invalid user ID passed to `setnickname"));
 			}
 		}
-		let result = executor::block_on(guild.edit_member(&environment.discord_context.http, member_id, |member| {
+		let result = guild.edit_member(&environment.discord_context.http, member_id, |member| {
 			member.nickname(parameter[0].clone());
 			return member;
-		}));
+		}).await;
 		if let Err(error) = result {
 			return Err(format!("Could not change nickname of user: `{}`", error));
 		}

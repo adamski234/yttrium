@@ -2,6 +2,7 @@
 #![deny(clippy::implicit_return)]
 
 use yttrium_key_base as key_base;
+use serenity::async_trait;
 use key_base::{
 	databases::{
 		DatabaseManager,
@@ -34,12 +35,13 @@ struct std_trigger {
 unsafe impl Send for std_trigger {}
 unsafe impl Sync for std_trigger {}
 
+#[async_trait]
 impl<Manager: DatabaseManager<DB>, DB: Database> key_base::Key<Manager, DB> for std_trigger {
 	fn get_key_info(&self) -> &key_base::KeyInfo {
 		return &self.info;
 	}
 
-	fn run_key(&self, _parameter: &[String], environment: &mut Environment<Manager, DB>) -> Result<String, String> {
+	async fn run_key(&self, _parameter: &[String], environment: &mut Environment<'_, Manager, DB>) -> Result<String, String> {
 		match &environment.event_info {
 			events::EventType::Message(event) => {
 				return Ok(event.trigger.clone());

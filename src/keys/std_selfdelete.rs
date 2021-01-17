@@ -1,6 +1,7 @@
 #![allow(clippy::needless_return)]
 #![deny(clippy::implicit_return)]
 use yttrium_key_base as key_base;
+use serenity::async_trait;
 use key_base::{
 	databases::{
 		DatabaseManager,
@@ -30,12 +31,13 @@ struct std_selfdelete {
 unsafe impl Send for std_selfdelete {}
 unsafe impl Sync for std_selfdelete {}
 
+#[async_trait]
 impl<Manager: DatabaseManager<DB>, DB: Database> key_base::Key<Manager, DB> for std_selfdelete {
 	fn get_key_info(&self) -> &key_base::KeyInfo {
 		return &self.info;
 	}
 
-	fn run_key(&self, parameter: &[String], environment: &mut Environment<Manager, DB>) -> Result<String, String> {
+	async fn run_key(&self, parameter: &[String], environment: &mut Environment<'_, Manager, DB>) -> Result<String, String> {
 		match humantime::parse_duration(&parameter[0]) {
 			Ok(duration) => {
 				environment.delete_option = Some(duration);

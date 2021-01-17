@@ -9,6 +9,7 @@ description = "Plugin for the Yttrium project"
 
 [dependencies]
 yttrium_key_base = { version = "0.1", path = "../yttrium_key_base" }
+serenity = "0.10"
 cxx = "1"
 
 [build-dependencies]

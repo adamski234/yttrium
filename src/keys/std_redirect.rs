@@ -1,6 +1,7 @@
 #![allow(clippy::needless_return)]
 #![deny(clippy::implicit_return)]
 use yttrium_key_base as key_base;
+use serenity::async_trait;
 use key_base::{
 	databases::{
 		DatabaseManager,
@@ -30,12 +31,13 @@ struct std_redirect {
 unsafe impl Send for std_redirect {}
 unsafe impl Sync for std_redirect {}
 
+#[async_trait]
 impl<Manager: DatabaseManager<DB>, DB: Database> key_base::Key<Manager, DB> for std_redirect {
 	fn get_key_info(&self) -> &key_base::KeyInfo {
 		return &self.info;
 	}
 
-	fn run_key(&self, parameter: &[String], environment: &mut Environment<Manager, DB>) -> Result<String, String> {
+	async fn run_key(&self, parameter: &[String], environment: &mut Environment<'_, Manager, DB>) -> Result<String, String> {
 		let possibly_id = &parameter[0];
 		let matcher = regex::Regex::new(key_base::regexes::DISCORD_ID).unwrap();
 		if matcher.is_match(possibly_id) {

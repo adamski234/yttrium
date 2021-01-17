@@ -2,7 +2,7 @@
 #![deny(clippy::implicit_return)]
 
 use yttrium_key_base as key_base;
-use futures::executor;
+use serenity::async_trait;
 use key_base::{
 	databases::{
 		DatabaseManager,
@@ -35,12 +35,13 @@ struct std_kick {
 unsafe impl Send for std_kick {}
 unsafe impl Sync for std_kick {}
 
+#[async_trait]
 impl<Manager: DatabaseManager<DB>, DB: Database> key_base::Key<Manager, DB> for std_kick {
 	fn get_key_info(&self) -> &key_base::KeyInfo {
 		return &self.info;
 	}
 
-	fn run_key(&self, parameter: &[String], environment: &mut Environment<Manager, DB>) -> Result<String, String> {
+	async fn run_key(&self, parameter: &[String], environment: &mut Environment<'_, Manager, DB>) -> Result<String, String> {
 		let guild_id = environment.guild_id.clone();
 		let user_id;
 		match &environment.event_info {
@@ -66,14 +67,14 @@ impl<Manager: DatabaseManager<DB>, DB: Database> key_base::Key<Manager, DB> for 
 				return Err(String::from("`kick` was called on an invalid event type"));
 			}
 		}
-		match executor::block_on(environment.discord_context.cache.member(guild_id, user_id)) {
+		match environment.discord_context.cache.member(guild_id, user_id).await {
 			Some(member) => {
 				if parameter.len() == 1 {
-					if let Err(error) = executor::block_on(member.kick_with_reason(&environment.discord_context.http, &parameter[0])) {
+					if let Err(error) = member.kick_with_reason(&environment.discord_context.http, &parameter[0]).await {
 						return Err(error.to_string());
 					}
 				} else {
-					if let Err(error) = executor::block_on(member.kick(&environment.discord_context.http)) {
+					if let Err(error) = member.kick(&environment.discord_context.http).await {
 						return Err(error.to_string());
 					}
 				}

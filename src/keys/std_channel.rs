@@ -2,6 +2,7 @@
 #![deny(clippy::implicit_return)]
 use yttrium_key_base as key_base;
 use serenity::model::id::ChannelId;
+use serenity::async_trait;
 use key_base::{
 	databases::{
 		DatabaseManager,
@@ -37,12 +38,13 @@ struct std_channel {
 unsafe impl Send for std_channel {}
 unsafe impl Sync for std_channel {}
 
+#[async_trait]
 impl<Manager: DatabaseManager<DB>, DB: Database> key_base::Key<Manager, DB> for std_channel {
 	fn get_key_info(&self) -> &key_base::KeyInfo {
 		return &self.info;
 	}
 
-	fn run_key(&self, parameter: &[String], environment: &mut Environment<Manager, DB>) -> Result<String, String> {
+	async fn run_key(&self, parameter: &[String], environment: &mut Environment<'_, Manager, DB>) -> Result<String, String> {
 		let matcher = regex::Regex::new(key_base::regexes::DISCORD_ID).unwrap();
 		let channel_id;
 		if parameter.len() == 2 && matcher.is_match(&parameter[1]) {
@@ -77,7 +79,7 @@ impl<Manager: DatabaseManager<DB>, DB: Database> key_base::Key<Manager, DB> for 
 			return Ok(channel_id.to_string());
 		}
 		let channel;
-		match futures::executor::block_on(environment.discord_context.cache.guild_channel(channel_id)) {
+		match environment.discord_context.cache.guild_channel(channel_id).await {
 			Some(chan) => {
 				channel = chan;
 			}

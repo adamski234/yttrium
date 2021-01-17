@@ -1,7 +1,7 @@
 #![allow(clippy::needless_return)]
 #![deny(clippy::implicit_return)]
 use yttrium_key_base as key_base;
-use futures::executor;
+use serenity::async_trait;
 use key_base::{
 	databases::{
 		DatabaseManager,
@@ -31,18 +31,19 @@ struct std_guild {
 unsafe impl Send for std_guild {}
 unsafe impl Sync for std_guild {}
 
+#[async_trait]
 impl<Manager: DatabaseManager<DB>, DB: Database> key_base::Key<Manager, DB> for std_guild {
 	fn get_key_info(&self) -> &key_base::KeyInfo {
 		return &self.info;
 	}
 
-	fn run_key(&self, parameter: &[String], environment: &mut Environment<Manager, DB>) -> Result<String, String> {
+	async fn run_key(&self, parameter: &[String], environment: &mut Environment<'_, Manager, DB>) -> Result<String, String> {
 		if parameter.is_empty() {
 			return Ok(String::new());
 		}
 		let guild_id = environment.guild_id.clone();
 		let guild;
-		match executor::block_on(environment.discord_context.cache.guild(&guild_id)) {
+		match environment.discord_context.cache.guild(&guild_id).await {
 			Some(result) => {
 				guild = result;
 			}

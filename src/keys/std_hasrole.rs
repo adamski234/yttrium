@@ -64,7 +64,7 @@ impl<Manager: DatabaseManager<DB>, DB: Database> key_base::Key<Manager, DB> for 
 				}
 			}
 			let member;
-			match futures::executor::block_on(environment.discord_context.cache.member(guild_id, user_id)) {
+			match environment.discord_context.cache.member(guild_id, user_id).await {
 				Some(result) => {
 					member = result;
 				}

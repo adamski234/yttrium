@@ -71,7 +71,7 @@ impl<Manager: DatabaseManager<DB>, DB: Database> key_base::Key<Manager, DB> for 
 					channel_id = event.channel_id.clone();
 				}
 				_ => {
-					return Err(String::from("Invalid return value type in `channel`"));
+					return Err(String::from("Invalid event type in `channel`"));
 				}
 			}
 		}

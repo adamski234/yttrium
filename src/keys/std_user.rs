@@ -27,7 +27,7 @@ Optional, user ID to target
 fn create_key_info() -> key_base::KeyInfo {
 	return key_base::KeyInfo {
 		name: String::from("user"),
-		parameters_required: vec![2],
+		parameters_required: vec![1, 2],
 	};
 }
 

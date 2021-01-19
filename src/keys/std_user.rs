@@ -83,27 +83,34 @@ impl<Manager: DatabaseManager<DB>, DB: Database> key_base::Key<Manager, DB> for 
 				}
 			}
 		}
-		match environment.discord_context.cache.member(guild_id, user_id).await {
+		match environment.discord_context.cache.user(user_id).await {
 			Some(user) => {
 				match parameter[0].as_str() {
 					"id" => {
-						return Ok(user.user.id.to_string());
+						return Ok(user.id.to_string());
 					}
 					"nickname" => {
-						match user.nick {
-							Some(nick) => {
-								return Ok(nick);
+						match environment.discord_context.cache.member(guild_id, user_id).await {
+							Some(user) => {
+								match user.nick {
+									Some(nick) => {
+										return Ok(nick);
+									}
+									None => {
+										return Ok(user.user.name);
+									}
+								}
 							}
 							None => {
-								return Ok(user.user.name);
+								return Ok(user.name);
 							}
 						}
 					}
 					"username" => {
-						return Ok(user.user.name);
+						return Ok(user.name);
 					}
 					"avatar" => {
-						match user.user.avatar_url() {
+						match user.avatar_url() {
 							Some(url) => {
 								return Ok(url);
 							}
@@ -113,7 +120,7 @@ impl<Manager: DatabaseManager<DB>, DB: Database> key_base::Key<Manager, DB> for 
 						}
 					}
 					"discriminator" => {
-						return Ok(user.user.discriminator.to_string());
+						return Ok(user.discriminator.to_string());
 					}
 					_ => {
 						return Err(String::from("Invalid property passed to `user`"));

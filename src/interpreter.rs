@@ -117,6 +117,15 @@ pub async fn interpret_tree<Manager: DatabaseManager<DB>, DB: Database>(tree: Ve
 						returned = current_node.returned_values[0].clone();
 					} else if current_node.inner_node.key == "exit" {
 						//Stop the interepreter
+						let target;
+						match environment.target.parse::<u64>() {
+							Ok(channel) => {
+								target = Some(serenity::model::id::ChannelId::from(channel));
+							}
+							Err(_) => {
+								target = None;
+							}
+						}
 						return Ok(InterpretationResult {
 							message: current_node.returned_values.join(""),
 							embed: environment.embed,
@@ -124,7 +133,7 @@ pub async fn interpret_tree<Manager: DatabaseManager<DB>, DB: Database>(tree: Ve
 							attachments: environment.attachments,
 							reactions: environment.reactions_to_add,
 							self_delete: environment.delete_option,
-							target: serenity::model::id::ChannelId::from(environment.target.parse::<u64>().unwrap()),
+							target: target,
 						});
 					} else {
 						match key_list.get(&current_node.inner_node.key).unwrap().run_key(&current_node.returned_values, &mut environment).await {
@@ -142,6 +151,15 @@ pub async fn interpret_tree<Manager: DatabaseManager<DB>, DB: Database>(tree: Ve
 				}
 				None => {
 					//No more keys to interpret, return the result
+					let target;
+					match environment.target.parse::<u64>() {
+						Ok(channel) => {
+							target = Some(serenity::model::id::ChannelId::from(channel));
+						}
+						Err(_) => {
+							target = None;
+						}
+					}
 					return Ok(InterpretationResult {
 						message: current_node.returned_values.join(""),
 						embed: environment.embed,
@@ -149,7 +167,7 @@ pub async fn interpret_tree<Manager: DatabaseManager<DB>, DB: Database>(tree: Ve
 						attachments: environment.attachments,
 						reactions: environment.reactions_to_add,
 						self_delete: environment.delete_option,
-						target: serenity::model::id::ChannelId::from(environment.target.parse::<u64>().unwrap()),
+						target: target,
 					});
 				}
 			}
@@ -197,7 +215,7 @@ pub struct InterpretationResult {
 	/// Time after which the sent message should be deleted
 	pub self_delete: Option<std::time::Duration>,
 	/// Channel to send the result to
-	pub target: serenity::model::id::ChannelId,
+	pub target: Option<serenity::model::id::ChannelId>,
 }
 
 struct InterpretableNode {

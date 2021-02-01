@@ -20,7 +20,7 @@ pub use interpreter::interpret_tree;
 /// * `ars_string` - The tree to interpret
 /// * `key_list` - A HashMap of keys, probably returned from [key_loader::load_keys]
 /// * `environment` - The environment from [key_base::environment::Environment]
-pub async fn interpret_string<Manager: DatabaseManager<DB>, DB: Database>(ars_string: String, key_list: &HashMap<String, Box<dyn yttrium_key_base::Key<Manager, DB> + Send + Sync>>, environment: yttrium_key_base::environment::Environment<'_, Manager, DB>) -> Result<ResultAndWarnings, errors_and_warns::Error> {
+pub async fn interpret_string<'a, Manager: DatabaseManager<DB>, DB: Database>(ars_string: String, key_list: &HashMap<String, Box<dyn yttrium_key_base::Key<Manager, DB> + Send + Sync>>, environment: yttrium_key_base::environment::Environment<'a, Manager, DB>) -> Result<ResultAndWarnings<'a, Manager, DB>, errors_and_warns::Error> {
 	match tree_creator::create_ars_tree(ars_string, key_list) {
 		Ok(tree) => {
 			match interpret_tree(tree.tree, key_list, environment).await {
@@ -45,7 +45,7 @@ pub async fn interpret_string<Manager: DatabaseManager<DB>, DB: Database>(ars_st
 /// The return value of [interpret_string]
 /// Contains both the result and all warnings, if there are any
 #[derive(Debug)]
-pub struct ResultAndWarnings {
-	pub result: interpreter::InterpretationResult,
+pub struct ResultAndWarnings<'a, Manager: DatabaseManager<DB>, DB: Database> {
+	pub result: interpreter::InterpretationResult<'a, Manager, DB>,
 	pub warnings: Option<Vec<errors_and_warns::Warning>>,
 }

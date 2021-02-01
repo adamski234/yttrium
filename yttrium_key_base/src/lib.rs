@@ -2,7 +2,6 @@
 #![deny(clippy::implicit_return)]
 
 pub mod environment;
-pub mod embed;
 pub mod databases;
 pub mod regexes;
 

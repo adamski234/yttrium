@@ -1,13 +1,13 @@
-use crate::embed;
 use crate::databases;
+use std::fmt::{Debug, Formatter, Error};
 use databases::{Database, DatabaseManager};
-use serenity::model::id::GuildId;
+use serenity::model::{channel::Embed, id::GuildId};
 #[path = "./events.rs"] pub mod events;
 
 /// The environment shared between all called keys, containing the global state
 pub struct Environment<'a, Manager: DatabaseManager<DB>, DB: Database> {
-	/// Unfinished
-	pub embed: Option<embed::Embed>,
+	/// The embed to return
+	pub embed: Option<Embed>,
 	/// The database manager used for accessing databases
 	pub database_manager: Manager,
 	/// The ID of the guild the message was sent in
@@ -41,6 +41,14 @@ impl<'a, Manager: DatabaseManager<DB>, DB: Database> Environment<'a, Manager, DB
 			reactions_to_add: vec![],
 			_phantom: std::marker::PhantomData,
 		};
+	}
+}
+
+impl<'a, Manager: DatabaseManager<DB>, DB: Database> Debug for Environment<'a, Manager, DB> {
+	fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), Error> {
+		return f.debug_struct("Environment").field("embed", &self.embed).field("guild_id", &self.guild_id)
+		.field("target", &self.target).field("attachments", &self.attachments).field("event_info", &self.event_info)
+		.field("delete_option", &self.delete_option).field("reactions_to_add", &self.reactions_to_add).finish();
 	}
 }
 

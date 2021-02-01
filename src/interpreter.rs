@@ -11,7 +11,7 @@ use crate::tree_creator;
 /// * `tree` - The tree in vector form returned from [tree_creator::create_ars_tree]
 /// * `key_list` - A HashMap of keys, probably returned from [crate::key_loader::load_keys]
 /// * `environment` - The environment from [key_base::environment::Environment]
-pub async fn interpret_tree<Manager: DatabaseManager<DB>, DB: Database>(tree: Vec<tree_creator::TreeNode>, key_list: &HashMap<String, Box<dyn yttrium_key_base::Key<Manager, DB> + Send + Sync>>, mut environment: Environment<'_, Manager, DB>) -> Result<InterpretationResult, String> {
+pub async fn interpret_tree<'a, Manager: DatabaseManager<DB>, DB: Database>(tree: Vec<tree_creator::TreeNode>, key_list: &HashMap<String, Box<dyn yttrium_key_base::Key<Manager, DB> + Send + Sync>>, mut environment: Environment<'a, Manager, DB>) -> Result<InterpretationResult<'a, Manager, DB>, String> {
 	let mut current_index = 0; //Pointer to the currently interpreted node
 	let mut interpretable_tree = Vec::with_capacity(tree.len());
 	let mut next_rule = None;
@@ -128,11 +128,8 @@ pub async fn interpret_tree<Manager: DatabaseManager<DB>, DB: Database>(tree: Ve
 						}
 						return Ok(InterpretationResult {
 							message: current_node.returned_values.join(""),
-							embed: environment.embed,
+							environment: environment,
 							next_rule: next_rule,
-							attachments: environment.attachments,
-							reactions: environment.reactions_to_add,
-							self_delete: environment.delete_option,
 							target: target,
 						});
 					} else {
@@ -162,11 +159,8 @@ pub async fn interpret_tree<Manager: DatabaseManager<DB>, DB: Database>(tree: Ve
 					}
 					return Ok(InterpretationResult {
 						message: current_node.returned_values.join(""),
-						embed: environment.embed,
+						environment: environment,
 						next_rule: next_rule,
-						attachments: environment.attachments,
-						reactions: environment.reactions_to_add,
-						self_delete: environment.delete_option,
 						target: target,
 					});
 				}
@@ -201,19 +195,13 @@ pub async fn interpret_tree<Manager: DatabaseManager<DB>, DB: Database>(tree: Ve
 
 /// Struct containing everything that the script might return
 #[derive(Debug)]
-pub struct InterpretationResult {
+pub struct InterpretationResult<'a, Manager: DatabaseManager<DB>, DB: Database> {
 	/// The returned message
 	pub message: String,
-	/// The created embed
-	pub embed: Option<yttrium_key_base::embed::Embed>,
+	/// Environment passed as the argument
+	pub environment: Environment<'a, Manager, DB>,
 	/// The next rule to call
 	pub next_rule: Option<String>,
-	/// A list of attachments to send
-	pub attachments: Vec<String>,
-	/// A list of reactions to add to the sent message
-	pub reactions: Vec<String>,
-	/// Time after which the sent message should be deleted
-	pub self_delete: Option<std::time::Duration>,
 	/// Channel to send the result to
 	pub target: Option<serenity::model::id::ChannelId>,
 }

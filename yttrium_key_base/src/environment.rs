@@ -1,13 +1,14 @@
 use crate::databases;
 use std::fmt::{Debug, Formatter, Error};
 use databases::{Database, DatabaseManager};
-use serenity::model::{channel::Embed, id::GuildId};
+use serenity::model::id::GuildId;
+use serenity::builder::CreateEmbed;
 #[path = "./events.rs"] pub mod events;
 
 /// The environment shared between all called keys, containing the global state
 pub struct Environment<'a, Manager: DatabaseManager<DB>, DB: Database> {
 	/// The embed to return
-	pub embed: Option<Embed>,
+	pub embed: Option<CreateEmbed>,
 	/// The database manager used for accessing databases
 	pub database_manager: Manager,
 	/// The ID of the guild the message was sent in

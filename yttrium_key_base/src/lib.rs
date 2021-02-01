@@ -12,7 +12,7 @@ use serenity::async_trait;
 pub trait Key<Manager: DatabaseManager<DB>, DB: Database> {
 	/// Returns a reference to a [KeyInfo] describing the key
 	fn get_key_info(&self) -> &KeyInfo;
-	/// Returns the key function that gets called during interpretation
+	/// Runs the key functionality
 	async fn run_key(&self, parameter: &[String], environment: &mut environment::Environment<'_, Manager, DB>) -> Result<String, String>;
 }
 

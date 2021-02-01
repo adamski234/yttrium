@@ -10,6 +10,7 @@ use yttrium_key_base::databases::{
 #[path = "keys/std_db_read.rs"] mod std_db_read;
 #[path = "keys/std_db_write_str.rs"] mod std_db_write_str;
 #[path = "keys/std_delete.rs"] mod std_delete;
+#[path = "keys/std_embed.rs"] mod std_embed;
 #[path = "keys/std_everyone.rs"] mod std_everyone;
 #[path = "keys/std_guild.rs"] mod std_guild;
 #[path = "keys/std_hasrole.rs"] mod std_hasrole;
@@ -43,6 +44,8 @@ pub fn load_keys<Manager: 'static + DatabaseManager<DB>, DB: 'static + Database>
 	let key = std_db_write_str::create();
 	keys.insert(key.get_key_info().name.clone(), key);
 	let key = std_delete::create();
+	keys.insert(key.get_key_info().name.clone(), key);
+	let key = std_embed::create();
 	keys.insert(key.get_key_info().name.clone(), key);
 	let key = std_everyone::create();
 	keys.insert(key.get_key_info().name.clone(), key);

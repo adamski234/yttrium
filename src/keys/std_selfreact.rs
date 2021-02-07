@@ -2,6 +2,10 @@
 #![deny(clippy::implicit_return)]
 use yttrium_key_base as key_base;
 use serenity::async_trait;
+use serenity::model::{
+	channel::ReactionType,
+	id::EmojiId,
+};
 use key_base::{
 	databases::{
 		DatabaseManager,
@@ -47,12 +51,12 @@ impl<Manager: DatabaseManager<DB>, DB: Database> key_base::Key<Manager, DB> for 
 		let reaction;
 		if matcher.is_match(&parameter[0]) {
 			//Guild reaction
-			reaction = parameter[0].clone();
+			reaction = ReactionType::from(EmojiId::from(parameter[0].parse::<u64>().unwrap()));
 		} else {
 			//Normal unicode reaction
 			let grapheme_count = unicode_segmentation::UnicodeSegmentation::graphemes(parameter[0].as_str(), true).count();
 			if grapheme_count == 1 {
-				reaction = parameter[0].clone();
+				reaction = ReactionType::Unicode(parameter[0].clone());
 			} else {
 				return Err(String::from("Too many characters passed to `selfreact`"));
 			}

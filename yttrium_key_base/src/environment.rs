@@ -24,7 +24,7 @@ pub struct Environment<'a, Manager: DatabaseManager<DB>, DB: Database> {
 	/// Used for deleting the response message
 	pub delete_option: Option<std::time::Duration>,
 	/// Used for adding reactions to the response message
-	pub reactions_to_add: Vec<String>,
+	pub reactions_to_add: Vec<serenity::model::channel::ReactionType>,
 	_phantom: std::marker::PhantomData<DB>,
 }
 

@@ -163,9 +163,9 @@ dependencies = [
 
 [[package]]
 name = "cxx"
-version = "1.0.29"
+version = "1.0.31"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fc31438f037629cab5cf43e32ad6852f6fd590dde08006c439b3cd61a6a14898"
+checksum = "26766d294f71b5186454025d06b01020dce24843bf489a67b3c242a631092dd3"
 dependencies = [
  "cc",
  "cxxbridge-flags",
@@ -175,9 +175,9 @@ dependencies = [
 
 [[package]]
 name = "cxx-build"
-version = "1.0.29"
+version = "1.0.31"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7fc27a71995199d030d61ce02455b5108a02aa5fdca3cea7c2f1999a6d1f9317"
+checksum = "69c0ba9a6c36216f1cd3cb6aedc605ca22feb9fc64d9a1b76099a9e368fa553d"
 dependencies = [
  "cc",
  "codespan-reporting",
@@ -190,15 +190,15 @@ dependencies = [
 
 [[package]]
 name = "cxxbridge-flags"
-version = "1.0.29"
+version = "1.0.31"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "59a0e2cec266b23b43ec182af46f30673fddb0c58e08cbd4e8affee9c6ca7062"
+checksum = "e138193533484046c2ee52a5b7e8bac3a488524c0417a115f381b516a9b8f26b"
 
 [[package]]
 name = "cxxbridge-macro"
-version = "1.0.29"
+version = "1.0.31"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8a360123256a138e23265a2b469c92d1d26972d02772e24b55fc16a3dde5c191"
+checksum = "bb87a7cbc9b0f9d87f151c1249da5d4ac6183078297377d9ff136ef5955bdc75"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -535,9 +535,9 @@ checksum = "e2abad23fbc42b3700f2f279844dc832adb2b2eb069b2df918f455c4e18cc646"
 
 [[package]]
 name = "libc"
-version = "0.2.85"
+version = "0.2.86"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7ccac4b00700875e6a07c6cde370d44d32fa01c5a65cdd2fca6858c479d28bb3"
+checksum = "b7282d924be3275cec7f6756ff4121987bc6481325397dde6ba3e7802b1a8b1c"
 
 [[package]]
 name = "link-cplusplus"
@@ -1261,9 +1261,9 @@ dependencies = [
 
 [[package]]
 name = "unicode-normalization"
-version = "0.1.16"
+version = "0.1.17"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a13e63ab62dbe32aeee58d1c5408d35c36c392bba5d9d3142287219721afe606"
+checksum = "07fbfce1c8a97d547e8b5334978438d9d6ec8c20e38f56d4a4374d181493eaef"
 dependencies = [
  "tinyvec",
 ]

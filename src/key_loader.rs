@@ -20,6 +20,7 @@ use yttrium_key_base::databases::{
 #[path = "keys/std_parameter.rs"] mod std_parameter;
 #[path = "keys/std_pin.rs"] mod std_pin;
 #[path = "keys/std_rand.rs"] mod std_rand;
+#[path = "keys/std_react.rs"] mod std_react;
 #[path = "keys/std_redirect.rs"] mod std_redirect;
 #[path = "keys/std_role.rs"] mod std_role;
 #[path = "keys/std_selfdelete.rs"] mod std_selfdelete;
@@ -66,6 +67,8 @@ pub fn load_keys<Manager: 'static + DatabaseManager<DB>, DB: 'static + Database>
 	let key = std_pin::create();
 	keys.insert(key.get_key_info().name.clone(), key);
 	let key = std_rand::create();
+	keys.insert(key.get_key_info().name.clone(), key);
+	let key = std_react::create();
 	keys.insert(key.get_key_info().name.clone(), key);
 	let key = std_redirect::create();
 	keys.insert(key.get_key_info().name.clone(), key);

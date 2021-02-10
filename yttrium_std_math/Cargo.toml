@@ -1,6 +1,6 @@
 [package]
 name = "yttrium_std_math"
-version = "0.1.0"
+version = "1.0.0"
 authors = ["adamski234 <adamski234@protonmail.com>"]
 edition = "2018"
 license = "MPL-2.0"
@@ -8,7 +8,7 @@ description = "Plugin for the Yttrium project"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-yttrium_key_base = { version = "0.1", path = "../yttrium_key_base" }
+yttrium_key_base = { version = "1.0", path = "../yttrium_key_base" }
 serenity = "0.10"
 cxx = "1"
 

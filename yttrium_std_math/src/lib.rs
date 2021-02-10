@@ -1,5 +1,5 @@
 #![allow(clippy::needless_return)]
-#![deny(clippy::implicit_return)]
+
 use yttrium_key_base as key_base;
 #[allow(unused_imports)]
 use cxx::{CxxString, UniquePtr};

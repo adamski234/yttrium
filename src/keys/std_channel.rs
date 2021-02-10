@@ -1,5 +1,5 @@
 #![allow(clippy::needless_return)]
-#![deny(clippy::implicit_return)]
+
 use yttrium_key_base as key_base;
 use serenity::model::id::ChannelId;
 use serenity::async_trait;
@@ -53,22 +53,22 @@ impl<Manager: DatabaseManager<DB>, DB: Database> key_base::Key<Manager, DB> for 
 			use key_base::environment::events::EventType;
 			match &environment.event_info {
 				EventType::Message(event) => {
-					channel_id = event.channel_id.clone();
+					channel_id = event.channel_id;
 				}
 				EventType::ChannelCreate(event) => {
-					channel_id = event.channel_id.clone();
+					channel_id = event.channel_id;
 				}
 				EventType::ChannelUpdate(event) => {
-					channel_id = event.channel_id.clone();
+					channel_id = event.channel_id;
 				}
 				EventType::VoiceUpdate(event) => {
-					channel_id = event.channel_id.clone();
+					channel_id = event.channel_id;
 				}
 				EventType::ReactionAdd(event) => {
-					channel_id = event.channel_id.clone();
+					channel_id = event.channel_id;
 				}
 				EventType::ReactionRemove(event) => {
-					channel_id = event.channel_id.clone();
+					channel_id = event.channel_id;
 				}
 				_ => {
 					return Err(String::from("Invalid event type in `channel`"));

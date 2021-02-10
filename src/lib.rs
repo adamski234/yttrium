@@ -1,5 +1,4 @@
 #![allow(clippy::needless_return, clippy::redundant_field_names)]
-#![deny(clippy::implicit_return)]
 #![feature(is_sorted)]
 
 #[path = "./errors_and_warns.rs"] pub mod errors_and_warns;

@@ -1,5 +1,5 @@
 #![allow(clippy::needless_return)]
-#![deny(clippy::implicit_return)]
+
 use yttrium_key_base as key_base;
 use serenity::async_trait;
 use key_base::{
@@ -49,8 +49,8 @@ impl<Manager: DatabaseManager<DB>, DB: Database> key_base::Key<Manager, DB> for 
 		let message_id;
 		let channel_id;
 		if let EventType::Message(event) = &environment.event_info {
-			message_id = event.message_id.clone();
-			channel_id = event.channel_id.clone();
+			message_id = event.message_id;
+			channel_id = event.channel_id;
 		} else {
 			return Err(String::from("`mention` called on an invalid event type"));
 		}

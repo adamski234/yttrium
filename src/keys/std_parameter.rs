@@ -1,5 +1,5 @@
 #![allow(clippy::needless_return)]
-#![deny(clippy::implicit_return)]
+
 use yttrium_key_base as key_base;
 use serenity::async_trait;
 use key_base::{
@@ -56,7 +56,7 @@ impl<Manager: DatabaseManager<DB>, DB: Database> key_base::Key<Manager, DB> for 
 							event.split_parameters.insert(parameter[0].clone(), split);
 						}
 						let split = event.split_parameters.get(&parameter[0]).unwrap();
-						if split.len() >= index + 1 {
+						if split.len() > index {
 							return Ok(split[index].clone());
 						} else {
 							return Err(format!("`parameter` split by `{}` didn't have `{}` elements", parameter[0], index + 1));

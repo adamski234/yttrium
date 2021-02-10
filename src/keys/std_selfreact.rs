@@ -1,5 +1,5 @@
 #![allow(clippy::needless_return)]
-#![deny(clippy::implicit_return)]
+
 use yttrium_key_base as key_base;
 use serenity::async_trait;
 use serenity::model::{

@@ -1,5 +1,4 @@
 #![allow(clippy::needless_return, clippy::redundant_field_names)]
-#![deny(clippy::implicit_return)]
 
 pub mod environment;
 pub mod databases;

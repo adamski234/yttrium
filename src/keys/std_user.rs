@@ -1,5 +1,4 @@
 #![allow(clippy::needless_return)]
-#![deny(clippy::implicit_return)]
 use yttrium_key_base as key_base;
 use serenity::model::id::UserId;
 use serenity::async_trait;
@@ -46,7 +45,7 @@ impl<Manager: DatabaseManager<DB>, DB: Database> key_base::Key<Manager, DB> for 
 	}
 
 	async fn run_key(&self, parameter: &[String], environment: &mut Environment<'_, Manager, DB>) -> Result<String, String> {
-		let guild_id = environment.guild_id.clone();
+		let guild_id = environment.guild_id;
 		let user_id;
 		if parameter.len() == 2 {
 			let matcher = regex::Regex::new(key_base::regexes::DISCORD_ID).unwrap();
@@ -58,25 +57,25 @@ impl<Manager: DatabaseManager<DB>, DB: Database> key_base::Key<Manager, DB> for 
 		} else {
 			match &environment.event_info {
 				EventType::MemberJoin(event) => {
-					user_id = event.user_id.clone();
+					user_id = event.user_id;
 				}
 				EventType::MemberLeave(event) => {
-					user_id = event.user_id.clone();
+					user_id = event.user_id;
 				}
 				EventType::MemberUpdate(event) => {
-					user_id = event.user_id.clone();
+					user_id = event.user_id;
 				}
 				EventType::Message(event) => {
-					user_id = event.user_id.clone();
+					user_id = event.user_id;
 				}
 				EventType::VoiceUpdate(event) => {
-					user_id = event.user_id.clone();
+					user_id = event.user_id;
 				}
 				EventType::ReactionAdd(event) => {
-					user_id = event.user_id.clone();
+					user_id = event.user_id;
 				}
 				EventType::ReactionRemove(event) => {
-					user_id = event.user_id.clone();
+					user_id = event.user_id;
 				}
 				_ => {
 					return Err(String::from("`user` was called on an invalid event with no ID"));

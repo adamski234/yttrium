@@ -1,5 +1,4 @@
 #![allow(clippy::needless_return)]
-#![deny(clippy::implicit_return)]
 
 use yttrium_key_base as key_base;
 use serenity::async_trait;
@@ -42,26 +41,26 @@ impl<Manager: DatabaseManager<DB>, DB: Database> key_base::Key<Manager, DB> for 
 	}
 
 	async fn run_key(&self, parameter: &[String], environment: &mut Environment<'_, Manager, DB>) -> Result<String, String> {
-		let guild_id = environment.guild_id.clone();
+		let guild_id = environment.guild_id;
 		let user_id;
 		match &environment.event_info {
 			events::EventType::Message(event) => {
-				user_id = event.user_id.clone();
+				user_id = event.user_id;
 			}
 			events::EventType::MemberJoin(event) => {
-				user_id = event.user_id.clone();
+				user_id = event.user_id;
 			}
 			events::EventType::MemberUpdate(event) => {
-				user_id = event.user_id.clone();
+				user_id = event.user_id;
 			}
 			events::EventType::VoiceUpdate(event) => {
-				user_id = event.user_id.clone();
+				user_id = event.user_id;
 			}
 			events::EventType::ReactionAdd(event) => {
-				user_id = event.user_id.clone();
+				user_id = event.user_id;
 			}
 			events::EventType::ReactionRemove(event) => {
-				user_id = event.user_id.clone();
+				user_id = event.user_id;
 			}
 			_ => {
 				return Err(String::from("`kick` was called on an invalid event type"));
@@ -73,10 +72,8 @@ impl<Manager: DatabaseManager<DB>, DB: Database> key_base::Key<Manager, DB> for 
 					if let Err(error) = member.kick_with_reason(&environment.discord_context.http, &parameter[0]).await {
 						return Err(error.to_string());
 					}
-				} else {
-					if let Err(error) = member.kick(&environment.discord_context.http).await {
-						return Err(error.to_string());
-					}
+				} else if let Err(error) = member.kick(&environment.discord_context.http).await {
+					return Err(error.to_string());
 				}
 			}
 			None => {

@@ -1,5 +1,4 @@
 #![allow(clippy::needless_return)]
-#![deny(clippy::implicit_return)]
 
 use yttrium_key_base as key_base;
 use serenity::model::id::{UserId, RoleId};
@@ -47,13 +46,13 @@ impl<Manager: DatabaseManager<DB>, DB: Database> key_base::Key<Manager, DB> for 
 	async fn run_key(&self, parameter: &[String], environment: &mut Environment<'_, Manager, DB>) -> Result<String, String> {
 		let matcher = regex::Regex::new(key_base::regexes::DISCORD_ID).unwrap();
 		if matcher.is_match(&parameter[0]) {
-			let guild_id = environment.guild_id.clone();
+			let guild_id = environment.guild_id;
 			let user_id = UserId::from(parameter[0].parse::<u64>().unwrap());
 			let role_id;
 			if matcher.is_match(&parameter[1]) {
 				role_id = RoleId::from(parameter[1].parse::<u64>().unwrap());
 			} else {
-				let guild = environment.discord_context.cache.guild(guild_id.clone()).await.unwrap();
+				let guild = environment.discord_context.cache.guild(guild_id).await.unwrap();
 				match guild.role_by_name(&parameter[1]) {
 					Some(role) => {
 						role_id = role.id;

@@ -1,5 +1,4 @@
 #![allow(clippy::needless_return)]
-#![deny(clippy::implicit_return)]
 
 use yttrium_key_base as key_base;
 use key_base::environment::{
@@ -47,7 +46,7 @@ impl<Manager: DatabaseManager<DB>, DB: Database> key_base::Key<Manager, DB> for 
 
 	async fn run_key(&self, parameter: &[String], environment: &mut Environment<'_, Manager, DB>) -> Result<String, String> {
 		let matcher = regex::Regex::new(key_base::regexes::DISCORD_ID).unwrap();
-		let guild_id = environment.guild_id.clone();
+		let guild_id = environment.guild_id;
 		let user_id;
 		let mut days_to_remove = 0;
 		if parameter.len() >= 2 {
@@ -60,22 +59,22 @@ impl<Manager: DatabaseManager<DB>, DB: Database> key_base::Key<Manager, DB> for 
 		} else {
 			match &environment.event_info {
 				events::EventType::Message(event) => {
-					user_id = event.user_id.clone();
+					user_id = event.user_id;
 				}
 				events::EventType::MemberJoin(event) => {
-					user_id = event.user_id.clone();
+					user_id = event.user_id;
 					}
 				events::EventType::MemberUpdate(event) => {
-					user_id = event.user_id.clone();
+					user_id = event.user_id;
 				}
 				events::EventType::VoiceUpdate(event) => {
-					user_id = event.user_id.clone();
+					user_id = event.user_id;
 				}
 				events::EventType::ReactionAdd(event) => {
-					user_id = event.user_id.clone();
+					user_id = event.user_id;
 				}
 				events::EventType::ReactionRemove(event) => {
-					user_id = event.user_id.clone();
+					user_id = event.user_id;
 				}
 				_ => {
 					return Err(String::from("`ban` called without user ID on invalid event"));
@@ -96,10 +95,8 @@ impl<Manager: DatabaseManager<DB>, DB: Database> key_base::Key<Manager, DB> for 
 			if let Err(error) = member.ban_with_reason(&environment.discord_context.http, days_to_remove, reason).await {
 				return Err(error.to_string());
 			};
-		} else {
-			if let Err(error) = member.ban(&environment.discord_context.http, days_to_remove).await {
-				return Err(error.to_string());
-			};
+		} else if let Err(error) = member.ban(&environment.discord_context.http, days_to_remove).await {
+			return Err(error.to_string());
 		}
 		return Ok(String::new());
 	}

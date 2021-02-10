@@ -1,5 +1,5 @@
 #![allow(clippy::needless_return)]
-#![deny(clippy::implicit_return)]
+
 use serenity::async_trait;
 use serenity::model::id::UserId;
 use yttrium_key_base as key_base;
@@ -39,27 +39,27 @@ impl<Manager: DatabaseManager<DB>, DB: Database> key_base::Key<Manager, DB> for 
 	}
 
 	async fn run_key(&self, parameter: &[String], environment: &mut Environment<'_, Manager, DB>) -> Result<String, String> {
-		let guild_id = environment.guild_id.clone();
+		let guild_id = environment.guild_id;
 		let user_id;
 		if parameter.is_empty() {
 			match &environment.event_info {
 				key_base::environment::events::EventType::MemberJoin(event) => {
-					user_id = event.user_id.clone();
+					user_id = event.user_id;
 				}
 				key_base::environment::events::EventType::Message(event) => {
-					user_id = event.user_id.clone();
+					user_id = event.user_id;
 				}
 				key_base::environment::events::EventType::MemberUpdate(event) => {
-					user_id = event.user_id.clone();
+					user_id = event.user_id;
 				}
 				key_base::environment::events::EventType::VoiceUpdate(event) => {
-					user_id = event.user_id.clone();
+					user_id = event.user_id;
 				}
 				key_base::environment::events::EventType::ReactionAdd(event) => {
-					user_id = event.user_id.clone();
+					user_id = event.user_id;
 				}
 				key_base::environment::events::EventType::ReactionRemove(event) => {
-					user_id = event.user_id.clone();
+					user_id = event.user_id;
 				}
 				_ => {
 					return Err(String::from("`joined` was called on invalid event type"));

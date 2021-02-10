@@ -1,5 +1,4 @@
 #![allow(clippy::needless_return)]
-#![deny(clippy::implicit_return)]
 
 use yttrium_key_base as key_base;
 use serenity::async_trait;
@@ -43,8 +42,8 @@ impl<Manager: DatabaseManager<DB>, DB: Database> key_base::Key<Manager, DB> for 
 
 	async fn run_key(&self, _parameter: &[String], environment: &mut Environment<'_, Manager, DB>) -> Result<String, String> {
 		if let events::EventType::Message(event) = &environment.event_info {
-			let message_id = event.message_id.clone();
-			let channel_id = event.channel_id.clone();
+			let message_id = event.message_id;
+			let channel_id = event.channel_id;
 			match environment.discord_context.cache.message(channel_id, message_id).await {
 				Some(message) => {
 					if let Err(error) = message.pin(&environment.discord_context.http).await {

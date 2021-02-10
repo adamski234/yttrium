@@ -1,5 +1,5 @@
 #![allow(clippy::needless_return)]
-#![deny(clippy::implicit_return)]
+
 use yttrium_key_base as key_base;
 use serenity::async_trait;
 use key_base::{
@@ -41,7 +41,7 @@ impl<Manager: DatabaseManager<DB>, DB: Database> key_base::Key<Manager, DB> for 
 		if parameter.is_empty() {
 			return Ok(String::new());
 		}
-		let guild_id = environment.guild_id.clone();
+		let guild_id = environment.guild_id;
 		let guild;
 		match environment.discord_context.cache.guild(&guild_id).await {
 			Some(result) => {
@@ -78,7 +78,7 @@ impl<Manager: DatabaseManager<DB>, DB: Database> key_base::Key<Manager, DB> for 
 				}
 			}
 			"region" => {
-				return Ok(guild.region.clone());
+				return Ok(guild.region);
 			}
 			_ => {
 				return Err(String::from("Invalid property passed to `guild`"));

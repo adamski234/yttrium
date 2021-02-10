@@ -1,5 +1,5 @@
 #![allow(clippy::needless_return)]
-#![deny(clippy::implicit_return)]
+
 use yttrium_key_base as key_base;
 use serenity::async_trait;
 use key_base::{
@@ -38,24 +38,24 @@ impl<Manager: DatabaseManager<DB>, DB: Database> key_base::Key<Manager, DB> for 
 	}
 
 	async fn run_key(&self, parameter: &[String], environment: &mut Environment<'_, Manager, DB>) -> Result<String, String> {
-		let guild = environment.discord_context.cache.guild(environment.guild_id.clone()).await.unwrap();
+		let guild = environment.discord_context.cache.guild(environment.guild_id).await.unwrap();
 		let member_id;
 		if parameter.len() == 1 {
 			match &environment.event_info {
 				key_base::environment::events::EventType::MemberJoin(event) => {
-					member_id = event.user_id.clone();
+					member_id = event.user_id;
 				}
 				key_base::environment::events::EventType::Message(event) => {
-					member_id = event.user_id.clone();
+					member_id = event.user_id;
 				}
 				key_base::environment::events::EventType::MemberUpdate(event) => {
-					member_id = event.user_id.clone();
+					member_id = event.user_id;
 				}
 				key_base::environment::events::EventType::ReactionAdd(event) => {
-					member_id = event.user_id.clone();
+					member_id = event.user_id;
 				}
 				key_base::environment::events::EventType::ReactionRemove(event) => {
-					member_id = event.user_id.clone();
+					member_id = event.user_id;
 				}
 				_ => {
 					return Err(String::from("`setnickname` was called on an invalid event type without an ID"));
@@ -70,7 +70,7 @@ impl<Manager: DatabaseManager<DB>, DB: Database> key_base::Key<Manager, DB> for 
 			}
 		}
 		let result = guild.edit_member(&environment.discord_context.http, member_id, |member| {
-			member.nickname(parameter[0].clone());
+			member.nickname(&parameter[0]);
 			return member;
 		}).await;
 		if let Err(error) = result {

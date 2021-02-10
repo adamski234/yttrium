@@ -1,5 +1,5 @@
 #![allow(clippy::needless_return)]
-#![deny(clippy::implicit_return)]
+
 use yttrium_key_base as key_base;
 use serenity::model::id::ChannelId;
 use serenity::async_trait;
@@ -65,16 +65,16 @@ impl<Manager: DatabaseManager<DB>, DB: Database> key_base::Key<Manager, DB> for 
 			let channel_id;
 			match &environment.event_info {
 				EventType::Message(event) => {
-					message_id = event.message_id.clone();
-					channel_id = event.channel_id.clone();
+					message_id = event.message_id;
+					channel_id = event.channel_id;
 				}
 				EventType::ReactionAdd(event) => {
-					message_id = event.message_id.clone();
-					channel_id = event.channel_id.clone();
+					message_id = event.message_id;
+					channel_id = event.channel_id;
 				}
 				EventType::ReactionRemove(event) => {
-					message_id = event.message_id.clone();
-					channel_id = event.channel_id.clone();
+					message_id = event.message_id;
+					channel_id = event.channel_id;
 				}
 				_ => {
 					return Err(String::from("`delete` called on an invalid event"))
@@ -106,16 +106,16 @@ impl<Manager: DatabaseManager<DB>, DB: Database> key_base::Key<Manager, DB> for 
 				let channel_id;
 				match &environment.event_info {
 					EventType::Message(event) => {
-						channel_id = event.channel_id.clone();
+						channel_id = event.channel_id;
 					}
 					EventType::ReactionAdd(event) => {
-						channel_id = event.channel_id.clone();
+						channel_id = event.channel_id;
 					}
 					EventType::ReactionRemove(event) => {
-						channel_id = event.channel_id.clone();
+						channel_id = event.channel_id;
 					}
 					EventType::ChannelUpdate(event) => {
-						channel_id = event.channel_id.clone();
+						channel_id = event.channel_id;
 					}
 					_ => {
 						return Err(String::from("`delete` called on an invalid event"));
@@ -159,7 +159,7 @@ impl<Manager: DatabaseManager<DB>, DB: Database> key_base::Key<Manager, DB> for 
 							channel = chan;
 						}
 						None => {
-							return Err(format!("Couldn't get channel in `delete`"));
+							return Err(String::from("Couldn't get channel in `delete`"));
 						}
 					}
 					if let serenity::model::channel::Channel::Guild(chan) = channel {

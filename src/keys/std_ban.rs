@@ -91,15 +91,15 @@ impl<Manager: DatabaseManager<DB>, DB: Database> key_base::Key<Manager, DB> for 
 				return Err(String::from("User does not exist"));
 			}
 		}
-		let result;
 		if parameter.len() >= 2 {
 			let reason = &parameter[0];
-			result = member.ban_with_reason(&environment.discord_context.http, days_to_remove, reason).await;
+			if let Err(error) = member.ban_with_reason(&environment.discord_context.http, days_to_remove, reason).await {
+				return Err(error.to_string());
+			};
 		} else {
-			result = member.ban(&environment.discord_context.http, days_to_remove).await;
-		}
-		if let Err(error) = result {
-			return Err(error.to_string());
+			if let Err(error) = member.ban(&environment.discord_context.http, days_to_remove).await {
+				return Err(error.to_string());
+			};
 		}
 		return Ok(String::new());
 	}

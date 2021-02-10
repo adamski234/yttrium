@@ -54,18 +54,22 @@ impl<Manager: DatabaseManager<DB>, DB: Database> key_base::Key<Manager, DB> for 
 			match info.channel_id.message(&environment.discord_context, info.message_id).await {
 				Ok(message) => {
 					let matcher = regex::Regex::new(key_base::regexes::DISCORD_ID).unwrap();
+					let reaction;
 					if matcher.is_match(&parameter[0]) {
 						//Guild reaction
-						message.react(&environment.discord_context, ReactionType::from(EmojiId::from(parameter[0].parse::<u64>().unwrap()))).await.unwrap();
+						reaction = ReactionType::from(EmojiId::from(parameter[0].parse::<u64>().unwrap()));
 					} else {
 						//Normal unicode reaction
 						let grapheme_count = unicode_segmentation::UnicodeSegmentation::graphemes(parameter[0].as_str(), true).count();
 						if grapheme_count == 1 {
-							message.react(&environment.discord_context, ReactionType::Unicode(parameter[0].clone())).await.unwrap();
+							reaction = ReactionType::Unicode(parameter[0].clone());
 						} else {
 							return Err(String::from("Too many characters passed to `react`"));
 						}
 					}
+					if let Err(error) = message.react(&environment.discord_context, reaction).await {
+						return Err(format!("Could not react to message: `{}`", error));
+					};
 					return Ok(String::new());
 				}
 				Err(_) => {

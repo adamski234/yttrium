@@ -44,7 +44,7 @@ impl<Manager: DatabaseManager<DB>, DB: Database> key_base::Key<Manager, DB> for 
 			environment.target = possibly_id.clone();
 			return Ok(String::new());
 		} else {
-			return Err(String::from("Invalid ID passed to `target`"));
+			return Err(String::from("Invalid ID passed to `redirect`"));
 		};
 	}
 }

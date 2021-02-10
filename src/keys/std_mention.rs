@@ -48,24 +48,21 @@ impl<Manager: DatabaseManager<DB>, DB: Database> key_base::Key<Manager, DB> for 
 	async fn run_key(&self, parameter: &[String], environment: &mut Environment<'_, Manager, DB>) -> Result<String, String> {
 		let message_id;
 		let channel_id;
-		match &environment.event_info {
-			EventType::Message(event) => {
-				message_id = event.message_id.clone();
-				channel_id = event.channel_id.clone();
+		if let EventType::Message(event) = &environment.event_info {
+			message_id = event.message_id.clone();
+			channel_id = event.channel_id.clone();
+		} else {
+			return Err(String::from("`mention` called on an invalid event type"));
+		}
+		let index;
+		match parameter[1].parse::<usize>() {
+			Ok(result) => {
+				index = result;
 			}
-			EventType::ReactionAdd(event) => {
-				message_id = event.message_id.clone();
-				channel_id = event.channel_id.clone();
-			}
-			EventType::ReactionRemove(event) => {
-				message_id = event.message_id.clone();
-				channel_id = event.channel_id.clone();
-			}
-			_ => {
-				return Err(String::from("`mention` called on an invalid event type"));
+			Err(_) => {
+				return Err(String::from("Invalid index passed to `mention`"));
 			}
 		}
-		let index: usize = parameter[1].parse().unwrap();
 		let message;
 		match environment.discord_context.cache.message(channel_id, message_id).await {
 			Some(msg) => {

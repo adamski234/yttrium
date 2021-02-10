@@ -133,12 +133,19 @@ pub async fn interpret_tree<'a, Manager: DatabaseManager<DB>, DB: Database>(tree
 							target: target,
 						});
 					} else {
-						match key_list.get(&current_node.inner_node.key).unwrap().run_key(&current_node.returned_values, &mut environment).await {
-							Ok(result) => {
-								returned = result;
+						match key_list.get(&current_node.inner_node.key) {
+							Some(key) => {
+								match key.run_key(&current_node.returned_values, &mut environment).await {
+									Ok(result) => {
+										returned = result;
+									}
+									Err(error) => {
+										return Err(error);
+									}
+								}
 							}
-							Err(error) => {
-								return Err(error);
+							None => {
+								return Err(String::from("One of the keys does not exist"));
 							}
 						}
 					}

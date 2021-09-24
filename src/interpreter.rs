@@ -16,7 +16,6 @@ pub async fn interpret_tree<'a, Manager: DatabaseManager<DB>, DB: Database>(tree
 	let mut interpretable_tree = Vec::with_capacity(tree.len());
 	let mut next_rule = None;
 	for node in tree {
-		let cond_if_false = node.key == "cond" && node.parameters.len() == 3;
 		let param_count = node.parameters.len();
 		interpretable_tree.push(InterpretableNode {
 			inner_node: node,
@@ -24,7 +23,6 @@ pub async fn interpret_tree<'a, Manager: DatabaseManager<DB>, DB: Database>(tree
 			interpreted_subparam: 0, //For `inner_node.parameters[interpreted_param]` (Nodes)
 			returned_values: Vec::with_capacity(param_count),
 			returned_subvalues: Vec::with_capacity(2),
-			cond_if_false: cond_if_false,
 		});
 	}
 	//Remember: no recursion
@@ -219,7 +217,6 @@ struct InterpretableNode {
 	pub interpreted_subparam: usize,
 	pub returned_values: Vec<String>,
 	pub returned_subvalues: Vec<String>,
-	pub cond_if_false: bool,
 }
 
 impl InterpretableNode {

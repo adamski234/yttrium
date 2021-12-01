@@ -2,6 +2,7 @@
 
 use yttrium_key_base as key_base;
 use serenity::model::id::ChannelId;
+use serenity::model;
 use serenity::async_trait;
 use key_base::{
 	databases::{
@@ -96,6 +97,20 @@ impl<Manager: DatabaseManager<DB>, DB: Database> key_base::Key<Manager, DB> for 
 			}
 			"type" => {
 				return Ok(String::from(channel.kind.name()));
+			}
+			"region" => {
+				if let model::channel::ChannelType::Voice = channel.kind {
+							match channel.rtc_region {
+								Some(region) => {
+									return Ok(region);
+								}
+								None => {
+									return Err(format!("Channel {} passed to `channel` is voice but has no region", parameter[0]));
+								}
+							}
+						} else {
+							return Err(format!("Channel {} passed to `channel` is not voice", parameter[0]));
+						}
 			}
 			_ => {
 				return Err(format!("Invalid property parameter given to `channel`: `{}`", parameter[0]));

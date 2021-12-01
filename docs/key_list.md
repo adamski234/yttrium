@@ -4,14 +4,14 @@ The current version of the library contains 27 keys, that implement most of the 
 | :- | :- | :- |
 | attach | Adds a URL to a file to be attached to the message | Required, the file URL |
 | ban | Bans the member from the server | Optional, reason, defaults to nothing<br>Optional, days to remove messages from, default 0<br>Optional, user id, defaults to the sender |
-| channel | Returns information about a channel | Optional, indicates what property should be returned. Can be: `id`, `name`, `position`, `type`. Defaults to id<br>Optional, channel ID to target |
+| channel | Returns information about a channel | Optional, indicates what property should be returned. Can be: `id`, `name`, `position`, `type` or `region` for voice channels. Defaults to `id`<br>Optional, channel ID to target |
 | cond | A conditional that returns the second parameter if the first parameter is truthy, otherwis it returns the third parameter | Required, the condition to check<br>Required, the value to return if the first parameter is truthy<br>Optional, the value to return if the first parameter is not truthy |
 | database_exists | Checks whether a database, or a database key, exists | Required, what to check for. Can be: db, key<br>Required, database name<br>Required if the first parameter is `key`, the key to check for in database |
 | db_read | Reads a value from the database | Required, the database name<br>Required, the key name to retrieve |
 | db_write_str | Writes text to database | Required, the database name<br>Required, the key name to insert to<br> Required, the text to insert |
 | delete | Deletes messages | Optional, time after which to delete the messages, default 0<br>Optional, amount of messages to delete, default 1<br>Optional, user ID for filtering messages, default no filtering |
 | everyone | Mentions everyone or here | Optional, set to `here` to mention `@here` |
-| guild | Returns information about the guild | Required, property that should be returned. Can be: `id`, `owner`, `membercount`, `rolecount`, `channelcount`, `icon` or `region` |
+| guild | Returns information about the guild | Required, property that should be returned. Can be: `id`, `owner`, `membercount`, `rolecount`, `channelcount`, `icon` |
 | hasrole | Checks if a member has a role | Required, the user ID to check<br>Required, the role ID or name to check for |
 | joined | Returns the timestamp of when the user joined | Optional, user ID to target |
 | kick | Kicks a user from the server | Optional, the reason for the kick |

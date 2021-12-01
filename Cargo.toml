@@ -14,9 +14,9 @@ repository = "https://github.com/adamski234/yttrium"
 yttrium_key_base = { version = "1.0", path = "./yttrium_key_base" }
 serenity = "0.10"
 rand = "0.8"
-regex = "1.4"
+regex = "1.5"
 humantime = "2"
-unicode-segmentation = "1.7"
+unicode-segmentation = "1.8"
 glob = "0.3"
 tokio = "1"
 # Math is too hard to figure out to be kept in the main source tree

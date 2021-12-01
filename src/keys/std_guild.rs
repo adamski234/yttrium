@@ -77,9 +77,6 @@ impl<Manager: DatabaseManager<DB>, DB: Database> key_base::Key<Manager, DB> for 
 					}
 				}
 			}
-			"region" => {
-				return Ok(guild.region);
-			}
 			_ => {
 				return Err(String::from("Invalid property passed to `guild`"));
 			}

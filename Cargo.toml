@@ -2,7 +2,7 @@
 name = "yttrium"
 version = "1.0.0"
 authors = ["adamski234 <adamski234@protonmail.com>"]
-edition = "2018"
+edition = "2021"
 license = "MPL-2.0"
 description = "Library for parsing ARS code, inspired by the echo discord bot"
 homepage = "https://adamski234.github.io/yttrium"

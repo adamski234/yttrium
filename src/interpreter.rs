@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use std::time::Duration;
 use yttrium_key_base::environment::Environment;
 use yttrium_key_base::databases::{
 	DatabaseManager,
@@ -11,10 +12,9 @@ use crate::tree_creator;
 /// * `tree` - The tree in vector form returned from [tree_creator::create_ars_tree]
 /// * `key_list` - A HashMap of keys, probably returned from [crate::key_loader::load_keys]
 /// * `environment` - The environment from [key_base::environment::Environment]
-pub async fn interpret_tree<'a, Manager: DatabaseManager<DB>, DB: Database>(tree: Vec<tree_creator::TreeNode>, key_list: &HashMap<String, Box<dyn yttrium_key_base::Key<Manager, DB> + Send + Sync>>, mut environment: Environment<'a, Manager, DB>) -> Result<InterpretationResult<'a, Manager, DB>, String> {
+pub async fn interpret_tree<'a, Manager: DatabaseManager<DB>, DB: Database>(tree: Vec<tree_creator::TreeNode>, key_list: &HashMap<String, Box<dyn yttrium_key_base::Key<Manager, DB> + Send + Sync>>, mut environment: Environment<'a, Manager, DB>) -> Result<InterpretationResultOrSleep<'a, Manager, DB>, String> {
 	let mut current_index = 0; //Pointer to the currently interpreted node
 	let mut interpretable_tree = Vec::with_capacity(tree.len());
-	let mut next_rule = None;
 	for node in tree {
 		let param_count = node.parameters.len();
 		interpretable_tree.push(InterpretableNode {
@@ -25,10 +25,10 @@ pub async fn interpret_tree<'a, Manager: DatabaseManager<DB>, DB: Database>(tree
 			returned_subvalues: Vec::with_capacity(2),
 		});
 	}
-	//Remember: no recursion
 	loop {
 		let mut current_node = &mut interpretable_tree[current_index];
 		//This is bad coding but I lack creativity to fix this
+		// TODO function handling `cond` in its entirety
 		if current_node.inner_node.key == "cond" && current_node.interpreted_param == 1 {
 			//The first parameter has been executed
 			if current_node.returned_values[0].is_empty() || current_node.returned_values[0] == "0" {
@@ -108,28 +108,16 @@ pub async fn interpret_tree<'a, Manager: DatabaseManager<DB>, DB: Database>(tree
 			match current_node.inner_node.parent {
 				Some(parent) => {
 					let returned;
-					if current_node.inner_node.key == "ars" {
-						next_rule = Some(current_node.returned_values.join(""));
-						returned = String::new();
-					} else if current_node.inner_node.key == "literal" {
+					if current_node.inner_node.key == "literal" {
 						returned = current_node.returned_values[0].clone();
 					} else if current_node.inner_node.key == "exit" {
 						//Stop the interepreter
-						let target;
-						match environment.target.parse::<u64>() {
-							Ok(channel) => {
-								target = Some(serenity::model::id::ChannelId::from(channel));
+						return Ok(InterpretationResultOrSleep::Result(
+							InterpretationResult {
+								message: current_node.returned_values.join(""),
+								environment: environment,
 							}
-							Err(_) => {
-								target = None;
-							}
-						}
-						return Ok(InterpretationResult {
-							message: current_node.returned_values.join(""),
-							environment: environment,
-							next_rule: next_rule,
-							target: target,
-						});
+						));
 					} else {
 						match key_list.get(&current_node.inner_node.key) {
 							Some(key) => {
@@ -153,21 +141,12 @@ pub async fn interpret_tree<'a, Manager: DatabaseManager<DB>, DB: Database>(tree
 				}
 				None => {
 					//No more keys to interpret, return the result
-					let target;
-					match environment.target.parse::<u64>() {
-						Ok(channel) => {
-							target = Some(serenity::model::id::ChannelId::from(channel));
+					return Ok(InterpretationResultOrSleep::Result(
+						InterpretationResult {
+							message: current_node.returned_values.join(""),
+							environment: environment,
 						}
-						Err(_) => {
-							target = None;
-						}
-					}
-					return Ok(InterpretationResult {
-						message: current_node.returned_values.join(""),
-						environment: environment,
-						next_rule: next_rule,
-						target: target,
-					});
+					));
 				}
 			}
 		} else {
@@ -195,7 +174,39 @@ pub async fn interpret_tree<'a, Manager: DatabaseManager<DB>, DB: Database>(tree
 				}
 			}
 		}
+		if environment.sleep_time.is_some() {
+			// Serialize code up the point of execution and hand it over to the caller for further processing
+			// Remove current sleep node
+			let param = &mut current_node.inner_node.parameters[current_node.interpreted_param];
+			match param {
+				tree_creator::Parameter::Nodes(nodes) => {
+					for i in current_node.interpreted_subparam..(nodes.len() - 1) {
+						nodes[i] = nodes[i + 1];
+					}
+					nodes.pop();
+				}
+				tree_creator::Parameter::String(_) => {
+					unreachable!("`sleep_time` was Some but the parameter was a string");
+				}
+			}
+			return Ok(InterpretationResultOrSleep::Sleep(
+				SleepResult {
+					duration: environment.sleep_time.unwrap(),
+					code_to_execute: interpretable_tree[0].serialize(),
+					environment: environment,
+				}
+			))
+		}
 	}
+}
+
+/// Enum that describes the further behavior of the interpreter
+#[derive(Debug)]
+pub enum InterpretationResultOrSleep<'a, Manager: DatabaseManager<DB>, DB: Database> {
+	/// The resulting text of the interpretation
+	Result(InterpretationResult<'a, Manager, DB>),
+	/// Information regarding when to wake the interpreter again and with what data
+	Sleep(SleepResult<'a, Manager, DB>)
 }
 
 /// Struct containing everything that the script might return
@@ -205,10 +216,16 @@ pub struct InterpretationResult<'a, Manager: DatabaseManager<DB>, DB: Database> 
 	pub message: String,
 	/// Environment passed as the argument
 	pub environment: Environment<'a, Manager, DB>,
-	/// The next rule to call
-	pub next_rule: Option<String>,
-	/// Channel to send the result to
-	pub target: Option<serenity::model::id::ChannelId>,
+}
+
+#[derive(Debug)]
+pub struct SleepResult<'a, Manager: DatabaseManager<DB>, DB: Database> {
+	/// Duration for which the interpreter should be paused. Time resolution is up to the implementer
+	pub duration: Duration,
+	/// Code that should be executed after the sleep time is over
+	pub code_to_execute: String,
+	/// The resulting environment passed as the argument
+	pub environment: Environment<'a, Manager, DB>,
 }
 
 struct InterpretableNode {
@@ -224,5 +241,10 @@ impl InterpretableNode {
 		self.returned_values.push(self.returned_subvalues.join(""));
 		self.returned_subvalues.clear();
 		self.interpreted_subparam = 0;
+	}
+	/// Recursively serializes itself along with all the child nodes, returning code that should be executed after resuming
+	fn serialize(&self) -> String {
+		//TODO
+		return String::new();
 	}
 }

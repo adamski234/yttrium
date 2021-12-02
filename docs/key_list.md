@@ -2,6 +2,7 @@ The current version of the library contains 27 keys, that implement most of the 
 
 | Key name | Description | Parameters |
 | :- | :- | :- |
+| call | Sets the next rule to be called | Required, the rule's name |
 | attach | Adds a URL to a file to be attached to the message | Required, the file URL |
 | ban | Bans the member from the server | Optional, reason, defaults to nothing<br>Optional, days to remove messages from, default 0<br>Optional, user id, defaults to the sender |
 | channel | Returns information about a channel | Optional, indicates what property should be returned. Can be: `id`, `name`, `position`, `type` or `region` for voice channels. Defaults to `id`<br>Optional, channel ID to target |

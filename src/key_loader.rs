@@ -17,6 +17,7 @@ use yttrium_key_base::databases::{
 #[path = "keys/std_joined.rs"] mod std_joined;
 #[path = "keys/std_kick.rs"] mod std_kick;
 #[path = "keys/std_mention.rs"] mod std_mention;
+#[path = "keys/std_next.rs"] mod std_next;
 #[path = "keys/std_parameter.rs"] mod std_parameter;
 #[path = "keys/std_pin.rs"] mod std_pin;
 #[path = "keys/std_rand.rs"] mod std_rand;
@@ -61,6 +62,8 @@ pub fn load_keys<Manager: 'static + DatabaseManager<DB>, DB: 'static + Database>
 	let key = yttrium_std_math::create();
 	keys.insert(key.get_key_info().name.clone(), key);
 	let key = std_mention::create();
+	keys.insert(key.get_key_info().name.clone(), key);
+	let key = std_next::create();
 	keys.insert(key.get_key_info().name.clone(), key);
 	let key = std_parameter::create();
 	keys.insert(key.get_key_info().name.clone(), key);

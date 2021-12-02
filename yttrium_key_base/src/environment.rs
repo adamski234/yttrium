@@ -1,5 +1,6 @@
 use crate::databases;
 use std::fmt::{Debug, Formatter, Error};
+use std::time::Duration;
 use databases::{Database, DatabaseManager};
 use serenity::model::id::GuildId;
 use serenity::builder::CreateEmbed;
@@ -15,6 +16,8 @@ pub struct Environment<'a, Manager: DatabaseManager<DB>, DB: Database> {
 	pub guild_id: GuildId,
 	/// The target channel ID, defaults to the channel in which the bot was triggered
 	pub target: String,
+	/// Linked rule
+	pub next_rule: Option<String>,
 	/// URLs of attachments to send
 	pub attachments: Vec<String>,
 	/// The event
@@ -22,9 +25,11 @@ pub struct Environment<'a, Manager: DatabaseManager<DB>, DB: Database> {
 	/// Shared serenity context used for accessing discord
 	pub discord_context: &'a serenity::client::Context,
 	/// Used for deleting the response message
-	pub delete_option: Option<std::time::Duration>,
+	pub delete_option: Option<Duration>,
 	/// Used for adding reactions to the response message
 	pub reactions_to_add: Vec<serenity::model::channel::ReactionType>,
+	/// Informs the interpreter about when to go back to executing code
+	pub sleep_time: Option<Duration>,
 	_phantom: std::marker::PhantomData<DB>,
 }
 
@@ -33,6 +38,7 @@ impl<'a, Manager: DatabaseManager<DB>, DB: Database> Environment<'a, Manager, DB
 		return Self {
 			embed: None,
 			target: String::new(),
+			next_rule: None,
 			database_manager: db_manager,
 			guild_id: guild_id,
 			attachments: Vec::new(),
@@ -40,6 +46,7 @@ impl<'a, Manager: DatabaseManager<DB>, DB: Database> Environment<'a, Manager, DB
 			discord_context: context,
 			delete_option: None,
 			reactions_to_add: vec![],
+			sleep_time: None,
 			_phantom: std::marker::PhantomData,
 		};
 	}

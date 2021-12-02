@@ -45,6 +45,6 @@ pub async fn interpret_string<'a, Manager: DatabaseManager<DB>, DB: Database>(ar
 /// Contains both the result and all warnings, if there are any
 #[derive(Debug)]
 pub struct ResultAndWarnings<'a, Manager: DatabaseManager<DB>, DB: Database> {
-	pub result: interpreter::InterpretationResult<'a, Manager, DB>,
+	pub result: interpreter::InterpretationResultOrSleep<'a, Manager, DB>,
 	pub warnings: Option<Vec<errors_and_warns::Warning>>,
 }

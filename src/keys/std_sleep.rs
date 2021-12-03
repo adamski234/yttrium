@@ -37,10 +37,10 @@ impl<Manager: DatabaseManager<DB>, DB: Database> key_base::Key<Manager, DB> for 
 		return &self.info;
 	}
 
-	async fn run_key(&self, parameter: &[String], _environment: &mut Environment<'_, Manager, DB>) -> Result<String, String> {
+	async fn run_key(&self, parameter: &[String], environment: &mut Environment<'_, Manager, DB>) -> Result<String, String> {
 		match humantime::parse_duration(&parameter[0]) {
 			Ok(result) => {
-				tokio::time::sleep(result).await;
+				environment.sleep_time = Some(result);
 				return Ok(String::new());
 			}
 			Err(error) => {

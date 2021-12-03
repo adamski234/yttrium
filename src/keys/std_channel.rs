@@ -21,7 +21,7 @@ pub fn create<Manager: 'static + DatabaseManager<DB>, DB: 'static + Database>() 
 
 /*
 Parameters:
-Optional, indicates what should be returned. Possible values: id, name, position, type. Defaults to id
+Optional, indicates what should be returned. Possible values: id, name, position, type, region. Defaults to id
 Optional, channel ID to target 
 */
 fn create_key_info() -> key_base::KeyInfo {
